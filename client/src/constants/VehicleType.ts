@@ -1,8 +1,10 @@
 export const enum VehicleType {
   CAR = 0,
-  MOTORCYCLE = 1,
-  TRUCK = 2,
-  VAN = 3,
-  BUS = 4,
-  BOAT = 5
+  BUS = 1,
+  VAN = 2,
+  TRUCK = 3,
+  MOTORCYCLE = 4,
+  BICYCLE = 5,
+  BOAT = 6,
+  PLANE = 7
 }
