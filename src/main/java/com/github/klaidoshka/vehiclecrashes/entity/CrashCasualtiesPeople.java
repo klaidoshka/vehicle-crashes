@@ -3,7 +3,9 @@ package com.github.klaidoshka.vehiclecrashes.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
 
@@ -15,9 +17,17 @@ public final class CrashCasualtiesPeople {
   private Long id;
 
   @ManyToOne
+  @JoinColumn(
+      name = "crash_id",
+      nullable = false
+  )
   private Crash crash;
 
   @ManyToOne
+  @JoinColumn(
+      name = "person_id",
+      nullable = false
+  )
   private Person person;
 
   public CrashCasualtiesPeople() {

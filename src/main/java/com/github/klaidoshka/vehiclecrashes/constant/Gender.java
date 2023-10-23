@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.constants;
+package com.github.klaidoshka.vehiclecrashes.constant;
 
 public enum Gender {
 

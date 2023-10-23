@@ -1,13 +1,11 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
@@ -26,6 +24,10 @@ public final class Insurance {
   private Long id;
 
   @ManyToOne
+  @JoinColumn(
+      name = "vehicle_id",
+      nullable = false
+  )
   private Vehicle vehicle;
 
   public Insurance() {

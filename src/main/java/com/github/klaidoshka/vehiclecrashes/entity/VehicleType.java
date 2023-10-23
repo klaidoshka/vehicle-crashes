@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
 
@@ -17,13 +18,13 @@ public final class VehicleType {
 
   @Enumerated(value = EnumType.STRING)
   @Column(nullable = false)
-  private com.github.klaidoshka.vehiclecrashes.constants.VehicleType type;
+  private com.github.klaidoshka.vehiclecrashes.constant.VehicleType type;
 
   public VehicleType() {
   }
 
   public VehicleType(@NonNull Integer id,
-      @NonNull com.github.klaidoshka.vehiclecrashes.constants.VehicleType type) {
+      @NonNull com.github.klaidoshka.vehiclecrashes.constant.VehicleType type) {
     this.id = id;
     this.type = type;
   }
@@ -32,11 +33,11 @@ public final class VehicleType {
     return id;
   }
 
-  public @NonNull com.github.klaidoshka.vehiclecrashes.constants.VehicleType getType() {
+  public @NonNull com.github.klaidoshka.vehiclecrashes.constant.VehicleType getType() {
     return type;
   }
 
-  public void setType(@NonNull com.github.klaidoshka.vehiclecrashes.constants.VehicleType type) {
+  public void setType(@NonNull com.github.klaidoshka.vehiclecrashes.constant.VehicleType type) {
     this.type = type;
   }
 

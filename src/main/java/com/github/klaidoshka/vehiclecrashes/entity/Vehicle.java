@@ -9,6 +9,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +26,7 @@ public final class Vehicle {
 
   @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
-      name = "CrashCasualtiesPeople",
+      name = "vc_CrashCasualtiesPeople",
       joinColumns = @JoinColumn(name = "person"),
       inverseJoinColumns = @JoinColumn(name = "crash")
   )
@@ -38,11 +39,17 @@ public final class Vehicle {
   @Column(nullable = false)
   private Long id;
 
-  @OneToMany(cascade = CascadeType.ALL)
-  private Set<Insurance> insurances;
+  @OneToMany(
+      cascade = CascadeType.ALL,
+      mappedBy = "vehicle"
+  )
+  private Set<Insurance> insurances = new HashSet<>();
 
-  @OneToMany(cascade = CascadeType.ALL)
-  private Set<VehicleOwner> owners;
+  @OneToMany(
+      cascade = CascadeType.ALL,
+      mappedBy = "vehicle"
+  )
+  private Set<VehicleOwner> owners = new HashSet<>();
 
   @Column(nullable = false)
   private String plate;

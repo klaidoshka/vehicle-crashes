@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,26 +21,27 @@ public final class Crash {
 
   @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
-      name = "CrashCasualtiesPeople",
+      name = "vc_CrashCasualtiesPeople",
       joinColumns = @JoinColumn(name = "crash"),
       inverseJoinColumns = @JoinColumn(name = "people")
   )
-  private Set<Person> casualtiesPeople;
+  private Set<Person> casualtiesPeople = new HashSet<>();
 
   @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
-      name = "CrashCasualtiesVehicle",
+      name = "vc_CrashCasualtiesVehicle",
       joinColumns = @JoinColumn(name = "crash"),
       inverseJoinColumns = @JoinColumn(name = "vehicle")
   )
-  private Set<Vehicle> casualtiesVehicle;
+  private Set<Vehicle> casualtiesVehicle = new HashSet<>();
 
   @Column(nullable = false)
   private LocalDateTime dateCrash;
 
   @Column(
       nullable = false,
-      precision = 2)
+      precision = 2
+  )
   private double damageCost;
 
   @Id
@@ -71,11 +73,11 @@ public final class Crash {
     this.casualtiesVehicle = new HashSet<>(casualtiesVehicle);
   }
 
-  public @NonNull LocalDateTime getDateCrash() {
+  public @NonNull LocalDateTime getDate() {
     return dateCrash;
   }
 
-  public void setDateCrash(@NonNull LocalDateTime dateCrash) {
+  public void setDate(@NonNull LocalDateTime dateCrash) {
     this.dateCrash = dateCrash;
   }
 

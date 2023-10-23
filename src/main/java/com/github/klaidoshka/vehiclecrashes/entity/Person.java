@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
-import com.github.klaidoshka.vehiclecrashes.constants.Gender;
+import com.github.klaidoshka.vehiclecrashes.constant.Gender;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,16 +21,19 @@ import org.springframework.lang.NonNull;
 @Entity
 public final class Person {
 
-  @OneToMany(cascade = CascadeType.ALL)
-  private Set<VehicleOwner> carsOwned;
+  @OneToMany(
+      cascade = CascadeType.ALL,
+      mappedBy = "person"
+  )
+  private Set<VehicleOwner> carsOwned = new HashSet<>();
 
   @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
-      name = "CrashCasualtiesPeople",
+      name = "vc_CrashCasualtiesPeople",
       joinColumns = @JoinColumn(name = "person"),
       inverseJoinColumns = @JoinColumn(name = "crash")
   )
-  private Set<Crash> crashes;
+  private Set<Crash> crashes = new HashSet<>();
 
   @Column(nullable = false)
   private LocalDateTime dateBirth;

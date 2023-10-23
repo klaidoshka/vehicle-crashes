@@ -3,7 +3,9 @@ package com.github.klaidoshka.vehiclecrashes.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
@@ -22,9 +24,17 @@ public final class VehicleOwner {
   private Long id;
 
   @ManyToOne
+  @JoinColumn(
+      name = "person_id",
+      nullable = false
+  )
   private Person person;
 
   @ManyToOne
+  @JoinColumn(
+      name = "vehicle_id",
+      nullable = false
+  )
   private Vehicle vehicle;
 
   public VehicleOwner() {
