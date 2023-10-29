@@ -54,7 +54,7 @@ const resolveSubmit = (isCreate: boolean, vehicle: Vehicle) => {
 }
 
 const VehicleManageForm = () => {
-  const [vehicle, setVehicle] = useState<Vehicle>(new Vehicle({
+  const [vehicle, setVehicle] = useState<Vehicle>({
     color: "",
     crashes: [],
     dateManufacture: "",
@@ -63,7 +63,7 @@ const VehicleManageForm = () => {
     owners: [],
     plate: "",
     type: undefined
-  }));
+  });
 
   const onChangeText = (event: FormEvent<HTMLInputElement>) => {
     const {name, value} = event.currentTarget;
