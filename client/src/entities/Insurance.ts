@@ -1,7 +1,7 @@
 import Vehicle from "./Vehicle.ts";
 
 interface Insurance {
-  id: number;
+  id?: number;
   dateInitialization: string;
   dateExpiration: string;
   vehicle: Vehicle;
