@@ -9,13 +9,9 @@ const HomePage = () => {
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center"
-          }}
-      >
-        <div
-            className="mt-5 col-12 h-50 d-flex flex-column justify-content-center align-items-center text-white"
-            style={{
-              backgroundColor: "rgba(0, 0, 0, 0.2)"
-            }}>
+          }}>
+        <div className="col-12 h-50 d-flex flex-column
+             justify-content-center align-items-center text-white">
           <h1 style={{
             fontWeight: "bold",
             fontSize: 100,
@@ -24,8 +20,8 @@ const HomePage = () => {
           </h1>
         </div>
 
-        <div
-            className="mt-5 col-12 d-flex flex-column justify-content-center align-items-center text-white">
+        <div className="col-12 d-flex flex-column
+             justify-content-center align-items-center text-white">
           <p
               className="w-25"
               style={{

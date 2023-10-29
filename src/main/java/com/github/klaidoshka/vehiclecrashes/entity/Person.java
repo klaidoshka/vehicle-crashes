@@ -4,6 +4,8 @@ import com.github.klaidoshka.vehiclecrashes.constant.Gender;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -29,7 +31,7 @@ public final class Person {
 
   @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
-      name = "vc_CrashCasualtiesPeople",
+      name = "CrashCasualtiesPeople",
       joinColumns = @JoinColumn(name = "person"),
       inverseJoinColumns = @JoinColumn(name = "crash")
   )
@@ -42,6 +44,7 @@ public final class Person {
   private Gender gender;
 
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
   private Long id;
 

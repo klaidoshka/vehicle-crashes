@@ -1,10 +1,10 @@
-package com.github.klaidoshka.vehiclecrashes.hibernate;
+package com.github.klaidoshka.vehiclecrashes.configuration;
 
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
-public final class PrefixedPhysicalTableNamingStrategy implements PhysicalNamingStrategy {
+public final class HibernateNamingStrategy implements PhysicalNamingStrategy {
 
   public static final String PREFIX = "vc_";
 

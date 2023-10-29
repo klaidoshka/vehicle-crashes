@@ -1,0 +1,38 @@
+package com.github.klaidoshka.vehiclecrashes.api.service;
+
+import org.springframework.lang.NonNull;
+
+public interface IConfigurationService {
+
+  /**
+   * Mapping of the server-side API (Spring)
+   *
+   * @return mapping of the server-side API
+   */
+  @NonNull
+  String getApiMapping();
+
+  /**
+   * Endpoint address of the client-side server (React), i.e. http://127.0.0.1:3000/
+   *
+   * @return endpoint of the client-side server
+   */
+  @NonNull
+  String getClientServerAddress();
+
+  /**
+   * Endpoint address of the client-side server (React) using domain, i.e. http://localhost:3000/
+   *
+   * @return endpoint of the client-side server
+   */
+  @NonNull
+  String getClientServerDomain();
+
+  /**
+   * Endpoint of the server-side server (Spring)
+   *
+   * @return endpoint of the server-side server
+   */
+  @NonNull
+  String getServerAddress();
+}

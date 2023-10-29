@@ -1,22 +1,21 @@
 import FormList from "../../../components/form/FormList.tsx";
-import ICrash, {dummyCrashes} from "../../../entities/ICrash.ts";
+import Crash from "../../../entities/Crash.ts";
 import {TableColumn} from "react-data-table-component";
-import ICasualty from "../../../entities/ICasualty.ts";
-import {VehicleType} from "../../../constants/VehicleType.ts";
+import CasualtyPerson from "../../../entities/CasualtyPerson.ts";
 
 export default function CrashListForm() {
   return (
       <FormList
           title={"View, edit, delete..."}
           columns={columnsCrash}
-          rows={dummyCrashes}
+          rows={[]}
           onDelete={(row) => console.log(row)}
           onEdit={(row) => console.log(row)}
           onExpand={(row) => {
             return <FormList
-                title={"#" + row.id + " Crash Casualties"}
+                title={"#" + row.id + " Crash Casualties (People)"}
                 columns={columnsCasualties}
-                rows={row.casualties}
+                rows={row.casualtiesPeople}
                 onDelete={(row) => console.log(row)}
                 onEdit={(row) => console.log(row)}
             />
@@ -25,7 +24,7 @@ export default function CrashListForm() {
   );
 }
 
-const columnsCasualties: TableColumn<ICasualty>[] = [
+const columnsCasualties: TableColumn<CasualtyPerson>[] = [
   {
     id: 'id',
     name: '#',
@@ -36,43 +35,13 @@ const columnsCasualties: TableColumn<ICasualty>[] = [
   {
     id: 'name',
     name: 'Name',
-    selector: row => row.vehicleOwner?.name ?? "N/A",
+    selector: row => row.person?.name ?? "N/A",
     sortable: true,
     width: '160px'
-  },
-  {
-    id: 'plate',
-    name: 'Plate',
-    selector: row => row.vehicle.plate,
-    sortable: true,
-    width: '150px'
-  },
-  {
-    id: 'type',
-    name: 'Type',
-    selector: row => row.vehicle.type,
-    sortable: true,
-    width: '150px',
-    // @ts-ignore
-    format: row => VehicleType[row.vehicle.type] || "N/A"
-  },
-  {
-    id: 'dateManufacture',
-    name: 'Date Manufacture',
-    selector: row => row.vehicle.dateManufacture,
-    sortable: true,
-    width: '150px'
-  },
-  {
-    id: 'color',
-    name: 'Color',
-    selector: row => row.vehicle.color,
-    sortable: true,
-    width: '150px'
   }
 ];
 
-const columnsCrash: TableColumn<ICrash>[] = [
+const columnsCrash: TableColumn<Crash>[] = [
   {
     id: 'id',
     name: '#',

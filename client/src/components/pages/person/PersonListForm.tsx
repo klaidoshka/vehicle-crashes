@@ -1,8 +1,8 @@
 import FormList from "../../form/FormList.tsx";
-import IPerson, {dummyPeople} from "../../../entities/IPerson.ts";
+import Person from "../../../entities/Person.ts";
 import {TableColumn} from "react-data-table-component";
 import {Gender} from "../../../constants/Gender.ts";
-import IVehicle from "../../../entities/IVehicle.ts";
+import Vehicle from "../../../entities/Vehicle.ts";
 import {VehicleType} from "../../../constants/VehicleType.ts";
 
 const PersonListForm = () => {
@@ -17,7 +17,7 @@ const PersonListForm = () => {
             return <FormList
                 title={`#${row.id} ${row.name} - Owned Vehicles.`}
                 columns={columnsVehicleOwned}
-                rows={row.vehicles ?? []}
+                rows={row.vehiclesOwned ?? []}
                 onDelete={(row) => console.log(row)}
                 onEdit={(row) => console.log(row)}
             />
@@ -28,7 +28,7 @@ const PersonListForm = () => {
 
 export default PersonListForm;
 
-const columnsPerson: TableColumn<IPerson>[] = [
+const columnsPerson: TableColumn<Person>[] = [
   {
     id: 'id',
     name: '#',
@@ -61,25 +61,25 @@ const columnsPerson: TableColumn<IPerson>[] = [
   }
 ];
 
-const columnsVehicleOwned: TableColumn<IVehicle>[] = [
+const columnsVehicleOwned: TableColumn<Vehicle>[] = [
   {
     id: 'id',
     name: '#',
-    selector: row => row.id,
+    selector: row => row.id!,
     sortable: true,
     width: '80px'
   },
   {
     id: 'plate',
     name: 'Plate',
-    selector: row => row.plate,
+    selector: row => row.plate!,
     sortable: true,
     width: '150px'
   },
   {
     id: 'type',
     name: 'Type',
-    selector: row => row.type,
+    selector: row => row.type!,
     sortable: true,
     width: '150px',
     // @ts-ignore
@@ -88,10 +88,10 @@ const columnsVehicleOwned: TableColumn<IVehicle>[] = [
   {
     id: 'dateManufacture',
     name: 'Date Manufacture',
-    selector: row => row.dateManufacture,
+    selector: row => row.dateManufacture!,
     sortable: true,
     width: '150px'
   }
 ];
 
-const rows: IPerson[] = dummyPeople;
+const rows: Person[] = [];

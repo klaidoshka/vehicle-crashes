@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.controller;
 
-import com.github.klaidoshka.vehiclecrashes.api.ICrashContext;
+import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import java.util.Collection;

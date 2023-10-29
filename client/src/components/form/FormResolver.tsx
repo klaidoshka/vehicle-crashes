@@ -11,8 +11,10 @@ export default function FormResolver({formType, formManage, formList}: IFormProp
 
     default:
       return (
-          <div className="text-center">
-            Please select a form type by clicking on one of the buttons within this page
+          <div className="d-flex flex-column text-center mt-3">
+            <p>
+              Please select a form by clicking one of the buttons above
+            </p>
           </div>
       );
   }

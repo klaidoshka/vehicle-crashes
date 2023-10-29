@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.constant;
 
-import org.apache.commons.text.WordUtils;
+import org.springframework.lang.NonNull;
 
 public enum VehicleType {
 
@@ -19,12 +19,16 @@ public enum VehicleType {
     this.id = id;
   }
 
+  public static @NonNull VehicleType fromString(@NonNull String vehicleType) {
+    return valueOf(vehicleType.trim().toUpperCase());
+  }
+
   public int getId() {
     return id;
   }
 
   @Override
   public String toString() {
-    return WordUtils.capitalizeFully(name());
+    return name();
   }
 }

@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
-import com.github.klaidoshka.vehiclecrashes.api.ICrashContext;
+import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -9,7 +9,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,8 @@ public final class CrashContext implements ICrashContext {
 
       return ResponseBase.success();
     } catch (Exception e) {
-      LOGGER.error("Error while deleting entity. Rolling back...", e);
+      LOGGER.error("Error while deleting entity. Rolling back...");
+      LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
@@ -59,7 +59,8 @@ public final class CrashContext implements ICrashContext {
     try (final EntityManager manager = entityManagerFactory.createEntityManager()) {
       return Optional.ofNullable(manager.find(clazz, id));
     } catch (Exception e) {
-      LOGGER.error("Error while finding entity", e);
+      LOGGER.error("Error while finding entity");
+      LOGGER.error("Message: {}", e.getMessage());
 
       return Optional.empty();
     }
@@ -76,7 +77,8 @@ public final class CrashContext implements ICrashContext {
 
       return entityManager.createQuery(criteriaQuery).getResultList();
     } catch (Exception e) {
-      LOGGER.error("Error while getting entities", e);
+      LOGGER.error("Error while getting entities");
+      LOGGER.error("Message: {}", e.getMessage());
 
       return Collections.emptyList();
     }
@@ -89,13 +91,14 @@ public final class CrashContext implements ICrashContext {
     try {
       manager.getTransaction().begin();
 
-      manager.persist(entity);
+      manager.merge(entity);
 
       manager.getTransaction().commit();
 
       return ResponseBase.success();
     } catch (Exception e) {
-      LOGGER.error("Error while saving entity. Rolling back...", e);
+      LOGGER.error("Error while saving entity. Rolling back...");
+      LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
@@ -112,13 +115,14 @@ public final class CrashContext implements ICrashContext {
     try {
       manager.getTransaction().begin();
 
-      entities.forEach(manager::persist);
+      entities.forEach(manager::merge);
 
       manager.getTransaction().commit();
 
       return ResponseBase.success();
     } catch (Exception e) {
-      LOGGER.error("Error while saving entities. Rolling back...", e);
+      LOGGER.error("Error while saving entities. Rolling back...");
+      LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 

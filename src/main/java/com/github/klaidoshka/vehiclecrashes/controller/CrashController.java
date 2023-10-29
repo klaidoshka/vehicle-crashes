@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.controller;
 
-import com.github.klaidoshka.vehiclecrashes.api.ICrashContext;
+import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.entity.Crash;
@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/")
 public final class CrashController extends ControllerBase<Crash, Long> {
 
   @Autowired
@@ -24,19 +26,19 @@ public final class CrashController extends ControllerBase<Crash, Long> {
     super(context);
   }
 
-  @PostMapping("/crashes")
+  @PostMapping
   @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Crash entity) {
     return super.create(entity);
   }
 
-  @DeleteMapping("/crashes/{id}")
+  @DeleteMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
     return super.delete(id);
   }
 
-  @PutMapping("/crashes/{id}")
+  @PutMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull Long id,
       @NonNull @RequestBody Crash entity) {
@@ -47,13 +49,13 @@ public final class CrashController extends ControllerBase<Crash, Long> {
     return super.edit(id, entity);
   }
 
-  @GetMapping("/crashes")
+  @GetMapping
   @Override
   public @NonNull Collection<Crash> get() {
     return super.get();
   }
 
-  @GetMapping("/crashes/{id}")
+  @GetMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseValued<Crash>> get(@NonNull @PathVariable Long id) {
     return super.get(id);

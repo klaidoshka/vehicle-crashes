@@ -1,4 +1,4 @@
-export const enum VehicleType {
+enum VehicleType {
   CAR = 0,
   BUS = 1,
   VAN = 2,
@@ -8,3 +8,10 @@ export const enum VehicleType {
   BOAT = 6,
   PLANE = 7
 }
+
+const values = Object
+  .keys(VehicleType)
+  .filter((key: string | number) => isNaN(key as number))
+  .map((key: string | number) => key as number);
+
+export {VehicleType, values};

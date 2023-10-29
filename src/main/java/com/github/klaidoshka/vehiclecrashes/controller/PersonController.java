@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.controller;
 
-import com.github.klaidoshka.vehiclecrashes.api.ICrashContext;
+import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.entity.Person;
@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/people")
 public final class PersonController extends ControllerBase<Person, Long> {
 
   @Autowired
@@ -24,19 +26,19 @@ public final class PersonController extends ControllerBase<Person, Long> {
     super(context);
   }
 
-  @PostMapping("/people")
+  @PostMapping
   @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Person entity) {
     return super.create(entity);
   }
 
-  @DeleteMapping("/people/{id}")
+  @DeleteMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
     return super.delete(id);
   }
 
-  @PutMapping("/people/{id}")
+  @PutMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull Long id,
       @NonNull @RequestBody Person entity) {
@@ -47,13 +49,13 @@ public final class PersonController extends ControllerBase<Person, Long> {
     return super.edit(id, entity);
   }
 
-  @GetMapping("/people")
+  @GetMapping
   @Override
   public @NonNull Collection<Person> get() {
     return super.get();
   }
 
-  @GetMapping("/people/{id}")
+  @GetMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseValued<Person>> get(@NonNull @PathVariable Long id) {
     return super.get(id);

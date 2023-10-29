@@ -1,13 +1,9 @@
 import {useForm} from "react-hook-form";
-import {dummyPeople} from "../../../entities/IPerson.ts";
 import AsyncSelect from "react-select/async";
 
-const resolveOptions = (input: string) => {
+const resolveOptions = () => {
   // return fetch(`http://localhost:8080/api/person?input=${input}`).then(response => response.json())
-  return new Promise<any>(() => dummyPeople
-      .filter(person => person.name.toLowerCase().includes(input.toLowerCase()))
-      .map(person => ({value: person.id, label: person.name}))
-  );
+  return new Promise<any>(() => []);
 }
 
 const onSubmit = (data: any) => console.log(data);

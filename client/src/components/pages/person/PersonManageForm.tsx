@@ -2,14 +2,10 @@ import {useForm} from "react-hook-form";
 import AsyncSelect from "react-select/async";
 import Select from "react-select";
 import {Gender} from "../../../constants/Gender.ts";
-import {dummyPeople} from "../../../entities/IPerson.ts";
 
-const resolveOptions = (ownerId: string) => {
+const resolveOptions = () => {
   // return fetch(`http://localhost:8080/api/vehicle?owner=${input}`).then(response => response.json())
-  return new Promise<any>(() => dummyPeople
-      .filter(person => person.name.toLowerCase().includes(ownerId.toLowerCase()))
-      .map(person => person.vehicles?.map(vehicle => ({value: vehicle.id, label: vehicle.plate})) ?? [])
-  );
+  return new Promise<any>(() => []);
 }
 
 const onSubmit = (data: any) => console.log(data);

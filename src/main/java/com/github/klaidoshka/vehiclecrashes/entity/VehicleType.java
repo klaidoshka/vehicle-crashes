@@ -4,6 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Objects;
@@ -13,6 +15,7 @@ import org.springframework.lang.NonNull;
 public final class VehicleType {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
   private Integer id;
 
@@ -27,6 +30,11 @@ public final class VehicleType {
       @NonNull com.github.klaidoshka.vehiclecrashes.constant.VehicleType type) {
     this.id = id;
     this.type = type;
+  }
+
+  public VehicleType(@NonNull String vehicleType) {
+    type = com.github.klaidoshka.vehiclecrashes.constant.VehicleType.fromString(vehicleType);
+    id = type.getId();
   }
 
   public @NonNull Integer getId() {

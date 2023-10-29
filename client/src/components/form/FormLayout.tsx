@@ -7,7 +7,11 @@ import {FormType} from "../../constants/FormType.ts";
 import {useState} from "react";
 
 export default function FormLayout(properties: IFormProperties) {
-  const [formType, setFormType] = useState<FormType>(FormType.LIST);
+  const [formType, setFormType] = useState<FormType>(FormType.NONE);
+
+  const handleFormTypeChange = (formTypeNew: FormType) => {
+    setFormType(formTypeNew === formType ? FormType.NONE : formTypeNew);
+  }
 
   return (
       <div className="col-12 d-flex justify-content-center align-items-center w-100">
@@ -18,8 +22,8 @@ export default function FormLayout(properties: IFormProperties) {
           <FormExplanation {...properties} />
 
           <FormButtons
-              onCreateClick={() => setFormType(FormType.CREATE)}
-              onListClick={() => setFormType(FormType.LIST)}
+              onCreateClick={() => handleFormTypeChange(FormType.CREATE)}
+              onListClick={() => handleFormTypeChange(FormType.LIST)}
           />
 
           <FormResolver {...properties} formType={formType}/>

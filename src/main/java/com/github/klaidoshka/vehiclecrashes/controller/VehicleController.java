@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.controller;
 
-import com.github.klaidoshka.vehiclecrashes.api.ICrashContext;
+import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/vehicles")
 public final class VehicleController extends ControllerBase<Vehicle, Long> {
 
   @Autowired
@@ -24,19 +26,19 @@ public final class VehicleController extends ControllerBase<Vehicle, Long> {
     super(context);
   }
 
-  @PostMapping("/vehicles")
+  @PostMapping
   @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Vehicle entity) {
     return super.create(entity);
   }
 
-  @DeleteMapping("/vehicles/{id}")
+  @DeleteMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
     return super.delete(id);
   }
 
-  @PutMapping("/vehicles/{id}")
+  @PutMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull Long id,
       @NonNull @RequestBody Vehicle entity) {
@@ -47,13 +49,13 @@ public final class VehicleController extends ControllerBase<Vehicle, Long> {
     return super.edit(id, entity);
   }
 
-  @GetMapping("/vehicles")
+  @GetMapping
   @Override
   public @NonNull Collection<Vehicle> get() {
     return super.get();
   }
 
-  @GetMapping("/vehicles/{id}")
+  @GetMapping("/{id}")
   @Override
   public @NonNull ResponseEntity<ResponseValued<Vehicle>> get(@NonNull @PathVariable Long id) {
     return super.get(id);
