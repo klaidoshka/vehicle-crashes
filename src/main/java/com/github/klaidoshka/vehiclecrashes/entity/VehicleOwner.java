@@ -8,7 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
 
@@ -16,10 +17,10 @@ import org.springframework.lang.NonNull;
 public final class VehicleOwner {
 
   @Column(nullable = false)
-  private LocalDateTime dateAcquisition;
+  private LocalDate dateAcquisition;
 
   @Column
-  private LocalDateTime dateDisposal;
+  private LocalDate dateDisposal;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +44,7 @@ public final class VehicleOwner {
   public VehicleOwner() {
   }
 
-  public VehicleOwner(LocalDateTime dateAcquisition, LocalDateTime dateDisposal, Long id,
+  public VehicleOwner(LocalDate dateAcquisition, LocalDate dateDisposal, Long id,
       Person person, Vehicle vehicle) {
     this.dateAcquisition = dateAcquisition;
     this.dateDisposal = dateDisposal;
@@ -52,19 +53,19 @@ public final class VehicleOwner {
     this.vehicle = vehicle;
   }
 
-  public @NonNull LocalDateTime getDateAcquisition() {
+  public @NonNull LocalDate getDateAcquisition() {
     return dateAcquisition;
   }
 
-  public void setDateAcquisition(@NonNull LocalDateTime dateAcquisition) {
+  public void setDateAcquisition(@NonNull LocalDate dateAcquisition) {
     this.dateAcquisition = dateAcquisition;
   }
 
-  public @NonNull LocalDateTime getDateDisposal() {
+  public @NonNull LocalDate getDateDisposal() {
     return dateDisposal;
   }
 
-  public void setDateDisposal(@NonNull LocalDateTime dateDisposal) {
+  public void setDateDisposal(@NonNull LocalDate dateDisposal) {
     this.dateDisposal = dateDisposal;
   }
 

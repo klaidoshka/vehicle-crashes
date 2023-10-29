@@ -12,7 +12,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,7 +38,7 @@ public final class Person {
   private Set<Crash> crashes = new HashSet<>();
 
   @Column(nullable = false)
-  private LocalDateTime dateBirth;
+  private LocalDate dateBirth;
 
   @Column(nullable = false)
   private Gender gender;
@@ -54,7 +54,7 @@ public final class Person {
   public Person() {
   }
 
-  public Person(@NonNull LocalDateTime dateBirth, @NonNull Gender gender, @NonNull Long id,
+  public Person(@NonNull LocalDate dateBirth, @NonNull Gender gender, @NonNull Long id,
       @NonNull String name) {
     this.dateBirth = dateBirth;
     this.gender = gender;
@@ -78,11 +78,11 @@ public final class Person {
     this.crashes = new HashSet<>(crashes);
   }
 
-  public @NonNull LocalDateTime getDateBirth() {
+  public @NonNull LocalDate getDateBirth() {
     return dateBirth;
   }
 
-  public void setDateBirth(@NonNull LocalDateTime dateBirth) {
+  public void setDateBirth(@NonNull LocalDate dateBirth) {
     this.dateBirth = dateBirth;
   }
 

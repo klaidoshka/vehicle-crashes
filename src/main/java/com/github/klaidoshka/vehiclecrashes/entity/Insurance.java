@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
 
@@ -16,10 +16,10 @@ import org.springframework.lang.NonNull;
 public final class Insurance {
 
   @Column(nullable = false)
-  private LocalDateTime dateInitialization;
+  private LocalDate dateInitialization;
 
   @Column(nullable = false)
-  private LocalDateTime dateExpiration;
+  private LocalDate dateExpiration;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,26 +36,26 @@ public final class Insurance {
   public Insurance() {
   }
 
-  public Insurance(@NonNull LocalDateTime dateInitialization, @NonNull LocalDateTime dateExpiration,
+  public Insurance(@NonNull LocalDate dateInitialization, @NonNull LocalDate dateExpiration,
       @NonNull Long id) {
     this.dateInitialization = dateInitialization;
     this.dateExpiration = dateExpiration;
     this.id = id;
   }
 
-  public @NonNull LocalDateTime getDateInitialization() {
+  public @NonNull LocalDate getDateInitialization() {
     return dateInitialization;
   }
 
-  public void setDateInitialization(@NonNull LocalDateTime dateInitialization) {
+  public void setDateInitialization(@NonNull LocalDate dateInitialization) {
     this.dateInitialization = dateInitialization;
   }
 
-  public @NonNull LocalDateTime getDateExpiration() {
+  public @NonNull LocalDate getDateExpiration() {
     return dateExpiration;
   }
 
-  public void setDateExpiration(@NonNull LocalDateTime dateExpiration) {
+  public void setDateExpiration(@NonNull LocalDate dateExpiration) {
     this.dateExpiration = dateExpiration;
   }
 

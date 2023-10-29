@@ -12,7 +12,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public final class Vehicle {
   private Set<Crash> crashes;
 
   @Column(nullable = false)
-  private LocalDateTime dateManufacture;
+  private LocalDate dateManufacture;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,7 +64,7 @@ public final class Vehicle {
   public Vehicle() {
   }
 
-  public Vehicle(@NonNull String color, @NonNull LocalDateTime dateManufacture, @NonNull Long id,
+  public Vehicle(@NonNull String color, @NonNull LocalDate dateManufacture, @NonNull Long id,
       @NonNull String plate,
       @NonNull VehicleType type) {
     this.color = color;
@@ -89,11 +90,11 @@ public final class Vehicle {
     this.crashes = new HashSet<>(crashes);
   }
 
-  public @NonNull LocalDateTime getDateManufacture() {
+  public @NonNull LocalDate getDateManufacture() {
     return dateManufacture;
   }
 
-  public void setDateManufacture(@NonNull LocalDateTime dateManufacture) {
+  public void setDateManufacture(@NonNull LocalDate dateManufacture) {
     this.dateManufacture = dateManufacture;
   }
 
