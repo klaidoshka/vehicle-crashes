@@ -6,9 +6,9 @@ import CrashesPage from "./components/pages/crash/CrashPage.tsx";
 
 const routes = [
   {name: "Home", path: "/", element: HomePage(), requiresAuth: false},
-  {name: "Crash", path: "/Crashes", element: CrashesPage(), requiresAuth: true},
-  {name: "Person", path: "/People", element: PeoplePage(), requiresAuth: true},
-  {name: "Vehicle", path: "/Vehicles", element: VehiclesPage(), requiresAuth: true}
+  {name: "Crash", path: "/Crashes/*", element: CrashesPage(), requiresAuth: true},
+  {name: "Person", path: "/People/*", element: PeoplePage(), requiresAuth: true},
+  {name: "Vehicle", path: "/Vehicles/*", element: VehiclesPage(), requiresAuth: true}
 ];
 
 const App = () => {
@@ -29,7 +29,7 @@ const App = () => {
                         <NavLink
                             className="nav-link"
                             aria-current="page"
-                            to={item.path}>
+                            to={item.path.substring(0, item.path.length - 2)}>
                           {item.name}
                         </NavLink>
                       </li>
