@@ -105,6 +105,6 @@ public final class VehicleOwner {
 
   @Override
   public int hashCode() {
-    return Objects.hash(dateAcquisition, dateDisposal, id, person, vehicle);
+    return Objects.hash(dateAcquisition, dateDisposal, id);
   }
 }

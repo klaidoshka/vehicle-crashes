@@ -87,6 +87,6 @@ public final class Insurance {
 
   @Override
   public int hashCode() {
-    return Objects.hash(dateInitialization, dateExpiration, id, vehicle);
+    return Objects.hash(dateInitialization, dateExpiration, id);
   }
 }

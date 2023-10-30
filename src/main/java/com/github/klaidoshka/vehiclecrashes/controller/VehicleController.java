@@ -3,6 +3,7 @@ package com.github.klaidoshka.vehiclecrashes.controller;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public final class VehicleController extends ControllerBase<Vehicle, Long> {
   @PostMapping
   @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Vehicle entity) {
+    entity.getInsurances().forEach(i -> i.setVehicle(entity));
+
     return super.create(entity);
   }
 

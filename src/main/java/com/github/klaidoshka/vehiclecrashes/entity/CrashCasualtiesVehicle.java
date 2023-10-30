@@ -76,6 +76,6 @@ public final class CrashCasualtiesVehicle {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, crash, vehicle);
+    return Objects.hash(id);
   }
 }

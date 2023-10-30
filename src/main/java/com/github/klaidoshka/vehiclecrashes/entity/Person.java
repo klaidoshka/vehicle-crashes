@@ -122,6 +122,6 @@ public final class Person {
 
   @Override
   public int hashCode() {
-    return Objects.hash(carsOwned, crashes, dateBirth, gender, id, name);
+    return Objects.hash(dateBirth, gender, id, name);
   }
 }

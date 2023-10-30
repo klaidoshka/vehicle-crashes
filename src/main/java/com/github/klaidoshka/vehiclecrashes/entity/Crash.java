@@ -112,6 +112,6 @@ public final class Crash {
 
   @Override
   public int hashCode() {
-    return Objects.hash(casualtiesPeople, casualtiesVehicle, dateCrash, damageCost, id);
+    return Objects.hash(dateCrash, damageCost, id);
   }
 }
