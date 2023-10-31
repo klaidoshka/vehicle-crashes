@@ -14,7 +14,6 @@ import org.springframework.lang.NonNull;
 public final class VehicleType {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
   private Integer id;
 

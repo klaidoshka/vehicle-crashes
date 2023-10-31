@@ -19,7 +19,7 @@ public enum VehicleType {
     this.id = id;
   }
 
-  public static @NonNull VehicleType fromId(@NonNull Integer vehicleTypeId) {
+  public static @NonNull VehicleType fromId(@NonNull int vehicleTypeId) {
     for (VehicleType type : values()) {
       if (type.getId() == vehicleTypeId) {
         return type;

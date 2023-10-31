@@ -2,16 +2,40 @@ import FormList from "../../form/FormList.tsx";
 import Vehicle from "../../../entities/Vehicle.ts";
 import {TableColumn} from "react-data-table-component";
 import {VehicleType} from "../../../constants/VehicleType.ts";
+import {useEffect, useState} from "react";
+import {callApi} from "../../../api/RestApi.ts";
 
 const VehicleListForm = () => {
+  const [isLoading, setLoading] = useState(false);
+  const [rows, setRows] = useState<Vehicle[]>([]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    callApi<Vehicle[]>("http://localhost:8080/api/vehicles")
+      .then(data => {
+        setRows(data.data ?? []);
+      })
+      .catch(error => {
+        alert("Error: " + error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
-      <FormList
-          title={"View, edit, delete..."}
-          columns={columns}
-          rows={rows}
-          onDelete={(row) => console.log(row)}
-          onEdit={(row) => console.log(row)}
-      />
+      (!isLoading &&
+          <FormList
+              title={"View, edit, delete..."}
+              columns={columns}
+              rows={rows}
+              onDelete={(row) => console.log(row)}
+              onEdit={(row) => console.log(row)}
+          />) ||
+      <p className="text-center text-black-50">
+        Loading entries...
+      </p>
   )
 }
 
@@ -49,5 +73,3 @@ const columns: TableColumn<Vehicle>[] = [
     width: '150px'
   }
 ];
-
-const rows: Vehicle[] = [];

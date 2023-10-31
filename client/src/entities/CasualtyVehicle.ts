@@ -2,7 +2,7 @@ import Crash from "./Crash.ts";
 import Vehicle from "./Vehicle.ts";
 
 interface CasualtyVehicle {
-  id: number;
+  id?: number;
   crash: Crash;
   vehicle: Vehicle;
 }

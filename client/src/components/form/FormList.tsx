@@ -64,13 +64,13 @@ export default function FormList<T>({
           expandableRowsComponent={(row: any) => onExpand == null ? <></> : onExpand(row.data as T)}
           expandableRowsHideExpander
           fixedHeader
-          fixedHeaderScrollHeight="500px"
+          fixedHeaderScrollHeight="600px"
           highlightOnHover
           pagination
           pointerOnHover
           responsive
           striped
-          title={title}
+          title={<h4 className="text-center">{title}</h4>}
       />
   );
 }

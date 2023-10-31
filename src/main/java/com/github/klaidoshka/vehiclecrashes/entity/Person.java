@@ -4,6 +4,7 @@ import com.github.klaidoshka.vehiclecrashes.constant.Gender;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,11 +26,15 @@ public final class Person {
 
   @OneToMany(
       cascade = CascadeType.ALL,
+      fetch = FetchType.EAGER,
       mappedBy = "person"
   )
   private Set<VehicleOwner> carsOwned = new HashSet<>();
 
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany(
+      cascade = CascadeType.ALL,
+      fetch = FetchType.EAGER
+  )
   @JoinTable(
       name = "CrashCasualtiesPeople",
       joinColumns = @JoinColumn(name = "person"),

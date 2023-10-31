@@ -3,6 +3,7 @@ package com.github.klaidoshka.vehiclecrashes.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +22,10 @@ import org.springframework.lang.NonNull;
 @Entity
 public final class Crash {
 
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany(
+      cascade = CascadeType.ALL,
+      fetch = FetchType.EAGER
+  )
   @JoinTable(
       name = "CrashCasualtiesPeople",
       joinColumns = @JoinColumn(name = "crash"),
@@ -29,7 +33,10 @@ public final class Crash {
   )
   private Set<Person> casualtiesPeople = new HashSet<>();
 
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany(
+      cascade = CascadeType.ALL,
+      fetch = FetchType.EAGER
+  )
   @JoinTable(
       name = "CrashCasualtiesVehicle",
       joinColumns = @JoinColumn(name = "crash"),
