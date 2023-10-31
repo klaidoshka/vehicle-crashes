@@ -19,8 +19,14 @@ public enum VehicleType {
     this.id = id;
   }
 
-  public static @NonNull VehicleType fromString(@NonNull String vehicleType) {
-    return valueOf(vehicleType.trim().toUpperCase());
+  public static @NonNull VehicleType fromId(@NonNull Integer vehicleTypeId) {
+    for (VehicleType type : values()) {
+      if (type.getId() == vehicleTypeId) {
+        return type;
+      }
+    }
+
+    throw new IllegalArgumentException("No vehicle type with id " + vehicleTypeId);
   }
 
   public int getId() {

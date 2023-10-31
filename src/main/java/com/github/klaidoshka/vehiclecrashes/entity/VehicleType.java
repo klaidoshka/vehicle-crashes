@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
 
@@ -32,8 +31,8 @@ public final class VehicleType {
     this.type = type;
   }
 
-  public VehicleType(@NonNull String vehicleType) {
-    type = com.github.klaidoshka.vehiclecrashes.constant.VehicleType.fromString(vehicleType);
+  public VehicleType(@NonNull Integer vehicleTypeId) {
+    type = com.github.klaidoshka.vehiclecrashes.constant.VehicleType.fromId(vehicleTypeId);
     id = type.getId();
   }
 
