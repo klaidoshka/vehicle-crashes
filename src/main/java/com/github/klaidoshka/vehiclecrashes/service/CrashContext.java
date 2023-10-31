@@ -37,7 +37,7 @@ public final class CrashContext implements ICrashContext {
     try {
       manager.getTransaction().begin();
 
-      manager.remove(entity);
+      manager.remove(manager.merge(entity));
 
       manager.getTransaction().commit();
 
