@@ -16,6 +16,30 @@ interface Vehicle {
   type?: VehicleType;
 }
 
+const convertToSchemaObject = (vehicle: Vehicle): VehicleFormSchemaType => {
+  return {
+    id: vehicle.id,
+    color: vehicle.color,
+    dateManufacture: new Date(vehicle.dateManufacture),
+    insurances: vehicle.insurances?.map(insurance => {
+      return {
+        id: insurance.id,
+        dateInitialization: new Date(insurance.dateInitialization),
+        dateExpiration: new Date(insurance.dateExpiration)
+      };
+    }),
+    owners: vehicle.owners?.map(owner => {
+      return {
+        id: owner.id,
+        dateAcquisition: new Date(owner.dateAcquisition),
+        dateDisposal: owner?.dateDisposal && new Date(owner.dateDisposal) || undefined,
+      };
+    }),
+    plate: vehicle.plate,
+    type: vehicle.type!
+  };
+}
+
 const VehicleFormSchema = z.object({
   id: z.number().int().positive().optional(),
   color: z.string().trim().toUpperCase()
@@ -39,6 +63,13 @@ const VehicleFormSchema = z.object({
 
 type VehicleFormSchemaType = z.infer<typeof VehicleFormSchema>;
 
-export {VehicleFormSchema};
+export {
+  VehicleFormSchema,
+  convertToSchemaObject
+};
+
 export default Vehicle;
-export type {VehicleFormSchemaType};
+
+export type {
+  VehicleFormSchemaType
+};

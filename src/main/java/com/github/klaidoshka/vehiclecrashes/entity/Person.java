@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.github.klaidoshka.vehiclecrashes.constant.Gender;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

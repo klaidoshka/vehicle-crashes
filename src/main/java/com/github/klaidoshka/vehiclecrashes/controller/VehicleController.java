@@ -31,6 +31,7 @@ public final class VehicleController extends ControllerBase<Vehicle, Long> {
   @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Vehicle entity) {
     entity.getInsurances().forEach(i -> i.setVehicle(entity));
+    entity.getOwners().forEach(o -> o.setVehicle(entity));
 
     return super.create(entity);
   }
@@ -43,8 +44,11 @@ public final class VehicleController extends ControllerBase<Vehicle, Long> {
 
   @PutMapping("/{id}")
   @Override
-  public @NonNull ResponseEntity<ResponseBase> edit(@NonNull Long id,
+  public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody Vehicle entity) {
+    entity.getInsurances().forEach(i -> i.setVehicle(entity));
+    entity.getOwners().forEach(o -> o.setVehicle(entity));
+
     if (!id.equals(entity.getId())) {
       return ResponseEntity.badRequest().body(ResponseBase.failure("Id mismatch"));
     }

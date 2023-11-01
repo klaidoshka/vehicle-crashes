@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
 
@@ -24,6 +24,7 @@ public final class CrashCasualtiesVehicle {
       name = "crash_id",
       nullable = false
   )
+  @JsonBackReference("crash-casualties-people")
   private Crash crash;
 
   @ManyToOne
@@ -31,6 +32,7 @@ public final class CrashCasualtiesVehicle {
       name = "vehicle_id",
       nullable = false
   )
+  @JsonBackReference("crash-casualties-vehicle")
   private Vehicle vehicle;
 
   public CrashCasualtiesVehicle() {
@@ -70,8 +72,7 @@ public final class CrashCasualtiesVehicle {
     if (!(o instanceof CrashCasualtiesVehicle that)) {
       return false;
     }
-    return Objects.equals(id, that.id) && Objects.equals(crash, that.crash)
-        && Objects.equals(vehicle, that.vehicle);
+    return Objects.equals(id, that.id);
   }
 
   @Override

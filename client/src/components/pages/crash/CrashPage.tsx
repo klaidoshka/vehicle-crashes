@@ -1,4 +1,4 @@
-import FormLayout from "../../../components/form/FormLayout.tsx";
+import FormLayout from "../../forms/FormLayout.tsx";
 import CrashManageForm from "./CrashManageForm.tsx";
 import CrashListForm from "./CrashListForm.tsx";
 

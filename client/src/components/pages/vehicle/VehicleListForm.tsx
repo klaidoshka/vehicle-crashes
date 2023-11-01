@@ -1,9 +1,10 @@
-import FormList from "../../form/FormList.tsx";
+import FormList from "../../forms/FormList.tsx";
 import Vehicle from "../../../entities/Vehicle.ts";
 import {TableColumn} from "react-data-table-component";
 import {VehicleType} from "../../../constants/VehicleType.ts";
 import {useEffect, useState} from "react";
 import {callApi} from "../../../api/RestApi.ts";
+import VehicleManageForm from "./VehicleManageForm.tsx";
 
 const VehicleListForm = () => {
   const [isLoading, setLoading] = useState(false);
@@ -13,15 +14,21 @@ const VehicleListForm = () => {
     setLoading(true);
 
     callApi<Vehicle[]>("http://localhost:8080/api/vehicles")
-      .then(data => {
-        setRows(data.data ?? []);
-      })
-      .catch(error => {
-        alert("Error: " + error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    .then(data => {
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      setRows(data.data ?? []);
+    })
+    .catch(error => {
+      console.error("Error: " + error);
+
+      return [];
+    })
+    .finally(() => {
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -30,16 +37,40 @@ const VehicleListForm = () => {
               title={"View, edit, delete..."}
               columns={columns}
               rows={rows}
-              onDelete={(row) => console.log(row)}
-              onEdit={(row) => console.log(row)}
+              onDelete={row =>
+                  callApi(
+                      `http://localhost:8080/api/vehicles/${row.id}`,
+                      {
+                        method: "DELETE",
+                        headers: {
+                          'Content-Type': 'application/json'
+                        }
+                      })
+                  .then(data => {
+                    if (!data.success) {
+                      throw new Error(data.message);
+                    }
+
+                    setRows(rows.filter(r => r.id !== row.id));
+                  })
+                  .catch(error => {
+                    console.error("Error: " + error);
+
+                    return [];
+                  })
+              }
+              onEdit={row => (
+                  <VehicleManageForm
+                      element={row}
+                      isCreate={false}
+                  />
+              )}
           />) ||
       <p className="text-center text-black-50">
         Loading entries...
       </p>
   )
 }
-
-export default VehicleListForm;
 
 const columns: TableColumn<Vehicle>[] = [
   {
@@ -73,3 +104,5 @@ const columns: TableColumn<Vehicle>[] = [
     width: '150px'
   }
 ];
+
+export default VehicleListForm;

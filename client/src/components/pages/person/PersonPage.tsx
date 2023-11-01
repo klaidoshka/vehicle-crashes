@@ -1,4 +1,4 @@
-import FormLayout from "../../form/FormLayout.tsx";
+import FormLayout from "../../forms/FormLayout.tsx";
 import PersonListForm from "./PersonListForm.tsx";
 import PersonManageForm from "./PersonManageForm.tsx";
 

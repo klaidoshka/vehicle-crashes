@@ -1,4 +1,4 @@
-import FormLayout from "../../form/FormLayout.tsx";
+import FormLayout from "../../forms/FormLayout.tsx";
 import VehicleListForm from "./VehicleListForm.tsx";
 import VehicleManageForm from "./VehicleManageForm.tsx";
 

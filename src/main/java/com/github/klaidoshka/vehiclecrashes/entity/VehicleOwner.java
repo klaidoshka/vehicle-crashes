@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +33,7 @@ public final class VehicleOwner {
       name = "person_id",
       nullable = false
   )
+  @JsonBackReference("vehicles-owned-person")
   private Person person;
 
   @ManyToOne
@@ -39,6 +41,7 @@ public final class VehicleOwner {
       name = "vehicle_id",
       nullable = false
   )
+  @JsonBackReference("vehicles-owned-vehicle")
   private Vehicle vehicle;
 
   public VehicleOwner() {
@@ -99,8 +102,7 @@ public final class VehicleOwner {
     }
     return Objects.equals(dateAcquisition, that.dateAcquisition)
         && Objects.equals(dateDisposal, that.dateDisposal) && Objects.equals(id,
-        that.id) && Objects.equals(person, that.person) && Objects.equals(vehicle,
-        that.vehicle);
+        that.id);
   }
 
   @Override

@@ -1,4 +1,4 @@
-import FormList from "../../form/FormList.tsx";
+import FormList from "../../forms/FormList.tsx";
 import Person from "../../../entities/Person.ts";
 import {TableColumn} from "react-data-table-component";
 import {Gender} from "../../../constants/Gender.ts";

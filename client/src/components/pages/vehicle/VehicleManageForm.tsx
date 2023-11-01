@@ -1,12 +1,17 @@
 import {VehicleType} from "../../../constants/VehicleType.ts";
-import Vehicle, {VehicleFormSchema, VehicleFormSchemaType} from "../../../entities/Vehicle.ts";
+import Vehicle, {
+  convertToSchemaObject,
+  VehicleFormSchema,
+  VehicleFormSchemaType
+} from "../../../entities/Vehicle.ts";
 import ManageFormProperties from "../../../api/ManageFormProperties.ts";
 import {callApi} from "../../../api/RestApi.ts";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import AsyncSelect from "react-select/async";
+import {Fragment} from "react";
 
-const VehicleManageForm = ({isCreate = true}: ManageFormProperties<Vehicle>) => {
+const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehicle>) => {
   const {
     control,
     register,
@@ -15,6 +20,7 @@ const VehicleManageForm = ({isCreate = true}: ManageFormProperties<Vehicle>) => 
     reset,
     watch
   } = useForm<VehicleFormSchemaType>({
+    defaultValues: element && convertToSchemaObject(element),
     resolver: zodResolver(VehicleFormSchema)
   });
 
@@ -24,7 +30,7 @@ const VehicleManageForm = ({isCreate = true}: ManageFormProperties<Vehicle>) => 
   });
 
   const resolveSubmit = async (data: VehicleFormSchemaType, isCreate: boolean) => {
-    await callApi<undefined>('http://localhost:8080/api/vehicles', {
+    await callApi<undefined>(`http://localhost:8080/api/vehicles${!isCreate ? '/' + data.id : ''}`, {
       method: isCreate ? 'POST' : 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -186,8 +192,8 @@ const VehicleManageForm = ({isCreate = true}: ManageFormProperties<Vehicle>) => 
 
                   <tbody>
                   {watch("insurances")?.map((insurance, index) => (
-                      <>
-                        <tr key={crypto.randomUUID()}>
+                      <Fragment key={crypto.randomUUID()}>
+                        <tr>
                           <td className="text-center" style={{width: "15%"}}>
                             {isTodayOrGreater(new Date(insurance.dateExpiration)) ? '✅' : '➖'}
                           </td>
@@ -220,7 +226,7 @@ const VehicleManageForm = ({isCreate = true}: ManageFormProperties<Vehicle>) => 
                         </tr>
 
                         {errors.insurances?.[index] &&
-                            <tr key={crypto.randomUUID()}>
+                            <tr>
                               <td className="text-center" style={{width: "15%"}}></td>
                               <td className="text-center" style={{width: "35%"}}>
                                 <p className="text-danger small">
@@ -236,7 +242,7 @@ const VehicleManageForm = ({isCreate = true}: ManageFormProperties<Vehicle>) => 
                               <td className="text-center" style={{width: "15%"}}></td>
                             </tr>
                         }
-                      </>
+                      </Fragment>
                   ))}
                   </tbody>
                 </table>

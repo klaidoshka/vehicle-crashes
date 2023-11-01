@@ -1,7 +1,6 @@
 import DataTable, {Direction, TableColumn} from 'react-data-table-component';
-import IconButton from "@mui/material/IconButton";
-import {DeleteForeverOutlined, EditOutlined} from "@mui/icons-material";
 import {ReactNode} from "react";
+import FormEntryActions from "./FormEntryActions.tsx";
 
 interface IFormListProperties<T> {
   title?: string
@@ -9,7 +8,7 @@ interface IFormListProperties<T> {
   rows: T[];
   isExpandable?: (row: T) => boolean;
   onDelete: (row: T) => void;
-  onEdit: (row: T) => void;
+  onEdit: (row: T) => ReactNode;
   onExpand?: (row: T) => ReactNode;
 }
 
@@ -21,32 +20,16 @@ export default function FormList<T>({
                                       onEdit,
                                       onExpand
                                     }: IFormListProperties<T>) {
+
   columns = [
     ...columns,
     {
-      cell: (row: T) => {
-        return <>
-          <IconButton
-              aria-label="edit"
-              size="small"
-              title="Edit entry"
-              color="warning"
-              onClick={() => onEdit(row)}
-          >
-            <EditOutlined fontSize="inherit"/>
-          </IconButton>
-
-          <IconButton
-              aria-label="delete"
-              size="small"
-              title="Delete entry"
-              color="error"
-              onClick={() => onDelete(row)}
-          >
-            <DeleteForeverOutlined fontSize="inherit"/>
-          </IconButton>
-        </>
-      },
+      cell: (row: T) => (
+          <FormEntryActions
+              onDelete={() => onDelete(row)}
+              editComponent={() => onEdit(row)}
+          />
+      ),
       id: 'actions',
       name: 'Actions',
       width: '100px'

@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
@@ -31,6 +31,7 @@ public final class Insurance {
       name = "vehicle_id",
       nullable = false
   )
+  @JsonBackReference("vehicle")
   private Vehicle vehicle;
 
   public Insurance() {
@@ -81,8 +82,7 @@ public final class Insurance {
     }
     return Objects.equals(dateInitialization, insurance.dateInitialization)
         && Objects.equals(dateExpiration, insurance.dateExpiration)
-        && Objects.equals(id, insurance.id) && Objects.equals(vehicle,
-        insurance.vehicle);
+        && Objects.equals(id, insurance.id);
   }
 
   @Override
