@@ -42,9 +42,6 @@ public final class CrashController extends ControllerBase<Crash, Long> {
   @Override
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody Crash entity) {
-    System.out.println("id: " + id);
-    System.out.println("entity: " + entity);
-
     if (!id.equals(entity.getId())) {
       return ResponseEntity.badRequest().body(ResponseBase.failure("Id mismatch"));
     }
