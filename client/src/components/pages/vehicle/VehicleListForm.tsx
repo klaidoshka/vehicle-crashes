@@ -110,6 +110,16 @@ const columns: TableColumn<IFormListRow<Vehicle>>[] = [
     width: '80px'
   },
   {
+    id: 'type',
+    format: (row) => {
+      return isNaN(row.value.type!) ? row.value.type : VehicleType[row.value.type!];
+    },
+    name: 'Type',
+    selector: row => row.value.type!,
+    sortable: true,
+    width: '150px'
+  },
+  {
     id: 'color',
     name: 'Color',
     selector: row => row.value.color!,
@@ -120,16 +130,6 @@ const columns: TableColumn<IFormListRow<Vehicle>>[] = [
     id: 'plate',
     name: 'Plate',
     selector: row => row.value.plate!,
-    sortable: true,
-    width: '150px'
-  },
-  {
-    id: 'type',
-    format: (row) => {
-      return isNaN(row.value.type!) ? row.value.type : VehicleType[row.value.type!];
-    },
-    name: 'Type',
-    selector: row => row.value.type!,
     sortable: true,
     width: '150px'
   },
