@@ -1,49 +1,54 @@
-import {Dialog, DialogActions, DialogTitle} from "@mui/material";
 import {useState} from "react";
-import IconButton from "@mui/material/IconButton";
-import {CancelOutlined, DeleteOutline} from "@mui/icons-material";
+import {CancelOutlined, DeleteForeverOutlined} from "@mui/icons-material";
 
 interface IFormDialogDeleteProperties {
+  description?: string;
   handleClose: () => void;
   handleDelete: () => void;
-  isOpen: boolean;
+  header: string;
 }
 
-const DialogDelete = ({handleClose, handleDelete, isOpen}: IFormDialogDeleteProperties) => {
+const DialogDelete = ({description, handleClose, handleDelete, header}: IFormDialogDeleteProperties) => {
   const [isLoading, setLoading] = useState(false);
 
-  return <Dialog open={isOpen}>
-    <DialogTitle>
-      Are you sure about deleting this entry?
-    </DialogTitle>
+  return (
+      <div>
+        <h1>{header}</h1>
 
-    <DialogActions>
-      <IconButton
-          className="text-danger"
-          size={"small"}
-          disabled={isLoading}
-          onClick={async () => {
-            setLoading(true);
+        {description && <p>{description}</p>}
 
-            await new Promise(() => handleDelete());
+        <div className="d-flex justify-content-end align-items-center">
+          <button
+              className="d-flex btn btn-sm btn-danger text-black-50 m-1 justify-content-center align-items-center"
+              disabled={isLoading}
+              onClick={async () => {
+                setLoading(true);
 
-            setLoading(false);
-          }}>
-        <DeleteOutline/>
-        Delete
-      </IconButton>
+                await new Promise(() => handleDelete());
 
-      <IconButton
-          className="text-warning"
-          size={"small"}
-          disabled={isLoading}
-          autoFocus
-          onClick={handleClose}>
-        <CancelOutlined/>
-        Cancel
-      </IconButton>
-    </DialogActions>
-  </Dialog>
+                setLoading(false);
+
+                handleClose();
+              }}
+              type="button"
+          >
+            <DeleteForeverOutlined/>
+            Delete
+          </button>
+
+          <button
+              className="d-flex btn btn-sm btn-warning text-black-50 m-1 justify-content-center align-items-center"
+              disabled={isLoading}
+              onClick={handleClose}
+              type="button"
+              autoFocus
+          >
+            <CancelOutlined/>
+            Cancel
+          </button>
+        </div>
+      </div>
+  )
 };
 
 export default DialogDelete;

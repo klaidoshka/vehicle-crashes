@@ -11,15 +11,15 @@ const PersonListForm = () => {
           title={"View, edit, delete..."}
           columns={columnsPerson}
           rows={rows}
-          onDelete={(row) => console.log(row)}
-          onEdit={(row) => console.log(row)}
+          onDeleteModule={(row) => console.log(row)}
+          onEditModule={(row) => console.log(row)}
           onExpand={(row) => {
             return <FormList
                 title={`#${row.id} ${row.name} - Owned Vehicles.`}
                 columns={columnsVehicleOwned}
                 rows={row.vehiclesOwned ?? []}
-                onDelete={(row) => console.log(row)}
-                onEdit={(row) => console.log(row)}
+                onDeleteModule={(row) => console.log(row)}
+                onEditModule={(row) => console.log(row)}
             />
           }}
       />

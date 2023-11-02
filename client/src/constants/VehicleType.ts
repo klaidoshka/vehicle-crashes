@@ -9,9 +9,4 @@ enum VehicleType {
   PLANE = 7
 }
 
-const values = Object
-  .keys(VehicleType)
-  .filter((key: string | number) => isNaN(key as number))
-  .map((key: string | number) => key as number);
-
-export {VehicleType, values};
+export {VehicleType};

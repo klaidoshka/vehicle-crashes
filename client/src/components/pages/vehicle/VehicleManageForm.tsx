@@ -1,17 +1,22 @@
 import {VehicleType} from "../../../constants/VehicleType.ts";
 import Vehicle, {
   convertToSchemaObject,
+  convertToVehicleObject,
   VehicleFormSchema,
   VehicleFormSchemaType
 } from "../../../entities/Vehicle.ts";
-import ManageFormProperties from "../../../api/ManageFormProperties.ts";
-import {callApi} from "../../../api/RestApi.ts";
+import IManageFormProperties from "../../../api/IManageFormProperties.ts";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import AsyncSelect from "react-select/async";
 import {Fragment} from "react";
+import {createVehicle, editVehicle} from "../../../services/VehicleService.ts";
 
-const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehicle>) => {
+const VehicleManageForm = ({
+                             callback,
+                             element,
+                             isEdit = false
+                           }: IManageFormProperties<Vehicle>) => {
   const {
     control,
     register,
@@ -29,35 +34,41 @@ const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehi
     control: control
   });
 
-  const resolveSubmit = async (data: VehicleFormSchemaType, isCreate: boolean) => {
-    await callApi<undefined>(`http://localhost:8080/api/vehicles${!isCreate ? '/' + data.id : ''}`, {
-      method: isCreate ? 'POST' : 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-    .then(data => {
-      if (!data.success) {
-        throw new Error(data?.message);
-      }
+  const resolveSubmit = async (data: VehicleFormSchemaType) => {
+    const vehicle = convertToVehicleObject(data);
+    if (isEdit) {
+      await editVehicle({
+        element: vehicle,
+        onSuccess: () => {
+          alert("Vehicle edited successfully!");
 
-      reset();
-    })
-    .catch(error => {
-      alert("Error: " + error.message);
-    });
+          callback?.(vehicle);
+
+          reset(data);
+        }
+      })
+    } else {
+      await createVehicle({
+        element: vehicle,
+        onSuccess: () => {
+          alert("Vehicle created successfully!");
+
+          callback?.(vehicle);
+
+          reset();
+        }
+      })
+    }
   }
 
-  // @ts-ignore
   return (
       <div className="container">
         <h4 className="text-center">Vehicle Management</h4>
 
         <form
             className="overflow-scroll p-3"
+            onSubmit={handleSubmit(resolveSubmit)}
             style={{minWidth: 400, maxHeight: 600}}
-            onSubmit={handleSubmit((data) => resolveSubmit(data, isCreate))}
         >
           <div className="form-group mb-3">
             <label htmlFor={"dateManufacture"}>Manufacture Date</label>
@@ -65,8 +76,10 @@ const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehi
             <input
                 {...register("dateManufacture")}
                 className="form-control"
-                type="date"
+                defaultChecked
+                defaultValue={control._defaultValues.dateManufacture?.toISOString().substring(0, 10)}
                 placeholder="Manufacture Date"
+                type="date"
             />
 
             <p className="text-danger small">
@@ -80,8 +93,8 @@ const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehi
             <input
                 {...register("plate")}
                 className="form-control"
-                type="text"
                 placeholder="Plate"
+                type="text"
             />
 
             <p className="text-danger small">
@@ -95,8 +108,8 @@ const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehi
             <input
                 {...register("color")}
                 className="form-control"
-                type="text"
                 placeholder="Color"
+                type="text"
             />
 
             <p className="text-danger small">
@@ -108,27 +121,23 @@ const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehi
             <label htmlFor={"type"}>Type</label>
 
             <Controller
-                name={"type"}
+                name="type"
                 control={control}
-                render={({field}) =>
-                    <div className="select-wrapper" style={{position: 'relative'}}>
+                render={({field}) => (
+                    <div style={{position: 'relative'}}>
                       <span style={{
-                        position: 'absolute',
-                        right: '10px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        fontSize: '14px',
-                        color: '#555',
-                        pointerEvents: 'none'
+                        position: 'absolute', right: '10px', top: '50%',
+                        transform: 'translateY(-50%)', fontSize: '14px',
+                        color: '#555', pointerEvents: 'none'
                       }}
-                      >▼
+                      >
+                        ▼
                       </span>
 
                       <select
-                          {...field}
                           className="form-control"
-                          onChange={(e) =>
-                              field.onChange(parseInt(e.target.value, 10))}
+                          onChange={e => field.onChange(Number(e.currentTarget.value))}
+                          value={isNaN(field.value) ? VehicleType[field.value] : field.value}
                       >
                         {Object.values(VehicleType)
                         .filter((v: any) => isNaN(v))
@@ -136,15 +145,17 @@ const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehi
                           value: VehicleType[v as keyof typeof VehicleType],
                           label: v
                         }))
-                        .map(o => <option
-                            key={o.label + "-" + o.value}
-                            value={o.value}
-                            label={`${o.label}`}
-                        ></option>)
-                        }
+                        .map(o => (
+                            <option
+                                key={o.label + "-" + o.value}
+                                value={o.value}
+                                label={`${o.label}`}
+                            >
+                            </option>
+                        ))}
                       </select>
                     </div>
-                }
+                )}
             />
 
             <p className="text-danger small">
@@ -250,8 +261,8 @@ const VehicleManageForm = ({isCreate = true, element}: ManageFormProperties<Vehi
 
             <div className="d-flex justify-content-center align-items-center mt-3">
               <button
-                  disabled={watch("insurances")?.findIndex((insurance) =>
-                      isTodayOrGreater(new Date(insurance.dateExpiration))) !== -1}
+                  disabled={(watch("insurances")?.findIndex((insurance) =>
+                      isTodayOrGreater(new Date(insurance.dateExpiration))) ?? -1) !== -1}
                   className="btn btn-sm btn-outline-success 50"
                   type="button"
                   onClick={() => {
@@ -289,18 +300,5 @@ const isTodayOrGreater = (date: Date): boolean => {
 
   return date.toDateString() === today.toDateString() || date > today;
 }
-
-// const resolvePeople = async (filterQuery: string): Promise<ValuedOptions<Person>[]> => {
-//   return callApi<Person[]>('http://localhost:8080/api/people')
-//   .then((response) => response.data
-//   // TODO: Transfer filter to backend. Now it's filtering only by name
-//   ?.filter(person => person.name.toLowerCase().includes(filterQuery.toLowerCase()))
-//   .map(person => {
-//     return {
-//       value: person,
-//       label: person.name
-//     }
-//   }) ?? []);
-// }
 
 export default VehicleManageForm;

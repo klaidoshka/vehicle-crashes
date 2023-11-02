@@ -40,6 +40,24 @@ const convertToSchemaObject = (vehicle: Vehicle): VehicleFormSchemaType => {
   };
 }
 
+const convertToVehicleObject = (vehicle: VehicleFormSchemaType): Vehicle => {
+  return {
+    id: vehicle.id,
+    color: vehicle.color,
+    dateManufacture: vehicle.dateManufacture.toISOString(),
+    insurances: vehicle.insurances?.map(insurance => {
+      return {
+        id: insurance.id,
+        dateInitialization: insurance.dateInitialization.toISOString(),
+        dateExpiration: insurance.dateExpiration.toISOString()
+      };
+    }),
+    owners: [],
+    plate: vehicle.plate,
+    type: vehicle.type!
+  };
+}
+
 const VehicleFormSchema = z.object({
   id: z.number().int().positive().optional(),
   color: z.string().trim().toUpperCase()
@@ -55,17 +73,20 @@ const VehicleFormSchema = z.object({
   plate: z.string().trim().toUpperCase()
     .regex(/^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$/,
         "Only letters, numbers and dashes are allowed"),
-  type: z.nativeEnum(VehicleType, {
-    required_error: "Please select a vehicle type",
-    invalid_type_error: "Please select a vehicle type"
-  }).default(VehicleType.CAR)
+  type: z.nativeEnum(
+      VehicleType,
+      {
+        required_error: "Please select a vehicle type",
+        invalid_type_error: "Please select a vehicle type"
+      }).default(VehicleType.CAR)
 });
 
 type VehicleFormSchemaType = z.infer<typeof VehicleFormSchema>;
 
 export {
   VehicleFormSchema,
-  convertToSchemaObject
+  convertToSchemaObject,
+  convertToVehicleObject
 };
 
 export default Vehicle;

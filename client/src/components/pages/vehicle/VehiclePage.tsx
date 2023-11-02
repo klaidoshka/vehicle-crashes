@@ -9,7 +9,7 @@ const VehiclePage = () => {
             title="🚲 Vehicles 🚘"
             description="Here you can create, list, edit and delete vehicles"
             formList={<VehicleListForm/>}
-            formManage={<VehicleManageForm/>}
+            formManage={<VehicleManageForm isEdit={false}/>}
         />
       </div>
   );

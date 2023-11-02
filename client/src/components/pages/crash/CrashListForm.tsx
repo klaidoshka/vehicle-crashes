@@ -9,15 +9,15 @@ export default function CrashListForm() {
           title={"View, edit, delete..."}
           columns={columnsCrash}
           rows={[]}
-          onDelete={(row) => console.log(row)}
-          onEdit={(row) => console.log(row)}
+          onDeleteModule={(row) => console.log(row)}
+          onEditModule={(row) => console.log(row)}
           onExpand={(row) => {
             return <FormList
                 title={"#" + row.id + " Crash Casualties (People)"}
                 columns={columnsCasualties}
                 rows={row.casualtiesPeople}
-                onDelete={(row) => console.log(row)}
-                onEdit={(row) => console.log(row)}
+                onDeleteModule={(row) => console.log(row)}
+                onEditModule={(row) => console.log(row)}
             />
           }}
       />
