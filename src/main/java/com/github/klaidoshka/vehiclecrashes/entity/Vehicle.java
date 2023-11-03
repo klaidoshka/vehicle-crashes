@@ -1,6 +1,5 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,8 +12,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.time.LocalDate;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;

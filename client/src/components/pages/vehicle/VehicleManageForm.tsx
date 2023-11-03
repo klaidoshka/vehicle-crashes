@@ -1,9 +1,7 @@
 import {VehicleType} from "../../../constants/VehicleType.ts";
 import Vehicle, {
   convertToSchemaObject,
-  convertToVehicleObject,
-  VehicleFormSchema,
-  VehicleFormSchemaType
+  convertToVehicleObject, vehicleSchema, VehicleWithCrashes
 } from "../../../entities/Vehicle.ts";
 import IManageFormProperties from "../../../api/IManageFormProperties.ts";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
@@ -23,9 +21,9 @@ const VehicleManageForm = ({
     formState: {errors, isSubmitting, isDirty},
     reset,
     watch
-  } = useForm<VehicleFormSchemaType>({
+  } = useForm<VehicleWithCrashes>({
     defaultValues: element && convertToSchemaObject(element),
-    resolver: zodResolver(VehicleFormSchema)
+    resolver: zodResolver(vehicleSchema)
   });
 
   const {remove, append} = useFieldArray({
@@ -33,7 +31,7 @@ const VehicleManageForm = ({
     control: control
   });
 
-  const resolveSubmit = async (data: VehicleFormSchemaType) => {
+  const resolveSubmit = async (data: VehicleWithCrashes) => {
     if (!isDirty) {
       return;
     }

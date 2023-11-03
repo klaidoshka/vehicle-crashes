@@ -17,12 +17,12 @@ public class Program {
     this.vehicleTypesFiller = vehicleTypesFiller;
   }
 
+  public static void main(String[] args) {
+    SpringApplication.run(Program.class, args);
+  }
+
   @PostConstruct
   public void init() {
     vehicleTypesFiller.fillMissing();
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(Program.class, args);
   }
 }

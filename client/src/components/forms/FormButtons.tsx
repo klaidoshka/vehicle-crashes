@@ -10,7 +10,8 @@ interface IFormButtonsProperties {
 
 export default function FormButtons({onListClick, onCreateClick}: IFormButtonsProperties) {
   return (
-      <Stack direction={"row"} spacing={1} className="d-flex justify-content-center align-items-center">
+      <Stack direction={"row"} spacing={1}
+             className="d-flex justify-content-center align-items-center">
         <IconButton aria-label="list" size="large" title="List entries" color="info"
                     onClick={() => onListClick()}>
           <IconEntriesList fontSize="inherit"/>

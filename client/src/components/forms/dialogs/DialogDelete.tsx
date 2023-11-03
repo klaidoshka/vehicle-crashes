@@ -8,7 +8,12 @@ interface IFormDialogDeleteProperties {
   header: string;
 }
 
-const DialogDelete = ({description, handleClose, handleDelete, header}: IFormDialogDeleteProperties) => {
+const DialogDelete = ({
+                        description,
+                        handleClose,
+                        handleDelete,
+                        header
+                      }: IFormDialogDeleteProperties) => {
   const [isLoading, setLoading] = useState(false);
 
   return (

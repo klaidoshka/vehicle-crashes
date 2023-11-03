@@ -30,7 +30,8 @@ public final class VehicleTypesFiller implements IVehicleTypesFiller {
             .collect(Collectors.toMap(VehicleType::getType, v -> v));
 
     for (com.github.klaidoshka.vehiclecrashes.constant.VehicleType type : com.github.klaidoshka.vehiclecrashes.constant.VehicleType.values()) {
-      LOGGER.info("Checking type [{}]. Is stored within database: {}", type, types.containsKey(type));
+      LOGGER.info("Checking type [{}]. Is stored within database: {}", type,
+          types.containsKey(type));
 
       if (!types.containsKey(type)) {
         context.save(new VehicleType(type.getId(), type));

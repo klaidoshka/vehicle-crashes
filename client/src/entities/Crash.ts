@@ -1,27 +1,34 @@
-import CasualtyPerson from "./CasualtyPerson.ts";
-import CasualtyVehicle from "./CasualtyVehicle.ts";
 import {z} from "zod";
-import {PersonFormSchema} from "./Person.ts";
-import {VehicleFormSchema} from "./Vehicle.ts";
+import Person, {personSchema, PersonWithCrashes} from "./Person.ts";
+import Vehicle, {vehicleSchema, VehicleWithCrashes} from "./Vehicle.ts";
 
 interface Crash {
   id?: number;
-  casualtiesPeople?: CasualtyPerson[];
-  casualtiesVehicle?: CasualtyVehicle[];
+  casualtiesPeople: Person[];
+  casualtiesVehicle: Vehicle[];
   damageCost: number;
   date: string;
 }
 
-const CrashFormSchema = z.object({
+const crashSchemaBase = z.object({
   id: z.number().int().positive().optional(),
-  casualtiesPeople: z.array(PersonFormSchema).optional(),
-  casualtiesVehicle: z.array(VehicleFormSchema).optional(),
   damageCost: z.number().nonnegative(),
   date: z.coerce
-    .date({required_error: "Please select a date"})
-    .min(new Date(1900, 0), "Too old, please select a date after 1900")
-    .max(new Date(), "Too far, please select a date before today")
+  .date({required_error: "Please select a date"})
+  .min(new Date(1900, 0), "Too old, please select a date after 1900")
+  .max(new Date(), "Too far, please select a date before today")
 });
 
-export {CrashFormSchema};
+type CrashWithCasualties = z.infer<typeof crashSchemaBase> & {
+  casualtiesPeople: PersonWithCrashes[],
+  casualtiesVehicle: VehicleWithCrashes[]
+};
+
+const crashSchema: z.ZodType<CrashWithCasualties> = crashSchemaBase.extend({
+  casualtiesPeople: z.lazy(() => z.array(personSchema)),
+  casualtiesVehicle: z.lazy(() => z.array(vehicleSchema))
+});
+
+export {crashSchema};
 export default Crash;
+export type {CrashWithCasualties};

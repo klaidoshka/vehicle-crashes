@@ -18,7 +18,11 @@ const InsuranceFormSchema = z.object({
     .max(new Date(new Date().getFullYear() + 2, 0), "Too far, please select a date with 2 years from today")
 })
 .refine(data => data.dateExpiration >= data.dateInitialization,
-    "Expiration date must be after the begin date");
+    {
+      message: "Expiration date must be after the begin date",
+      path: ["dateExpiration"]
+    }
+);
 
 export {InsuranceFormSchema};
 export default Insurance;

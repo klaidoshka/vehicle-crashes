@@ -1,7 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.controller;
 
-import com.github.klaidoshka.vehiclecrashes.api.service.IConfigurationService;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
+import com.github.klaidoshka.vehiclecrashes.api.service.IConfigurationService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
