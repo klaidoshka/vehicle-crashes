@@ -131,9 +131,12 @@ const getVehicles = ({
       throw new Error(response.message);
     }
 
-    let entries: Vehicle[] = response.data?.map((vehicle: Vehicle) => {
+    let entries: Vehicle[] = response.data?.map(vehicle => {
       return {
         ...vehicle,
+        crashes: vehicle.crashes ?? [],
+        insurances: vehicle.insurances ?? [],
+        owners: vehicle.owners ?? [],
         type: (vehicle.type! as any).type as VehicleType
       }
     }) ?? [];
