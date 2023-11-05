@@ -59,7 +59,7 @@ public final class Vehicle {
   )
   private Set<VehicleOwner> owners = new HashSet<>();
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String plate;
 
   @ManyToOne
