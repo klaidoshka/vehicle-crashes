@@ -24,7 +24,7 @@ public interface ICrashContext {
    * @param <E>   entity type
    * @return response
    */
-  default <E> @NonNull ResponseBase delete(@NonNull Class<E> clazz, @NonNull Object id) {
+  default <E> @NonNull ResponseBase deleteById(@NonNull Class<E> clazz, @NonNull Object id) {
     final Optional<E> entity = find(clazz, id);
 
     return entity

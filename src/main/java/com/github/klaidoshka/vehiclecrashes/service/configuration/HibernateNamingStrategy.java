@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.configuration;
+package com.github.klaidoshka.vehiclecrashes.service.configuration;
 
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;

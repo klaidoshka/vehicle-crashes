@@ -3,8 +3,12 @@ package com.github.klaidoshka.vehiclecrashes.controller;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
-import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.Vehicle;
+import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleMapper;
+import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -19,56 +23,81 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/vehicles")
-public final class VehicleController extends ControllerBase<Vehicle, Long> {
+public final class VehicleController {
+
+  private final ICrashContext context;
+  private final VehicleMapper vehicleMapper;
 
   @Autowired
-  public VehicleController(@NonNull ICrashContext context) {
-    super(context);
+  public VehicleController(@NonNull ICrashContext context, @NonNull VehicleMapper vehicleMapper) {
+    this.context = context;
+    this.vehicleMapper = vehicleMapper;
   }
 
   @PostMapping
-  @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Vehicle entity) {
-    entity.getInsurances().forEach(i -> i.setVehicle(entity));
-    entity.getOwners().forEach(o -> o.setVehicle(entity));
-
-    return super.create(entity);
+    return ResponseResolver.resolve(context.save(entity));
   }
 
   @DeleteMapping("/{id}")
-  @Override
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
-    return super.delete(id);
+    return ResponseResolver.resolve(
+        context.deleteById(com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class, id));
   }
 
   @PutMapping("/{id}")
-  @Override
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody Vehicle entity) {
-    entity.getInsurances().forEach(i -> i.setVehicle(entity));
-    entity.getOwners().forEach(o -> o.setVehicle(entity));
+    final Optional<com.github.klaidoshka.vehiclecrashes.entity.Vehicle> vehicle = context.find(
+            com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class, id)
+        .map(v -> {
+          v.setColor(entity.color());
+          v.setDateManufacture(entity.dateManufacture());
+          v.setPlate(entity.plate());
+          v.setType(entity.type());
 
-    if (!id.equals(entity.getId())) {
-      return ResponseEntity.badRequest().body(ResponseBase.failure("Id mismatch"));
-    }
+          v.setCrashes(entity.crashes().stream()
+              .filter(Objects::nonNull)
+              .map(crashId -> context.find(
+                      com.github.klaidoshka.vehiclecrashes.entity.Crash.class, crashId)
+                  .orElseThrow())
+              .toList());
 
-    return super.edit(id, entity);
+          v.setInsurances(entity.insurances().stream()
+              .filter(Objects::nonNull)
+              .map(insuranceId -> context.find(
+                      com.github.klaidoshka.vehiclecrashes.entity.Insurance.class,
+                      insuranceId)
+                  .orElseThrow())
+              .toList());
+
+          v.setOwners(entity.owners().stream()
+              .filter(Objects::nonNull)
+              .map(ownerId -> context.find(
+                      com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner.class,
+                      ownerId)
+                  .orElseThrow())
+              .toList());
+
+          return v;
+        });
+
+    return vehicle.map(v -> ResponseResolver.resolve(context.save(v)))
+        .orElseGet(() -> ResponseEntity.badRequest().build());
   }
 
   @GetMapping
-  @Override
   public @NonNull Collection<Vehicle> get() {
-    return super.get();
+    return context.get(com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class).stream()
+        .map(vehicleMapper)
+        .toList();
   }
 
   @GetMapping("/{id}")
-  @Override
   public @NonNull ResponseEntity<ResponseValued<Vehicle>> get(@NonNull @PathVariable Long id) {
-    return super.get(id);
-  }
-
-  @Override
-  public @NonNull Class<Vehicle> getEntityClass() {
-    return Vehicle.class;
+    return ResponseResolver.resolve(
+        context.find(com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class, id)
+            .map(vehicleMapper),
+        "Entity not found");
   }
 }

@@ -3,8 +3,12 @@ package com.github.klaidoshka.vehiclecrashes.controller;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
-import com.github.klaidoshka.vehiclecrashes.entity.Crash;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.Crash;
+import com.github.klaidoshka.vehiclecrashes.entity.mappers.CrashMapper;
+import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -18,51 +22,70 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/")
-public final class CrashController extends ControllerBase<Crash, Long> {
+@RequestMapping("/api/crashes")
+public final class CrashController {
+
+  private final ICrashContext context;
+  private final CrashMapper crashMapper;
 
   @Autowired
-  public CrashController(@NonNull ICrashContext context) {
-    super(context);
+  public CrashController(@NonNull ICrashContext context, @NonNull CrashMapper crashMapper) {
+    this.context = context;
+    this.crashMapper = crashMapper;
   }
 
   @PostMapping
-  @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Crash entity) {
-    return super.create(entity);
+    return ResponseResolver.resolve(context.save(entity));
   }
 
   @DeleteMapping("/{id}")
-  @Override
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
-    return super.delete(id);
+    return ResponseResolver.resolve(
+        context.deleteById(com.github.klaidoshka.vehiclecrashes.entity.Crash.class, id));
   }
 
   @PutMapping("/{id}")
-  @Override
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody Crash entity) {
-    if (!id.equals(entity.getId())) {
-      return ResponseEntity.badRequest().body(ResponseBase.failure("Id mismatch"));
-    }
+    final Optional<com.github.klaidoshka.vehiclecrashes.entity.Crash> crash = context.find(
+            com.github.klaidoshka.vehiclecrashes.entity.Crash.class, id)
+        .map(c -> {
+          c.setDate(entity.dateCrash());
+          c.setDamageCost(entity.damageCost());
 
-    return super.edit(id, entity);
+          c.setCasualtiesPeople(entity.casualtiesPeople().stream()
+              .filter(Objects::nonNull)
+              .map(personId -> context.find(
+                      com.github.klaidoshka.vehiclecrashes.entity.Person.class, personId)
+                  .orElseThrow())
+              .toList());
+          c.setCasualtiesVehicle(entity.casualtiesVehicle().stream()
+              .filter(Objects::nonNull)
+              .map(vehicleId -> context.find(
+                      com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class, vehicleId)
+                  .orElseThrow())
+              .toList());
+
+          return c;
+        });
+
+    return crash.map(v -> ResponseResolver.resolve(context.save(v)))
+        .orElseGet(() -> ResponseEntity.badRequest().build());
   }
 
   @GetMapping
-  @Override
   public @NonNull Collection<Crash> get() {
-    return super.get();
+    return context.get(com.github.klaidoshka.vehiclecrashes.entity.Crash.class).stream()
+        .map(crashMapper)
+        .toList();
   }
 
   @GetMapping("/{id}")
-  @Override
   public @NonNull ResponseEntity<ResponseValued<Crash>> get(@NonNull @PathVariable Long id) {
-    return super.get(id);
-  }
-
-  @Override
-  public @NonNull Class<Crash> getEntityClass() {
-    return Crash.class;
+    return ResponseResolver.resolve(
+        context.find(com.github.klaidoshka.vehiclecrashes.entity.Crash.class, id)
+            .map(crashMapper),
+        "Entity not found");
   }
 }

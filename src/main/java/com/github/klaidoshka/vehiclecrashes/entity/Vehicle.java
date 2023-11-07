@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.entity;
 
+import com.github.klaidoshka.vehiclecrashes.constant.VehicleType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -62,7 +62,7 @@ public final class Vehicle {
   @Column(nullable = false, unique = true)
   private String plate;
 
-  @ManyToOne
+  @Column(nullable = false)
   private VehicleType type;
 
   public Vehicle() {

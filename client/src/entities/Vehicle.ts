@@ -20,10 +20,10 @@ import {z} from "zod";
 
 
 interface Vehicle {
-  id?: number;
   color: string;
   crashes: Crash[];
   dateManufacture: string;
+  id?: number;
   insurances: Insurance[];
   owners: VehicleOwner[];
   plate: string;

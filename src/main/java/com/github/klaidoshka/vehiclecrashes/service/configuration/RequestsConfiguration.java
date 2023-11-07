@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.configuration;
+package com.github.klaidoshka.vehiclecrashes.service.configuration;
 
 import com.github.klaidoshka.vehiclecrashes.api.service.IConfigurationService;
 import org.springframework.context.annotation.Bean;
