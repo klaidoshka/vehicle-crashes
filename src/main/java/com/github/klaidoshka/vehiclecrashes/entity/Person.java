@@ -23,13 +23,6 @@ import org.springframework.lang.NonNull;
 @Entity
 public final class Person {
 
-  @OneToMany(
-      cascade = CascadeType.ALL,
-      fetch = FetchType.EAGER,
-      mappedBy = "person"
-  )
-  private Set<VehicleOwner> carsOwned = new HashSet<>();
-
   @ManyToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER
@@ -55,6 +48,13 @@ public final class Person {
   @Column(nullable = false)
   private String name;
 
+  @OneToMany(
+      cascade = CascadeType.ALL,
+      fetch = FetchType.EAGER,
+      mappedBy = "person"
+  )
+  private Set<VehicleOwner> vehiclesOwned = new HashSet<>();
+
   public Person() {
   }
 
@@ -66,12 +66,12 @@ public final class Person {
     this.name = name;
   }
 
-  public @NonNull Collection<VehicleOwner> getCarsOwned() {
-    return Collections.unmodifiableSet(carsOwned);
+  public @NonNull Collection<VehicleOwner> getVehiclesOwned() {
+    return Collections.unmodifiableSet(vehiclesOwned);
   }
 
-  public void setCarsOwned(@NonNull Collection<VehicleOwner> carsOwned) {
-    this.carsOwned = new HashSet<>(carsOwned);
+  public void setVehiclesOwned(@NonNull Collection<VehicleOwner> vehiclesOwned) {
+    this.vehiclesOwned = new HashSet<>(vehiclesOwned);
   }
 
   public @NonNull Collection<Crash> getCrashes() {
@@ -118,7 +118,7 @@ public final class Person {
     if (!(o instanceof Person person)) {
       return false;
     }
-    return Objects.equals(carsOwned, person.carsOwned) && Objects.equals(crashes,
+    return Objects.equals(vehiclesOwned, person.vehiclesOwned) && Objects.equals(crashes,
         person.crashes) && Objects.equals(dateBirth, person.dateBirth)
         && gender == person.gender && Objects.equals(id, person.id)
         && Objects.equals(name, person.name);

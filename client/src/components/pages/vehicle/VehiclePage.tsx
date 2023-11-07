@@ -7,7 +7,7 @@ const VehiclePage = () => {
       <div className="d-flex container-fluid h-100 justify-content-center align-items-center">
         <FormLayout
             title="🚲 Vehicles 🚘"
-            description="Here you can create, list, edit and delete vehicles"
+            description="Here you can create, list, edit and delete vehicles data"
             formList={<VehicleListForm/>}
             formManage={<VehicleManageForm isEdit={false}/>}
         />

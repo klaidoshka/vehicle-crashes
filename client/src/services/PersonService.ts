@@ -1,20 +1,20 @@
 import {callApi} from "./RestApi.ts";
-import Vehicle from "../entities/Vehicle.ts";
-import {VehicleType} from "../constants/VehicleType.ts";
 import IApiEditProperties from "../api/IApiEditProperties.ts";
 import IApiGetCollectionProperties from "../api/IApiGetCollectionProperties.ts";
 import Response from "../api/Response.ts";
 import IApiDeleteProperties from "../api/IApiDeleteProperties.ts";
 import IApiCreateProperties from "../api/IApiCreateProperties.ts";
+import Person from "../entities/Person.ts";
+import {Gender} from "../constants/Gender.ts";
 
-const API_ENDPOINT = "http://localhost:8080/api/vehicles";
+const API_ENDPOINT = "http://localhost:8080/api/people";
 
-const createVehicle = ({
-                         element,
-                         onError = (error: Error) => console.error(error),
-                         onFinally,
-                         onSuccess
-                       }: IApiCreateProperties<Vehicle>): Promise<Response<any>> => {
+const createPerson = ({
+                        element,
+                        onError = (error: Error) => console.error(error),
+                        onFinally,
+                        onSuccess
+                      }: IApiCreateProperties<Person>): Promise<Response<any>> => {
   return callApi(
       API_ENDPOINT,
       {
@@ -46,12 +46,12 @@ const createVehicle = ({
   });
 };
 
-const deleteVehicle = ({
-                         id,
-                         onError = (error: Error) => console.error(error),
-                         onFinally,
-                         onSuccess
-                       }: IApiDeleteProperties): Promise<Response<any>> => {
+const deletePerson = ({
+                        id,
+                        onError = (error: Error) => console.error(error),
+                        onFinally,
+                        onSuccess
+                      }: IApiDeleteProperties): Promise<Response<any>> => {
   return callApi(
       API_ENDPOINT + "/" + id,
       {
@@ -82,12 +82,12 @@ const deleteVehicle = ({
   });
 }
 
-const editVehicle = ({
-                       element,
-                       onError = (error: Error) => console.error(error),
-                       onFinally,
-                       onSuccess
-                     }: IApiEditProperties<Vehicle>): Promise<Response<any>> => {
+const editPerson = ({
+                      element,
+                      onError = (error: Error) => console.error(error),
+                      onFinally,
+                      onSuccess
+                    }: IApiEditProperties<Person>): Promise<Response<any>> => {
   return callApi<any>(
       API_ENDPOINT + "/" + element?.id,
       {
@@ -119,13 +119,13 @@ const editVehicle = ({
   });
 }
 
-const getVehicles = ({
-                       filter,
-                       onError = (error: Error) => console.error(error),
-                       onFinally,
-                       onSuccess,
-                       params
-                     }: IApiGetCollectionProperties<Vehicle>): Promise<Vehicle[]> => {
+const getPeople = ({
+                     filter,
+                     onError = (error: Error) => console.error(error),
+                     onFinally,
+                     onSuccess,
+                     params
+                   }: IApiGetCollectionProperties<Person>): Promise<Person[]> => {
   const queryParams = new URLSearchParams();
 
   if (params) {
@@ -138,23 +138,18 @@ const getVehicles = ({
 
   const apiUrl = API_ENDPOINT + (queryParams.size > 0 ? `?${queryParams.toString()}` : '');
 
-  return callApi<Vehicle[]>(apiUrl)
+  return callApi<Person[]>(apiUrl)
   .then(response => {
     if (!response.success) {
       throw new Error(response.message);
     }
 
-    let entries: Vehicle[] = response.data?.map(vehicle => {
-      const type = (vehicle.type! as any).type as VehicleType;
-
-      return {
-        ...vehicle,
-        crashes: vehicle.crashes ?? [],
-        insurances: vehicle.insurances ?? [],
-        owners: vehicle.owners ?? [],
-        type: (isNaN(type) ? VehicleType[type] : type) as VehicleType
-      }
-    }) ?? [];
+    let entries: Person[] = response.data?.map((entry) => ({
+      ...entry,
+      crashes: entry.crashes ?? [],
+      gender: (isNaN(entry.gender!) ? Gender[entry.gender as number] : entry.gender) as Gender,
+      vehiclesOwned: entry.vehiclesOwned ?? []
+    })) ?? [];
 
     if (filter) {
       entries = entries.filter(filter);
@@ -175,8 +170,8 @@ const getVehicles = ({
 }
 
 export {
-  createVehicle,
-  deleteVehicle,
-  editVehicle,
-  getVehicles
+  createPerson,
+  deletePerson,
+  editPerson,
+  getPeople
 };

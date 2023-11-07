@@ -5,6 +5,8 @@ export const callApi = async <T>(input: RequestInfo | URL, init?: RequestInit): 
     try {
       const data: any = await response.json();
 
+      console.log(data);
+
       return response.ok
           ? {
             success: true,

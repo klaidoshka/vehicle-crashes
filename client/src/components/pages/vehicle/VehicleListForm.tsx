@@ -111,9 +111,8 @@ const columns: TableColumn<IFormListRow<Vehicle>>[] = [
   },
   {
     id: 'type',
-    format: (row) => {
-      return isNaN(row.value.type!) ? row.value.type : VehicleType[row.value.type!];
-    },
+    format: (row) => isNaN(row.value.type!)
+        ? row.value.type : VehicleType[row.value.type!],
     name: 'Type',
     selector: row => row.value.type!,
     sortable: true,

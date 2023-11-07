@@ -1,7 +1,21 @@
 import {VehicleType} from "../constants/VehicleType.ts";
-import Insurance, {InsuranceFormSchema} from "./Insurance.ts";
-import Crash, {crashSchema, CrashWithCasualties} from "./Crash.ts";
-import VehicleOwner, {VehicleOwnerFormSchema} from "./VehicleOwner.ts";
+import Insurance, {
+  insuranceSchema,
+  mapToEntity as mapToEntityInsurance,
+  mapToSchema as mapToSchemaInsurance
+} from "./Insurance.ts";
+import Crash, {
+  crashSchema,
+  CrashWithCasualties,
+  mapToEntity as mapToEntityCrash,
+  mapToSchema as mapToSchemaCrash
+} from "./Crash.ts";
+import VehicleOwner, {
+  mapToEntity as mapToEntityVehicleOwner,
+  mapToSchema as mapToSchemaVehicleOwner,
+  VehicleOwnerSchema,
+  vehicleOwnerSchema
+} from "./VehicleOwner.ts";
 import {z} from "zod";
 
 
@@ -16,43 +30,31 @@ interface Vehicle {
   type: VehicleType;
 }
 
-const convertToSchemaObject = (vehicle: Vehicle): VehicleWithCrashes => {
+const mapToEntity = (vehicle: VehicleWithCrashesAndInsurances): Vehicle => {
   return {
-    id: vehicle.id,
-    color: vehicle.color,
-    crashes: vehicle.crashes as unknown as CrashWithCasualties[],
+    ...vehicle,
+    crashes: vehicle.crashes.map(crash => mapToEntityCrash(crash)),
+    dateManufacture: vehicle.dateManufacture.toISOString().substring(0, 10),
+    insurances: vehicle.insurances.map(insurance => mapToEntityInsurance(insurance)),
+    owners: vehicle.owners?.map(owner => mapToEntityVehicleOwner(owner)) ?? [],
+  };
+};
+
+const mapToSchema = (vehicle: Vehicle): VehicleWithCrashesAndInsurances => {
+  vehicle.owners.forEach(owner => owner.vehicle = ({
+    ...vehicle,
+    owners: []
+  }));
+
+  return {
+    ...vehicle,
+    crashes: vehicle.crashes.map(crash => mapToSchemaCrash(crash)),
     dateManufacture: new Date(vehicle.dateManufacture),
-    insurances: vehicle.insurances?.map(insurance => {
-      return {
-        id: insurance.id,
-        dateInitialization: new Date(insurance.dateInitialization),
-        dateExpiration: new Date(insurance.dateExpiration)
-      };
-    }),
-    owners: vehicle.owners?.map(owner => {
-      return {
-        id: owner.id,
-        dateAcquisition: new Date(owner.dateAcquisition),
-        dateDisposal: owner.dateDisposal && new Date(owner.dateDisposal) || undefined,
-      };
-    }),
-    plate: vehicle.plate,
+    insurances: vehicle.insurances.map(insurance => mapToSchemaInsurance(insurance)),
+    owners: vehicle.owners.map(owner => mapToSchemaVehicleOwner(owner)),
     type: (isNaN(vehicle.type) ? VehicleType[vehicle.type] : vehicle.type) as VehicleType
   };
-}
-
-const convertToVehicleObject = (vehicle: VehicleWithCrashes): Vehicle => {
-  return {
-    id: vehicle.id,
-    color: vehicle.color,
-    crashes: (vehicle.crashes ?? []) as unknown as Crash[],
-    dateManufacture: vehicle.dateManufacture.toISOString(),
-    insurances: (vehicle.insurances ?? []) as unknown as Insurance[],
-    owners: [],
-    plate: vehicle.plate,
-    type: vehicle.type!
-  };
-}
+};
 
 const vehicleSchemaBase = z.object({
   id: z.number().int().positive().optional(),
@@ -64,8 +66,7 @@ const vehicleSchemaBase = z.object({
     .date({required_error: "Please select a date"})
     .min(new Date(1900, 0), "Too old, please select a date after 1900")
     .max(new Date(), "Too far, please select a date before today"),
-  insurances: z.array(InsuranceFormSchema).optional(),
-  owners: z.array(VehicleOwnerFormSchema).optional(),
+  insurances: z.array(insuranceSchema),
   plate: z.string().trim().toUpperCase()
     .regex(/^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$/,
         "Only letters, numbers and dashes are allowed"),
@@ -77,18 +78,22 @@ const vehicleSchemaBase = z.object({
       })
 });
 
-type VehicleWithCrashes = z.infer<typeof vehicleSchemaBase> & { crashes: CrashWithCasualties[] };
+type VehicleWithCrashesAndInsurances = z.infer<typeof vehicleSchemaBase> & {
+  crashes: CrashWithCasualties[];
+  owners: VehicleOwnerSchema[];
+};
 
-const vehicleSchema: z.ZodType<VehicleWithCrashes> = vehicleSchemaBase.extend({
-  crashes: z.lazy(() => z.array(crashSchema))
+const vehicleSchema: z.ZodType<VehicleWithCrashesAndInsurances> = vehicleSchemaBase.extend({
+  crashes: z.lazy(() => z.array(crashSchema)),
+  owners: z.lazy(() => z.array(vehicleOwnerSchema))
 });
 
 export {
   vehicleSchema,
-  convertToSchemaObject,
-  convertToVehicleObject
+  mapToSchema,
+  mapToEntity
 };
 
 export default Vehicle;
 
-export type {VehicleWithCrashes};
+export type {VehicleWithCrashesAndInsurances};

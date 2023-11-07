@@ -6,7 +6,23 @@ interface Insurance {
   dateExpiration: string;
 }
 
-const InsuranceFormSchema = z.object({
+const mapToEntity = (insurance: InsuranceFormSchema): Insurance => {
+  return {
+    ...insurance,
+    dateInitialization: insurance.dateInitialization.toISOString().substring(0, 10),
+    dateExpiration: insurance.dateExpiration.toISOString().substring(0, 10)
+  };
+};
+
+const mapToSchema = (insurance: Insurance): InsuranceFormSchema => {
+  return {
+    ...insurance,
+    dateInitialization: new Date(insurance.dateInitialization),
+    dateExpiration: new Date(insurance.dateExpiration)
+  };
+};
+
+const insuranceSchema = z.object({
   id: z.number().int().positive().optional(),
   dateInitialization: z.coerce
     .date({required_error: "Please select a begin date"})
@@ -24,5 +40,8 @@ const InsuranceFormSchema = z.object({
     }
 );
 
-export {InsuranceFormSchema};
+type InsuranceFormSchema = z.infer<typeof insuranceSchema>;
+
+export {insuranceSchema, mapToEntity, mapToSchema};
 export default Insurance;
+export type {InsuranceFormSchema};

@@ -3,4 +3,5 @@ export default interface IApiGetCollectionProperties<T> {
   onError?: (error: Error) => void;
   onFinally?: () => void;
   onSuccess?: (vehicles: T[]) => void;
+  params?: { [key: string]: string | number };
 }

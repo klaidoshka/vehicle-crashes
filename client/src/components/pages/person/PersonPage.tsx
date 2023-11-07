@@ -6,10 +6,10 @@ const PersonPage = () => {
   return (
       <div className="d-flex container-fluid h-100 justify-content-center align-items-center">
         <FormLayout
-            title="People"
-            description="You can list, create, edit, delete people within this page"
+            title="🙋 People 🚶"
+            description="Here you can create, list, edit and delete people data"
             formList={<PersonListForm/>}
-            formManage={<PersonManageForm/>}
+            formManage={<PersonManageForm isEdit={false}/>}
         />
       </div>
   );

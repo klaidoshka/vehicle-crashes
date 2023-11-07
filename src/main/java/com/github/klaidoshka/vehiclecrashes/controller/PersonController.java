@@ -29,7 +29,7 @@ public final class PersonController extends ControllerBase<Person, Long> {
   @PostMapping
   @Override
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Person entity) {
-    entity.getCarsOwned().forEach(car -> car.setPerson(entity));
+    entity.getVehiclesOwned().forEach(car -> car.setPerson(entity));
 
     return super.create(entity);
   }
@@ -44,7 +44,7 @@ public final class PersonController extends ControllerBase<Person, Long> {
   @Override
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody Person entity) {
-    entity.getCarsOwned().forEach(car -> car.setPerson(entity));
+    entity.getVehiclesOwned().forEach(v -> v.setPerson(entity));
 
     if (!id.equals(entity.getId())) {
       return ResponseEntity.badRequest().body(ResponseBase.failure("Id mismatch"));

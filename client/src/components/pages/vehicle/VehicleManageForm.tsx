@@ -1,13 +1,16 @@
 import {VehicleType} from "../../../constants/VehicleType.ts";
 import Vehicle, {
-  convertToSchemaObject,
-  convertToVehicleObject, vehicleSchema, VehicleWithCrashes
+  mapToEntity,
+  mapToSchema,
+  vehicleSchema,
+  VehicleWithCrashesAndInsurances
 } from "../../../entities/Vehicle.ts";
 import IManageFormProperties from "../../../api/IManageFormProperties.ts";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Fragment} from "react";
 import {createVehicle, editVehicle} from "../../../services/VehicleService.ts";
+import {isTodayOrGreater, resolveDateString} from "../../../services/Dates.ts";
 
 const VehicleManageForm = ({
                              callback,
@@ -21,8 +24,12 @@ const VehicleManageForm = ({
     formState: {errors, isSubmitting, isDirty},
     reset,
     watch
-  } = useForm<VehicleWithCrashes>({
-    defaultValues: element && convertToSchemaObject(element),
+  } = useForm<VehicleWithCrashesAndInsurances>({
+    defaultValues: element && mapToSchema(element) || {
+      crashes: [],
+      insurances: [],
+      owners: []
+    },
     resolver: zodResolver(vehicleSchema)
   });
 
@@ -31,31 +38,31 @@ const VehicleManageForm = ({
     control: control
   });
 
-  const resolveSubmit = async (data: VehicleWithCrashes) => {
+  const resolveSubmit = async (data: VehicleWithCrashesAndInsurances) => {
     if (!isDirty) {
       return;
     }
 
-    const vehicle = convertToVehicleObject(data);
+    const entity = mapToEntity(data);
 
     if (isEdit) {
       await editVehicle({
-        element: vehicle,
+        element: entity,
         onSuccess: () => {
           alert("Vehicle edited successfully!");
 
-          callback?.(vehicle);
+          callback?.(entity);
 
           reset(data);
         }
       })
     } else {
       await createVehicle({
-        element: vehicle,
+        element: entity,
         onSuccess: () => {
           alert("Vehicle created successfully!");
 
-          callback?.(vehicle);
+          callback?.(entity);
 
           reset();
         }
@@ -125,6 +132,7 @@ const VehicleManageForm = ({
             <Controller
                 name="type"
                 control={control}
+                defaultValue={VehicleType.CAR}
                 render={({field}) => (
                     <div style={{position: 'relative'}}>
                       <span style={{
@@ -138,8 +146,9 @@ const VehicleManageForm = ({
 
                       <select
                           className="form-control"
+                          defaultChecked
+                          defaultValue={isNaN(field.value) ? VehicleType[field.value] : field.value}
                           onChange={e => field.onChange(Number(e.currentTarget.value))}
-                          value={isNaN(field.value) ? VehicleType[field.value] : field.value}
                       >
                         {Object.values(VehicleType)
                         .filter((v: any) => isNaN(v))
@@ -165,115 +174,101 @@ const VehicleManageForm = ({
             </p>
           </div>
 
-          {/*<div className="form-group mb-3">*/}
-          {/*  <label htmlFor={"owners"}>Owners</label>*/}
-
-          {/*  <Controller*/}
-          {/*      name={"owners"}*/}
-          {/*      control={control}*/}
-          {/*      render={({field}) =>*/}
-          {/*          <AsyncSelect*/}
-          {/*              {...field}*/}
-          {/*              cacheOptions*/}
-          {/*              defaultOptions*/}
-          {/*              loadingMessage={() => "Loading..."}*/}
-          {/*              // loadOptions={resolvePeople}*/}
-          {/*              noOptionsMessage={() => "Empty"}*/}
-          {/*              closeMenuOnSelect*/}
-          {/*          />*/}
-          {/*      }*/}
-          {/*  />*/}
-
-          {/*  <p className="text-danger small">*/}
-          {/*    {errors.owners?.message}*/}
-          {/*  </p>*/}
-          {/*</div>*/}
-
           <div className="form-group mb-3">
             <label>Insurances</label>
 
-            {(watch("insurances")?.length ?? 0) > 0 &&
-                (
-                    <table>
-                      <thead>
-                      <tr>
-                        <th className="text-center" style={{width: "15%"}}>Active</th>
-                        <th className="text-center" style={{width: "35%"}}>Start Date</th>
-                        <th className="text-center" style={{width: "35%"}}>Expire Date</th>
-                        <th className="text-center" style={{width: "15%"}}></th>
-                      </tr>
-                      </thead>
+            {(watch("insurances")?.length ?? 0) > 0 && (
+                <div className="table-responsive">
+                  <table className="table table-sm table-hover table-striped">
+                    <thead>
+                    <tr>
+                      <th style={{width: "15%"}}>
+                        Active
+                      </th>
 
-                      <tbody>
-                      {watch("insurances")?.map((insurance, index) => (
-                          <Fragment key={crypto.randomUUID()}>
-                            <tr>
-                              <td className="text-center" style={{width: "15%"}}>
-                                {isDateTodayOrGreater(new Date(insurance.dateExpiration)) ? '✅' : '➖'}
-                              </td>
+                      <th style={{width: "35%"}}>
+                        Start Date
+                      </th>
 
-                              <td className="text-center" style={{width: "35%"}}>
-                                <input
-                                    {...register(`insurances.${index}.dateInitialization`)}
-                                    className="form-control w-100"
-                                    defaultChecked
-                                    defaultValue={resolveDateString(insurance.dateInitialization)}
-                                    type="date"
-                                />
-                              </td>
+                      <th style={{width: "35%"}}>
+                        Expire Date
+                      </th>
 
-                              <td className="text-center" style={{width: "35%"}}>
-                                <input
-                                    {...register(`insurances.${index}.dateExpiration`)}
-                                    className="form-control w-100"
-                                    defaultChecked
-                                    defaultValue={resolveDateString(insurance.dateExpiration)}
-                                    type="date"
-                                />
-                              </td>
+                      <th style={{width: "15%"}}></th>
+                    </tr>
+                    </thead>
 
-                              <td className="text-center" style={{width: "35%"}}>
-                                <button
-                                    type="button"
-                                    className="btn btn-sm btn-outline-danger w-100 text-center"
-                                    onClick={() => remove(index)}
-                                >
-                                  ❌
-                                </button>
-                              </td>
-                            </tr>
+                    <tbody>
+                    {watch("insurances")?.map((insurance, index) => (
+                        <Fragment key={crypto.randomUUID()}>
+                          <tr>
+                            <td className="text-center" style={{width: "15%"}}>
+                              {isTodayOrGreater(new Date(insurance.dateExpiration)) ? '✅' : '➖'}
+                            </td>
 
-                            {errors.insurances?.[index] &&
-                                <tr>
-                                  <td className="text-center" style={{width: "15%"}}></td>
-                                  <td className="text-center" style={{width: "35%"}}>
-                                    <p className="text-danger small">
-                                      {errors.insurances?.[index]?.dateInitialization?.message}
-                                    </p>
-                                  </td>
-                                  <td className="text-center" style={{width: "35%"}}>
-                                    <p className="text-danger small">
-                                      {errors.insurances?.[index]?.dateExpiration?.message ||
-                                          errors.insurances?.[index]?.root?.message}
-                                    </p>
-                                  </td>
-                                  <td className="text-center" style={{width: "15%"}}></td>
-                                </tr>
-                            }
-                          </Fragment>
-                      ))}
-                      </tbody>
-                    </table>
-                ) || <p className="text-black-50">
-                  This vehicle has no insurances
-                </p>
+                            <td style={{width: "35%"}}>
+                              <input
+                                  {...register(`insurances.${index}.dateInitialization`)}
+                                  className="form-control w-100"
+                                  defaultChecked
+                                  defaultValue={resolveDateString(insurance.dateInitialization)}
+                                  type="date"
+                              />
+                            </td>
+
+                            <td style={{width: "35%"}}>
+                              <input
+                                  {...register(`insurances.${index}.dateExpiration`)}
+                                  className="form-control w-100"
+                                  defaultChecked
+                                  defaultValue={resolveDateString(insurance.dateExpiration)}
+                                  type="date"
+                              />
+                            </td>
+
+                            <td style={{width: "35%"}}>
+                              <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline-danger w-100 mt-1"
+                                  onClick={() => remove(index)}
+                              >
+                                ❌
+                              </button>
+                            </td>
+                          </tr>
+
+                          {errors.insurances?.[index] &&
+                              <tr>
+                                <td style={{width: "15%"}}></td>
+                                <td style={{width: "35%"}}>
+                                  <p className="text-danger small">
+                                    {errors.insurances?.[index]?.dateInitialization?.message}
+                                  </p>
+                                </td>
+                                <td className="text-center" style={{width: "35%"}}>
+                                  <p className="text-danger small">
+                                    {errors.insurances?.[index]?.dateExpiration?.message ||
+                                        errors.insurances?.[index]?.root?.message}
+                                  </p>
+                                </td>
+                                <td style={{width: "15%"}}></td>
+                              </tr>
+                          }
+                        </Fragment>
+                    ))}
+                    </tbody>
+                  </table>
+                </div>
+            ) || <p className="text-black-50">
+              This vehicle has no insurances
+            </p>
             }
 
             <div className="d-flex justify-content-center align-items-center mt-3">
               <button
                   className="btn btn-sm btn-outline-success 50"
                   disabled={(watch("insurances")?.findIndex((insurance) =>
-                      isDateTodayOrGreater(new Date(insurance.dateExpiration))) ?? -1) !== -1}
+                      isTodayOrGreater(new Date(insurance.dateExpiration))) ?? -1) !== -1}
                   onClick={() => {
                     const dateStart = new Date();
                     const dateExpire = new Date();
@@ -303,16 +298,6 @@ const VehicleManageForm = ({
         </form>
       </div>
   );
-}
-
-const resolveDateString = (date?: Date | string): string => {
-  return date ? new Date(date).toISOString().substring(0, 10) : "";
-}
-
-const isDateTodayOrGreater = (date: Date): boolean => {
-  const today = new Date();
-
-  return date.toDateString() === today.toDateString() || date > today;
 }
 
 export default VehicleManageForm;
