@@ -3,21 +3,21 @@ import {Dialog} from "@mui/material";
 import {Close} from "@mui/icons-material";
 
 interface IModuleDialogProperties {
+  closeCallback: () => void;
   content: ReactNode;
-  handleClose: () => void;
-  shouldOpen: () => boolean;
+  isOpen: () => boolean;
 }
 
-const ModuleDialog = ({content, handleClose, shouldOpen}: IModuleDialogProperties) => {
+const DialogAkaModule = ({closeCallback, content, isOpen}: IModuleDialogProperties) => {
   return (
       <Dialog
-          open={shouldOpen()}
-          onClose={handleClose}
+          open={isOpen()}
+          onClose={closeCallback}
       >
         <div className="p-3 rounded-3">
           <button
               className="btn btn-sm btn-outline-danger justify-content-center align-items-center float-end"
-              onClick={handleClose}
+              onClick={closeCallback}
               type="button"
           >
             <Close/>
@@ -29,4 +29,4 @@ const ModuleDialog = ({content, handleClose, shouldOpen}: IModuleDialogPropertie
   );
 };
 
-export default ModuleDialog;
+export default DialogAkaModule;

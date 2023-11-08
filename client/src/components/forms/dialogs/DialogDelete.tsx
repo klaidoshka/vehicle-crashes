@@ -5,20 +5,20 @@ interface IFormDialogDeleteProperties {
   description?: string;
   handleClose: () => void;
   handleDelete: () => void;
-  header: string;
+  title: string;
 }
 
 const DialogDelete = ({
                         description,
                         handleClose,
                         handleDelete,
-                        header
+                        title
                       }: IFormDialogDeleteProperties) => {
   const [isLoading, setLoading] = useState(false);
 
   return (
       <div>
-        <h1>{header}</h1>
+        <h1>{title}</h1>
 
         {description && <p>{description}</p>}
 

@@ -85,7 +85,7 @@ public final class VehicleService implements IVehicleService {
             return context.find(VehicleOwner.class, vo.id()).getValue();
           }
 
-          final Person person = context.find(Person.class, vo.personId()).getValue();
+          final Person person = context.find(Person.class, vo.person().id()).getValue();
 
           if (person == null) {
             return null;

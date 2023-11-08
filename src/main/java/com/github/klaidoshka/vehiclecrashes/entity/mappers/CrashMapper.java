@@ -20,8 +20,8 @@ public final class CrashMapper implements
         entity.getCasualtiesVehicle().stream()
             .map(Vehicle::getId)
             .toList(),
-        entity.getDate(),
         entity.getDamageCost(),
+        entity.getDate(),
         entity.getId()
     );
   }

@@ -8,6 +8,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.Person;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.PersonView;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.PersonViewModifiable;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.PersonMapper;
+import com.github.klaidoshka.vehiclecrashes.entity.mappers.PersonModifiableMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
 import java.util.Optional;
@@ -29,14 +30,17 @@ public final class PersonController {
 
   private final ICrashContext context;
   private final IPersonService service;
-  private final PersonMapper personMapper;
+  private final PersonMapper personViewMapper;
+  private final PersonModifiableMapper personViewModifiableMapper;
 
   @Autowired
   public PersonController(@NonNull ICrashContext context, @NonNull IPersonService service,
-      @NonNull PersonMapper personMapper) {
+      @NonNull PersonMapper personViewMapper,
+      @NonNull PersonModifiableMapper personViewModifiableMapper) {
     this.context = context;
     this.service = service;
-    this.personMapper = personMapper;
+    this.personViewMapper = personViewMapper;
+    this.personViewModifiableMapper = personViewModifiableMapper;
   }
 
   @PostMapping
@@ -70,13 +74,27 @@ public final class PersonController {
   @GetMapping
   public @NonNull Collection<PersonView> get() {
     return context.findAll(Person.class).getValue().stream()
-        .map(personMapper)
+        .map(personViewMapper)
         .toList();
   }
 
   @GetMapping("/{id}")
   public @NonNull ResponseEntity<ResponseValued<PersonView>> get(@NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Person.class, id).getValue())
-        .map(personMapper), "Entity not found");
+        .map(personViewMapper), "Entity not found");
+  }
+
+  @GetMapping("/modifiable")
+  public @NonNull Collection<PersonViewModifiable> getModifiable() {
+    return context.findAll(Person.class).getValue().stream()
+        .map(personViewModifiableMapper)
+        .toList();
+  }
+
+  @GetMapping("/modifiable/{id}")
+  public @NonNull ResponseEntity<ResponseValued<PersonViewModifiable>> getModifiable(
+      @NonNull @PathVariable Long id) {
+    return ResponseResolver.resolve(Optional.ofNullable(context.find(Person.class, id).getValue())
+        .map(personViewModifiableMapper), "Entity not found");
   }
 }

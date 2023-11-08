@@ -12,7 +12,7 @@ public record VehicleViewModifiable(
     @NonNull LocalDate dateManufacture,
     @Nullable Long id,
     @NonNull Collection<InsuranceView> insurances,
-    @NonNull Collection<VehicleOwnerView> owners,
+    @NonNull Collection<VehicleOwnerViewModifiable> owners,
     @NonNull String plate,
     @NonNull VehicleType type
 ) {

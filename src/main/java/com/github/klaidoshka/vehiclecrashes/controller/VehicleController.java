@@ -8,6 +8,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleView;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleViewModifiable;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleMapper;
+import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleModifiableMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
 import java.util.Optional;
@@ -29,14 +30,17 @@ public final class VehicleController {
 
   private final ICrashContext context;
   private final IVehicleService service;
-  private final VehicleMapper vehicleMapper;
+  private final VehicleMapper vehicleViewMapper;
+  private final VehicleModifiableMapper vehicleViewModifiableMapper;
 
   @Autowired
   public VehicleController(@NonNull ICrashContext context, @NonNull IVehicleService service,
-      @NonNull VehicleMapper vehicleMapper) {
+      @NonNull VehicleMapper vehicleViewMapper,
+      @NonNull VehicleModifiableMapper vehicleViewModifiableMapper) {
     this.context = context;
     this.service = service;
-    this.vehicleMapper = vehicleMapper;
+    this.vehicleViewMapper = vehicleViewMapper;
+    this.vehicleViewModifiableMapper = vehicleViewModifiableMapper;
   }
 
   @PostMapping
@@ -71,13 +75,27 @@ public final class VehicleController {
   @GetMapping
   public @NonNull Collection<VehicleView> get() {
     return context.findAll(Vehicle.class).getValue().stream()
-        .map(vehicleMapper)
+        .map(vehicleViewMapper)
         .toList();
   }
 
   @GetMapping("/{id}")
   public @NonNull ResponseEntity<ResponseValued<VehicleView>> get(@NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Vehicle.class, id).getValue())
-        .map(vehicleMapper), "Entity not found");
+        .map(vehicleViewMapper), "Entity not found");
+  }
+
+  @GetMapping("/modifiable")
+  public @NonNull Collection<VehicleViewModifiable> getModifiable() {
+    return context.findAll(Vehicle.class).getValue().stream()
+        .map(vehicleViewModifiableMapper)
+        .toList();
+  }
+
+  @GetMapping("/modifiable/{id}")
+  public @NonNull ResponseEntity<ResponseValued<VehicleViewModifiable>> getModifiable(
+      @NonNull @PathVariable Long id) {
+    return ResponseResolver.resolve(Optional.ofNullable(context.find(Vehicle.class, id).getValue())
+        .map(vehicleViewModifiableMapper), "Entity not found");
   }
 }

@@ -1,11 +1,9 @@
-import Response from "../api/Response.ts";
+import Response from "../api/rest/Response.ts";
 
 export const callApi = async <T>(input: RequestInfo | URL, init?: RequestInit): Promise<Response<T>> => {
   return fetch(input, init).then<Response<T>>(async (response) => {
     try {
       const data: any = await response.json();
-
-      console.log(data);
 
       return response.ok
           ? {

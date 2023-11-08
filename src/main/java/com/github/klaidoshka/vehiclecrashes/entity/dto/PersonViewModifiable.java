@@ -12,7 +12,7 @@ public record PersonViewModifiable(
     @NonNull Gender gender,
     @Nullable Long id,
     @NonNull String name,
-    @NonNull Collection<VehicleOwnerView> vehiclesOwned
+    @NonNull Collection<VehicleOwnerViewModifiable> vehiclesOwned
 ) {
 
 }

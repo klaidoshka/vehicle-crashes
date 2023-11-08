@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-public record VehicleOwnerView(
+public record VehicleOwnerViewModifiable(
     @NonNull LocalDate dateAcquisition,
     @Nullable LocalDate dateDisposal,
     @Nullable Long id,
-    @Nullable Long personId,
-    @Nullable Long vehicleId
+    @Nullable PersonView person,
+    @Nullable VehicleView vehicle
 ) {
 
 }

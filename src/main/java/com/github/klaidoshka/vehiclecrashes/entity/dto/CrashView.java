@@ -8,8 +8,8 @@ import org.springframework.lang.Nullable;
 public record CrashView(
     @NonNull Collection<Long> casualtiesPeople,
     @NonNull Collection<Long> casualtiesVehicle,
-    @NonNull LocalDateTime dateCrash,
     double damageCost,
+    @NonNull LocalDateTime dateCrash,
     @Nullable Long id
 ) {
 
