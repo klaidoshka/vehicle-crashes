@@ -1,16 +1,17 @@
 package com.github.klaidoshka.vehiclecrashes.entity.mappers;
 
 import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class InsuranceMapper implements
-    Function<Insurance, com.github.klaidoshka.vehiclecrashes.entity.dto.Insurance> {
+    Function<Insurance, InsuranceView> {
 
   @Override
-  public com.github.klaidoshka.vehiclecrashes.entity.dto.Insurance apply(Insurance entity) {
-    return new com.github.klaidoshka.vehiclecrashes.entity.dto.Insurance(
+  public InsuranceView apply(Insurance entity) {
+    return new InsuranceView(
         entity.getDateInitialization(),
         entity.getDateExpiration(),
         entity.getId(),

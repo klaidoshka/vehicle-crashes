@@ -4,7 +4,7 @@ import IApiGetCollectionProperties from "../api/IApiGetCollectionProperties.ts";
 import Response from "../api/Response.ts";
 import IApiDeleteProperties from "../api/IApiDeleteProperties.ts";
 import IApiCreateProperties from "../api/IApiCreateProperties.ts";
-import Person from "../entities/Person.ts";
+import Person from "../dto/Person.ts";
 import {Gender} from "../constants/Gender.ts";
 
 const API_ENDPOINT = "http://localhost:8080/api/people";

@@ -1,5 +1,5 @@
 import FormList from "../../forms/FormList.tsx";
-import Person from "../../../entities/Person.ts";
+import Person from "../../../dto/Person.ts";
 import {TableColumn} from "react-data-table-component";
 import {Gender} from "../../../constants/Gender.ts";
 import {VehicleType} from "../../../constants/VehicleType.ts";
@@ -9,7 +9,7 @@ import {deletePerson, getPeople} from "../../../services/PersonService.ts";
 import ModuleDialog from "../../forms/dialogs/ModuleDialog.tsx";
 import DialogDelete from "../../forms/dialogs/DialogDelete.tsx";
 import PersonManageForm from "./PersonManageForm.tsx";
-import VehicleOwner from "../../../entities/VehicleOwner.ts";
+import VehicleOwner from "../../../dto/VehicleOwner.ts";
 
 const PersonListForm = () => {
   const [isLoading, setLoading] = useState(false);

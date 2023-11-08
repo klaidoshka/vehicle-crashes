@@ -4,7 +4,7 @@ import Vehicle, {
   mapToSchema,
   vehicleSchema,
   VehicleWithCrashesAndInsurances
-} from "../../../entities/Vehicle.ts";
+} from "../../../dto/Vehicle.ts";
 import IManageFormProperties from "../../../api/IManageFormProperties.ts";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";

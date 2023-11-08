@@ -3,7 +3,7 @@ import Person, {
   mapToSchema,
   personSchema,
   PersonWithCrashes
-} from "../../../entities/Person.ts";
+} from "../../../dto/Person.ts";
 import IManageFormProperties from "../../../api/IManageFormProperties.ts";
 import {Controller, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -12,7 +12,7 @@ import {Gender} from "../../../constants/Gender.ts";
 import AsyncSelect from "react-select/async";
 import {getVehicles} from "../../../services/VehicleService.ts";
 import ValuedOptions from "../../../api/options/ValuedOptions.ts";
-import Vehicle from "../../../entities/Vehicle.ts";
+import Vehicle from "../../../dto/Vehicle.ts";
 import {Fragment} from "react";
 import {VehicleType} from "../../../constants/VehicleType.ts";
 

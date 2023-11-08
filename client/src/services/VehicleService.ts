@@ -1,5 +1,5 @@
 import {callApi} from "./RestApi.ts";
-import Vehicle from "../entities/Vehicle.ts";
+import Vehicle from "../dto/Vehicle.ts";
 import {VehicleType} from "../constants/VehicleType.ts";
 import IApiEditProperties from "../api/IApiEditProperties.ts";
 import IApiGetCollectionProperties from "../api/IApiGetCollectionProperties.ts";

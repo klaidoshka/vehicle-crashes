@@ -1,7 +1,7 @@
 import FormList from "../../forms/FormList.tsx";
-import Crash from "../../../entities/Crash.ts";
+import Crash from "../../../dto/Crash.ts";
 import {TableColumn} from "react-data-table-component";
-import CasualtyPerson from "../../../entities/CasualtyPerson.ts";
+import CasualtyPerson from "../../../dto/CasualtyPerson.ts";
 
 export default function CrashListForm() {
   return (

@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
+import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -9,7 +9,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,43 +28,49 @@ public final class CrashContext implements ICrashContext {
   }
 
   @Override
-  public @NonNull <E> ResponseBase delete(@NonNull E entity) {
+  public @NonNull <E> ResponseValued<E> delete(@NonNull E entity) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
       manager.getTransaction().begin();
 
-      manager.remove(manager.merge(entity));
+      entity = manager.merge(entity);
+
+      manager.remove(entity);
 
       manager.getTransaction().commit();
 
-      return ResponseBase.success();
+      return ResponseValued.success(entity);
     } catch (Exception e) {
       LOGGER.error("Error while deleting entity. Rolling back...");
       LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
-      return ResponseBase.failure(e);
+      return ResponseValued.failure(e, null);
     } finally {
       manager.close();
     }
   }
 
   @Override
-  public @NonNull <E> Optional<E> find(@NonNull Class<E> clazz, @NonNull Object id) {
+  public @NonNull <E> ResponseValued<E> find(@NonNull Class<E> clazz, @NonNull Object id) {
     try (final EntityManager manager = entityManagerFactory.createEntityManager()) {
-      return Optional.ofNullable(manager.find(clazz, id));
+      final E entity = manager.find(clazz, id);
+
+      return entity != null
+             ? ResponseValued.success(entity)
+             : ResponseValued.failure("Entity not found", null);
     } catch (Exception e) {
       LOGGER.error("Error while finding entity");
       LOGGER.error("Message: {}", e.getMessage());
 
-      return Optional.empty();
+      return ResponseValued.failure(e, null);
     }
   }
 
   @Override
-  public @NonNull <E> Collection<E> get(@NonNull Class<E> clazz) {
+  public @NonNull <E> ResponseValued<Collection<E>> findAll(@NonNull Class<E> clazz) {
     try (final EntityManager entityManager = entityManagerFactory.createEntityManager()) {
       final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
       final CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(clazz);
@@ -73,58 +78,60 @@ public final class CrashContext implements ICrashContext {
 
       criteriaQuery.select(root);
 
-      return entityManager.createQuery(criteriaQuery).getResultList();
+      return ResponseValued.success(entityManager.createQuery(criteriaQuery).getResultList());
     } catch (Exception e) {
       LOGGER.error("Error while getting entities");
       LOGGER.error("Message: {}", e.getMessage());
 
-      return Collections.emptyList();
+      return ResponseValued.failure(e, Collections.emptyList());
     }
   }
 
   @Override
-  public <E> @NonNull ResponseBase save(@NonNull E entity) {
+  public <E> @NonNull ResponseValued<E> createOrUpdate(@NonNull E entity) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
       manager.getTransaction().begin();
 
-      manager.merge(entity);
+      entity = manager.merge(entity);
 
       manager.getTransaction().commit();
 
-      return ResponseBase.success();
+      return ResponseValued.success(entity);
     } catch (Exception e) {
       LOGGER.error("Error while saving entity. Rolling back...");
       LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
-      return ResponseBase.failure(e);
+      return ResponseValued.failure(e, null);
     } finally {
       manager.close();
     }
   }
 
   @Override
-  public <E> @NonNull ResponseBase save(@NonNull Collection<E> entities) {
+  public <E> @NonNull ResponseValued<Collection<E>> createOrUpdate(@NonNull Collection<E> entities) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
       manager.getTransaction().begin();
 
-      entities.forEach(manager::merge);
+      final Collection<E> entitiesMerged = entities.stream()
+          .map(manager::merge)
+          .toList();
 
       manager.getTransaction().commit();
 
-      return ResponseBase.success();
+      return ResponseValued.success(entitiesMerged);
     } catch (Exception e) {
       LOGGER.error("Error while saving entities. Rolling back...");
       LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
-      return ResponseBase.failure(e);
+      return ResponseValued.failure(e, Collections.emptyList());
     } finally {
       manager.close();
     }

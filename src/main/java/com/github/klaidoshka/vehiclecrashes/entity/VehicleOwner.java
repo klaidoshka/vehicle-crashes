@@ -54,6 +54,14 @@ public final class VehicleOwner {
     this.vehicle = vehicle;
   }
 
+  public VehicleOwner(LocalDate dateAcquisition, LocalDate dateDisposal,
+      Person person, Vehicle vehicle) {
+    this.dateAcquisition = dateAcquisition;
+    this.dateDisposal = dateDisposal;
+    this.person = person;
+    this.vehicle = vehicle;
+  }
+
   public @NonNull LocalDate getDateAcquisition() {
     return dateAcquisition;
   }

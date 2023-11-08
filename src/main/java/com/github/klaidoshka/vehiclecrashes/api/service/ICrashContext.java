@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
+import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import java.util.Collection;
 import java.util.Optional;
 import org.springframework.lang.NonNull;
@@ -8,13 +8,31 @@ import org.springframework.lang.NonNull;
 public interface ICrashContext {
 
   /**
+   * Saves entity to the context
+   *
+   * @param entity to save
+   * @param <E>    entity type
+   * @return response with saved entity or null, if entity save failed
+   */
+  <E> @NonNull ResponseValued<E> createOrUpdate(@NonNull E entity);
+
+  /**
+   * Saves entities to the context
+   *
+   * @param entities to save
+   * @param <E>      entity type
+   * @return response with saved entities or empty collection, if entities save failed
+   */
+  <E> @NonNull ResponseValued<Collection<E>> createOrUpdate(@NonNull Collection<E> entities);
+
+  /**
    * Deletes entity from the context
    *
    * @param entity to delete
    * @param <E>    entity type
-   * @return response
+   * @return response with deleted entity or null, if entity delete failed
    */
-  <E> @NonNull ResponseBase delete(@NonNull E entity);
+  <E> @NonNull ResponseValued<E> delete(@NonNull E entity);
 
   /**
    * Deletes entity from the context
@@ -22,14 +40,14 @@ public interface ICrashContext {
    * @param clazz entity class
    * @param id    entity id
    * @param <E>   entity type
-   * @return response
+   * @return response with deleted entity or null, if entity delete failed
    */
-  default <E> @NonNull ResponseBase deleteById(@NonNull Class<E> clazz, @NonNull Object id) {
-    final Optional<E> entity = find(clazz, id);
+  default <E> @NonNull ResponseValued<E> deleteById(@NonNull Class<E> clazz, @NonNull Object id) {
+    final ResponseValued<E> entity = find(clazz, id);
 
-    return entity
+    return Optional.ofNullable(entity.getValue())
         .map(this::delete)
-        .orElse(ResponseBase.failure("Entity not found"));
+        .orElse(ResponseValued.failure("Entity not found", null));
   }
 
   /**
@@ -38,34 +56,16 @@ public interface ICrashContext {
    * @param clazz entity class
    * @param id    entity id
    * @param <E>   entity type
-   * @return entity
+   * @return response with found entity or null, if entity was not found
    */
-  <E> @NonNull Optional<E> find(@NonNull Class<E> clazz, @NonNull Object id);
+  <E> @NonNull ResponseValued<E> find(@NonNull Class<E> clazz, @NonNull Object id);
 
   /**
    * Finds all entities of given class
    *
    * @param clazz entity class
    * @param <E>   entity type
-   * @return collection of entities
+   * @return response with collection of entities
    */
-  <E> @NonNull Collection<E> get(@NonNull Class<E> clazz);
-
-  /**
-   * Saves entity to the context
-   *
-   * @param entity to save
-   * @param <E>    entity type
-   * @return response
-   */
-  <E> @NonNull ResponseBase save(@NonNull E entity);
-
-  /**
-   * Saves entities to the context
-   *
-   * @param entities to save
-   * @param <E>      entity type
-   * @return response
-   */
-  <E> @NonNull ResponseBase save(@NonNull Collection<E> entities);
+  <E> @NonNull ResponseValued<Collection<E>> findAll(@NonNull Class<E> clazz);
 }

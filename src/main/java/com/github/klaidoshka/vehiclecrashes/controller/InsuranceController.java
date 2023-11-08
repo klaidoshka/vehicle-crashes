@@ -2,9 +2,11 @@ package com.github.klaidoshka.vehiclecrashes.controller;
 
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.Insurance;
+import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.InsuranceMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -27,10 +29,10 @@ public final class InsuranceController {
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<Insurance>> get(@NonNull @PathVariable Long id) {
+  public @NonNull ResponseEntity<ResponseValued<InsuranceView>> get(
+      @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(
-        context.find(com.github.klaidoshka.vehiclecrashes.entity.Insurance.class, id)
-            .map(insuranceMapper),
-        "Entity not found");
+        Optional.ofNullable(context.find(Insurance.class, id).getValue())
+            .map(insuranceMapper), "Entity not found");
   }
 }

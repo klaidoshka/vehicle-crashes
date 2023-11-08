@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-public record Crash(
+public record CrashView(
     @NonNull Collection<Long> casualtiesPeople,
     @NonNull Collection<Long> casualtiesVehicle,
     @NonNull LocalDateTime dateCrash,

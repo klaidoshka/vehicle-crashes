@@ -3,11 +3,13 @@ package com.github.klaidoshka.vehiclecrashes.controller;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.Vehicle;
+import com.github.klaidoshka.vehiclecrashes.api.service.IVehicleService;
+import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleView;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleViewModifiable;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,78 +28,56 @@ import org.springframework.web.bind.annotation.RestController;
 public final class VehicleController {
 
   private final ICrashContext context;
+  private final IVehicleService service;
   private final VehicleMapper vehicleMapper;
 
   @Autowired
-  public VehicleController(@NonNull ICrashContext context, @NonNull VehicleMapper vehicleMapper) {
+  public VehicleController(@NonNull ICrashContext context, @NonNull IVehicleService service,
+      @NonNull VehicleMapper vehicleMapper) {
     this.context = context;
+    this.service = service;
     this.vehicleMapper = vehicleMapper;
   }
 
   @PostMapping
-  public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody Vehicle entity) {
-    return ResponseResolver.resolve(context.save(entity));
+  public @NonNull ResponseEntity<ResponseBase> create(
+      @NonNull @RequestBody VehicleViewModifiable entity) {
+    if (!service.isValid(entity)) {
+      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+    }
+
+    return ResponseResolver.resolve(context.createOrUpdate(service.merge(new Vehicle(), entity)));
   }
 
   @DeleteMapping("/{id}")
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(
-        context.deleteById(com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class, id));
+        context.deleteById(Vehicle.class, id));
   }
 
   @PutMapping("/{id}")
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
-      @NonNull @RequestBody Vehicle entity) {
-    final Optional<com.github.klaidoshka.vehiclecrashes.entity.Vehicle> vehicle = context.find(
-            com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class, id)
-        .map(v -> {
-          v.setColor(entity.color());
-          v.setDateManufacture(entity.dateManufacture());
-          v.setPlate(entity.plate());
-          v.setType(entity.type());
+      @NonNull @RequestBody VehicleViewModifiable entity) {
+    if (!service.isValid(entity)) {
+      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+    }
 
-          v.setCrashes(entity.crashes().stream()
-              .filter(Objects::nonNull)
-              .map(crashId -> context.find(
-                      com.github.klaidoshka.vehiclecrashes.entity.Crash.class, crashId)
-                  .orElseThrow())
-              .toList());
-
-          v.setInsurances(entity.insurances().stream()
-              .filter(Objects::nonNull)
-              .map(insuranceId -> context.find(
-                      com.github.klaidoshka.vehiclecrashes.entity.Insurance.class,
-                      insuranceId)
-                  .orElseThrow())
-              .toList());
-
-          v.setOwners(entity.owners().stream()
-              .filter(Objects::nonNull)
-              .map(ownerId -> context.find(
-                      com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner.class,
-                      ownerId)
-                  .orElseThrow())
-              .toList());
-
-          return v;
-        });
-
-    return vehicle.map(v -> ResponseResolver.resolve(context.save(v)))
+    return Optional.ofNullable(context.find(Vehicle.class, id).getValue())
+        .map(v -> service.merge(v, entity))
+        .map(v -> ResponseResolver.resolve(context.createOrUpdate(v)))
         .orElseGet(() -> ResponseEntity.badRequest().build());
   }
 
   @GetMapping
-  public @NonNull Collection<Vehicle> get() {
-    return context.get(com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class).stream()
+  public @NonNull Collection<VehicleView> get() {
+    return context.findAll(Vehicle.class).getValue().stream()
         .map(vehicleMapper)
         .toList();
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<Vehicle>> get(@NonNull @PathVariable Long id) {
-    return ResponseResolver.resolve(
-        context.find(com.github.klaidoshka.vehiclecrashes.entity.Vehicle.class, id)
-            .map(vehicleMapper),
-        "Entity not found");
+  public @NonNull ResponseEntity<ResponseValued<VehicleView>> get(@NonNull @PathVariable Long id) {
+    return ResponseResolver.resolve(Optional.ofNullable(context.find(Vehicle.class, id).getValue())
+        .map(vehicleMapper), "Entity not found");
   }
 }

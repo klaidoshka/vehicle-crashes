@@ -6,13 +6,13 @@ import java.util.Collection;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-public record Person(
+public record PersonViewModifiable(
     @NonNull Collection<Long> crashes,
     @NonNull LocalDate dateBirth,
     @NonNull Gender gender,
     @Nullable Long id,
     @NonNull String name,
-    @NonNull Collection<Long> vehiclesOwned
+    @NonNull Collection<VehicleOwnerView> vehiclesOwned
 ) {
 
 }

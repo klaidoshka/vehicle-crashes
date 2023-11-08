@@ -6,13 +6,13 @@ import java.util.Collection;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-public record Vehicle(
+public record VehicleViewModifiable(
     @NonNull String color,
     @NonNull Collection<Long> crashes,
     @NonNull LocalDate dateManufacture,
     @Nullable Long id,
-    @NonNull Collection<Long> insurances,
-    @NonNull Collection<Long> owners,
+    @NonNull Collection<InsuranceView> insurances,
+    @NonNull Collection<VehicleOwnerView> owners,
     @NonNull String plate,
     @NonNull VehicleType type
 ) {

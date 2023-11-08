@@ -4,16 +4,17 @@ import com.github.klaidoshka.vehiclecrashes.entity.Crash;
 import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleView;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class VehicleMapper implements
-    Function<Vehicle, com.github.klaidoshka.vehiclecrashes.entity.dto.Vehicle> {
+    Function<Vehicle, VehicleView> {
 
   @Override
-  public com.github.klaidoshka.vehiclecrashes.entity.dto.Vehicle apply(Vehicle entity) {
-    return new com.github.klaidoshka.vehiclecrashes.entity.dto.Vehicle(
+  public VehicleView apply(Vehicle entity) {
+    return new VehicleView(
         entity.getColor(),
         entity.getCrashes().stream()
             .map(Crash::getId)

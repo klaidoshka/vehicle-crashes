@@ -44,6 +44,13 @@ public final class Insurance {
     this.id = id;
   }
 
+  public Insurance(@NonNull LocalDate dateInitialization, @NonNull LocalDate dateExpiration,
+      @NonNull Vehicle vehicle) {
+    this.dateInitialization = dateInitialization;
+    this.dateExpiration = dateExpiration;
+    this.vehicle = vehicle;
+  }
+
   public @NonNull LocalDate getDateInitialization() {
     return dateInitialization;
   }

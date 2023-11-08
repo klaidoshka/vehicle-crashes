@@ -1,5 +1,5 @@
 import FormList from "../../forms/FormList.tsx";
-import Vehicle from "../../../entities/Vehicle.ts";
+import Vehicle from "../../../dto/Vehicle.ts";
 import {TableColumn} from "react-data-table-component";
 import {useEffect, useState} from "react";
 import {deleteVehicle, getVehicles} from "../../../services/VehicleService.ts";

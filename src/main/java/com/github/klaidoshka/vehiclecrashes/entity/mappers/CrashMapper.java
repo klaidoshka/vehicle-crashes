@@ -3,16 +3,17 @@ package com.github.klaidoshka.vehiclecrashes.entity.mappers;
 import com.github.klaidoshka.vehiclecrashes.entity.Crash;
 import com.github.klaidoshka.vehiclecrashes.entity.Person;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.CrashView;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class CrashMapper implements
-    Function<Crash, com.github.klaidoshka.vehiclecrashes.entity.dto.Crash> {
+    Function<Crash, CrashView> {
 
   @Override
-  public com.github.klaidoshka.vehiclecrashes.entity.dto.Crash apply(Crash entity) {
-    return new com.github.klaidoshka.vehiclecrashes.entity.dto.Crash(
+  public CrashView apply(Crash entity) {
+    return new CrashView(
         entity.getCasualtiesPeople().stream()
             .map(Person::getId)
             .toList(),
