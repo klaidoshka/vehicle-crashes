@@ -5,7 +5,7 @@ import EditAction from './actions/EditAction.tsx';
 import IFormListProperties from './IFormListProperties.ts';
 
 export default function FormList<T>({
-  title = "List",
+  title,
   columns,
   rows,
   resolveDeleteModule,
@@ -38,7 +38,15 @@ export default function FormList<T>({
       direction={Direction.LTR}
       expandOnRowClicked
       expandableRows={!!onExpand}
-      expandableRowsComponent={(row) => (onExpand == null ? <></> : onExpand(row.data as T))}
+      expandableRowsComponent={(row) =>
+        onExpand ? (
+          <div className='d-flex justify-content-center align-items-center mw-75 mh-75 m-3'>
+            {onExpand(row.data as T)}
+          </div>
+        ) : (
+          <></>
+        )
+      }
       expandableRowsHideExpander
       fixedHeader
       fixedHeaderScrollHeight='600px'
@@ -47,7 +55,9 @@ export default function FormList<T>({
       pointerOnHover
       responsive
       striped
-      title={<h4 className='text-center'>{title}</h4>}
+      paginationPerPage={10}
+      paginationRowsPerPageOptions={[10, 20, 50, 100]}
+      title={title ? <h2 className='text-center'>{title}</h2> : undefined}
     />
   );
 }

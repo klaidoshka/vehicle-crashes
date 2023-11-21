@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { TableColumn } from 'react-data-table-component';
 
 import { VehicleType } from '../../../constants/VehicleType.ts';
 import VehicleViewModifiable from '../../../dto/VehicleViewModifiable.ts';
@@ -7,6 +6,7 @@ import {
     deleteVehicle, getVehicleModifiable, getVehiclesModifiable
 } from '../../../services/VehicleService.ts';
 import FormList from '../../forms/FormList.tsx';
+import { VehicleColumns, VehicleOwnerColumnsPersonSided } from '../../forms/FormListColumns.ts';
 import VehicleManageForm from './VehicleManageForm.tsx';
 
 const VehicleListForm = () => {
@@ -26,8 +26,8 @@ const VehicleListForm = () => {
   return (
     (!isLoading && (
       <FormList
-        title={"View, edit, delete..."}
-        columns={columns}
+        title={"View / Edit / Delete"}
+        columns={VehicleColumns}
         rows={rows}
         resolveDeleteModule={(row) => ({
           description: "This action is irreversible. Associated data will be deleted too.",
@@ -60,51 +60,20 @@ const VehicleListForm = () => {
             }
           };
         }}
+        onExpand={(row) => {
+          return (
+            <div className='mw-100 w-100 h-100'>
+              <FormList
+                title={`${VehicleType[row.type]} / ${row.plate} Owners`}
+                columns={VehicleOwnerColumnsPersonSided}
+                rows={row.owners}
+              />
+            </div>
+          );
+        }}
       />
     )) || <p className='text-center text-black-50'>Loading entries...</p>
   );
 };
-
-const columns: TableColumn<VehicleViewModifiable>[] = [
-  {
-    id: "id",
-    name: "#",
-    selector: (row) => row.id!,
-    sortable: true,
-    width: "80px"
-  },
-  {
-    id: "type",
-    format: (row) => (isNaN(row.type!) ? row.type : VehicleType[row.type!]),
-    name: "Type",
-    selector: (row) => row.type!,
-    sortable: true,
-    width: "150px"
-  },
-  {
-    id: "color",
-    name: "Color",
-    selector: (row) => row.color!,
-    sortable: true,
-    width: "100px"
-  },
-  {
-    id: "plate",
-    name: "Plate",
-    selector: (row) => row.plate!,
-    sortable: true,
-    width: "150px"
-  },
-  {
-    id: "dateManufacture",
-    format: (row) => {
-      return new Date(row.dateManufacture).toISOString().split("T")[0];
-    },
-    name: "Date Manufacture",
-    selector: (row) => row.dateManufacture!,
-    sortable: true,
-    width: "150px"
-  }
-];
 
 export default VehicleListForm;

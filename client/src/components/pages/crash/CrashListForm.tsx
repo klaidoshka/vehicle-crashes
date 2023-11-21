@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { TableColumn } from 'react-data-table-component';
 
 import CrashView from '../../../dto/CrashView.ts';
 import { deleteCrash, getCrash, getCrashes } from '../../../services/CrashService.ts';
 import FormList from '../../forms/FormList.tsx';
+import { CrashColumns } from '../../forms/FormListColumns.ts';
 import CrashManageForm from './CrashManageForm.tsx';
 
 const CrashListForm = () => {
@@ -13,8 +13,8 @@ const CrashListForm = () => {
   useEffect(() => {
     setLoading(true);
 
-    getCrashes({}).then(async (people) => {
-      setRows(people);
+    getCrashes({}).then(async (crashes) => {
+      setRows(crashes);
 
       setLoading(false);
     });
@@ -23,8 +23,8 @@ const CrashListForm = () => {
   return (
     (!isLoading && (
       <FormList
-        title={"View, edit, delete..."}
-        columns={columns}
+        title={"View / Edit / Delete"}
+        columns={CrashColumns}
         rows={rows}
         resolveDeleteModule={(row) => ({
           description: "This action is irreversible. Associated data will be deleted too.",
@@ -62,28 +62,5 @@ const CrashListForm = () => {
   );
 };
 
-const columns: TableColumn<CrashView>[] = [
-  {
-    id: "id",
-    name: "#",
-    selector: (row) => row.id ?? "N/A",
-    sortable: true,
-    width: "80px"
-  },
-  {
-    id: "damageCost",
-    name: "Damage Cost",
-    selector: (row) => row.damageCost!,
-    sortable: true,
-    width: "100px"
-  },
-  {
-    id: "date",
-    name: "Date",
-    selector: (row) => row.date!,
-    sortable: true,
-    width: "150px"
-  }
-];
 
 export default CrashListForm;

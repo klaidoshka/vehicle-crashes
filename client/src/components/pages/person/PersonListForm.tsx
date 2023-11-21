@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { TableColumn } from 'react-data-table-component';
 
-import { Gender } from '../../../constants/Gender.ts';
 import PersonViewModifiable from '../../../dto/PersonViewModifiable.ts';
 import { deletePerson, getPeople, getPersonModifiable } from '../../../services/PersonService.ts';
 import FormList from '../../forms/FormList.tsx';
+import { PersonColumns, VehicleOwnerColumnsVehicleSided } from '../../forms/FormListColumns.ts';
 import PersonManageForm from './PersonManageForm.tsx';
 
 const PersonListForm = () => {
@@ -24,8 +23,8 @@ const PersonListForm = () => {
   return (
     (!isLoading && (
       <FormList
-        title={"View, edit, delete..."}
-        columns={columns}
+        title={"View / Edit / Delete"}
+        columns={PersonColumns}
         rows={rows}
         resolveDeleteModule={(row) => ({
           description: "This action is irreversible. Associated data will be deleted too.",
@@ -58,88 +57,20 @@ const PersonListForm = () => {
             }
           };
         }}
+        onExpand={(row) => {
+          return (
+            <div className='mw-100 w-100 h-100'>
+              <FormList
+                title={`${row.name} Owned Vehicles`}
+                columns={VehicleOwnerColumnsVehicleSided}
+                rows={row.vehiclesOwned}
+              />
+            </div>
+          );
+        }}
       />
     )) || <p className='text-center text-black-50'>Loading entries...</p>
   );
 };
 
 export default PersonListForm;
-
-const columns: TableColumn<PersonViewModifiable>[] = [
-  {
-    id: "id",
-    name: "#",
-    selector: (row) => row.id ?? "N/A",
-    sortable: true,
-    width: "80px"
-  },
-  {
-    id: "name",
-    name: "Name",
-    selector: (row) => row.name!,
-    sortable: true,
-    width: "160px"
-  },
-  {
-    id: "dateBirth",
-    name: "Date Birth",
-    selector: (row) => row.dateBirth!,
-    sortable: true,
-    width: "150px"
-  },
-  {
-    id: "gender",
-    name: "Gender",
-    selector: (row) => row.gender!,
-    sortable: true,
-    width: "150px",
-    format: (row) => (isNaN(row.gender!) ? row.gender : Gender[row.gender!])
-  }
-];
-
-// const columnsExpanded: TableColumn<VehicleOwnerViewModifiable>[] = [
-//   {
-//     id: 'id',
-//     name: '#',
-//     selector: row => row.id!,
-//     sortable: true,
-//     width: '80px'
-//   },
-//   {
-//     id: 'plate',
-//     name: 'Plate',
-//     selector: row => row.vehicle.plate!,
-//     sortable: true,
-//     width: '150px'
-//   },
-//   {
-//     id: 'type',
-//     format: (row) => isNaN(row.vehicle.type!)
-//         ? row.vehicle.type : VehicleType[row.vehicle.type!],
-//     name: 'Type',
-//     selector: row => row.vehicle.type!,
-//     sortable: true,
-//     width: '150px',
-//   },
-//   {
-//     id: 'vehicle.dateManufacture',
-//     name: 'Manufacture Date',
-//     selector: row => row.vehicle.dateManufacture!,
-//     sortable: true,
-//     width: '150px'
-//   },
-//   {
-//     id: 'dateAcquisition',
-//     name: 'Acquisition Date',
-//     selector: row => row.dateAcquisition!,
-//     sortable: true,
-//     width: '150px'
-//   },
-//   {
-//     id: 'dateDisposal',
-//     name: 'Disposal Date',
-//     selector: row => row.dateDisposal!,
-//     sortable: true,
-//     width: '150px'
-//   }
-// ];
