@@ -10,6 +10,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.PersonViewModifiable;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -22,13 +23,14 @@ public final class PersonService implements IPersonService {
   private final IVehicleOwnerService vehicleOwnerService;
 
   @Autowired
-  public PersonService(@NonNull ICrashContext context, @NonNull IVehicleOwnerService vehicleOwnerService) {
+  public PersonService(@NonNull ICrashContext context,
+      @NonNull IVehicleOwnerService vehicleOwnerService) {
     this.context = context;
     this.vehicleOwnerService = vehicleOwnerService;
   }
 
   @Override
-  public boolean isValid(PersonViewModifiable person) {
+  public boolean isValid(@NonNull PersonViewModifiable person) {
     if (person.dateBirth().isAfter(LocalDate.now())) {
       return false;
     }
@@ -47,37 +49,63 @@ public final class PersonService implements IPersonService {
   }
 
   @Override
-  public Person merge(Person person, PersonViewModifiable personView) {
-    person.setGender(personView.gender());
+  public void createOrUpdate(@NonNull PersonViewModifiable personView) {
+    context.wrappedTransaction(m -> {
+      final Person person;
 
-    person.setName(personView.name());
+      if (personView.id() != null) {
+        person = Optional.ofNullable(m.find(Person.class, personView.id()))
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Person with id " + personView.id() + " not found"));
+      } else {
+        person = new Person();
+      }
 
-    person.setDateBirth(personView.dateBirth());
+      person.setGender(personView.gender());
 
-    person.setCrashes(personView.crashes().stream()
-        .filter(Objects::nonNull)
-        .map(id -> context.find(Crash.class, id).getValue())
-        .filter(Objects::nonNull)
-        .toList());
+      person.setName(personView.name());
 
-    person.setVehiclesOwned(personView.vehiclesOwned().stream()
-        .filter(Objects::nonNull)
-        .map(vo -> {
-          if (vo.id() != null) {
-            return context.find(VehicleOwner.class, vo.id()).getValue();
-          }
+      person.setDateBirth(personView.dateBirth());
 
-          final Vehicle vehicle = context.find(Vehicle.class, vo.vehicle().id()).getValue();
+      person.setCrashes(personView.crashes().stream()
+          .map(id -> id != null ? m.find(Crash.class, id) : null)
+          .filter(Objects::nonNull)
+          .toList());
 
-          if (vehicle == null) {
-            return null;
-          }
+      person.setVehiclesOwned(personView.vehiclesOwned().stream()
+          .map(vo -> {
+            if (vo.id() != null) {
+              final VehicleOwner vehicleOwner = m.find(VehicleOwner.class, vo.id());
 
-          return new VehicleOwner(vo.dateAcquisition(), vo.dateDisposal(), person, vehicle);
-        })
-        .filter(Objects::nonNull)
-        .toList());
+              if (vehicleOwner != null) {
+                vehicleOwner.setDateAcquisition(vo.dateAcquisition());
 
-    return person;
+                vehicleOwner.setDateDisposal(vo.dateDisposal());
+
+                vehicleOwner.setPerson(person);
+              }
+
+              return vehicleOwner;
+            } else if (vo.vehicle().id() == null) {
+              return null;
+            }
+
+            final Vehicle vehicle = m.find(Vehicle.class, vo.vehicle().id());
+
+            return vehicle != null
+                   ? new VehicleOwner(vo.dateAcquisition(), vo.dateDisposal(), person, vehicle)
+                   : null;
+          })
+          .filter(Objects::nonNull)
+          .toList());
+
+      person.getVehiclesOwned().forEach(vo ->
+          vo.getVehicle().setOwners(vo.getVehicle().getOwners().stream()
+              .filter(o -> !o.getPerson().getId().equals(person.getId()) ||
+                  person.getVehiclesOwned().contains(o))
+              .toList()));
+
+      m.merge(person);
+    });
   }
 }

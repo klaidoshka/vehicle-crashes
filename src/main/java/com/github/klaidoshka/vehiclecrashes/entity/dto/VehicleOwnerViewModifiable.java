@@ -8,8 +8,8 @@ public record VehicleOwnerViewModifiable(
     @NonNull LocalDate dateAcquisition,
     @Nullable LocalDate dateDisposal,
     @Nullable Long id,
-    @Nullable PersonView person,
-    @Nullable VehicleView vehicle
+    @NonNull PersonView person,
+    @NonNull VehicleView vehicle
 ) {
 
 }

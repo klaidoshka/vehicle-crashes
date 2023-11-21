@@ -47,10 +47,16 @@ public final class PersonController {
   public @NonNull ResponseEntity<ResponseBase> create(
       @NonNull @RequestBody PersonViewModifiable entity) {
     if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+      return ResponseResolver.resolve(ResponseBase.failure("Invalid person data"));
     }
 
-    return ResponseResolver.resolve(context.createOrUpdate(service.merge(new Person(), entity)));
+    try {
+      service.createOrUpdate(entity);
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
+
+    return ResponseEntity.ok(ResponseBase.success());
   }
 
   @DeleteMapping("/{id}")
@@ -61,14 +67,17 @@ public final class PersonController {
   @PutMapping("/{id}")
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody PersonViewModifiable entity) {
-    if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+    if (!id.equals(entity.id()) || !service.isValid(entity)) {
+      return ResponseResolver.resolve(ResponseBase.failure("Invalid person data (or id mismatch)"));
     }
 
-    return Optional.ofNullable(context.find(Person.class, id).getValue())
-        .map(v -> service.merge(v, entity))
-        .map(v -> ResponseResolver.resolve(context.createOrUpdate(v)))
-        .orElseGet(() -> ResponseEntity.badRequest().build());
+    try {
+      service.createOrUpdate(entity);
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
+
+    return ResponseEntity.ok(ResponseBase.success());
   }
 
   @GetMapping
@@ -91,7 +100,7 @@ public final class PersonController {
         .toList();
   }
 
-  @GetMapping("/modifiable/{id}")
+  @GetMapping("/{id}/modifiable")
   public @NonNull ResponseEntity<ResponseValued<PersonViewModifiable>> getModifiable(
       @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Person.class, id).getValue())

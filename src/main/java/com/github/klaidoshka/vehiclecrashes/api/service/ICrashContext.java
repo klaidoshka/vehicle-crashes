@@ -1,8 +1,11 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
+import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 import org.springframework.lang.NonNull;
 
 public interface ICrashContext {
@@ -68,4 +71,13 @@ public interface ICrashContext {
    * @return response with collection of entities
    */
   <E> @NonNull ResponseValued<Collection<E>> findAll(@NonNull Class<E> clazz);
+
+  /**
+   * Wraps transaction around consumer
+   *
+   * @param consumer to wrap
+   * @return response with boolean and/or message values, indicating if transaction was successful
+   */
+  @NonNull
+  ResponseBase wrappedTransaction(@NonNull Consumer<EntityManager> consumer);
 }

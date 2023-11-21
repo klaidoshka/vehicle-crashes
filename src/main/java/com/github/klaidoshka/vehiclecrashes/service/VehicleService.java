@@ -55,47 +55,59 @@ public final class VehicleService implements IVehicleService {
 
   @NonNull
   @Override
-  public Vehicle merge(@NonNull Vehicle vehicle, @NonNull VehicleViewModifiable vehicleView) {
-    vehicle.setColor(vehicleView.color());
+  public void createOrUpdate(@NonNull VehicleViewModifiable vehicleView) {
+    context.wrappedTransaction(m -> {
+      final Vehicle vehicle;
 
-    vehicle.setDateManufacture(vehicleView.dateManufacture());
+      if (vehicleView.id() != null) {
+        vehicle = m.find(Vehicle.class, vehicleView.id());
+      } else {
+        vehicle = new Vehicle();
+      }
 
-    vehicle.setPlate(vehicleView.plate());
+      vehicle.setColor(vehicleView.color());
+      vehicle.setDateManufacture(vehicleView.dateManufacture());
+      vehicle.setPlate(vehicleView.plate());
+      vehicle.setType(vehicleView.type());
 
-    vehicle.setType(vehicleView.type());
+      vehicle.setCrashes(vehicleView.crashes().stream()
+          .map(id -> m.find(Crash.class, id))
+          .filter(Objects::nonNull)
+          .toList());
 
-    vehicle.setCrashes(vehicleView.crashes().stream()
-        .filter(Objects::nonNull)
-        .map(id -> context.find(Crash.class, id).getValue())
-        .filter(Objects::nonNull)
-        .toList());
+      vehicle.setInsurances(vehicleView.insurances().stream()
+          .map(i -> {
+            if (i.id() != null) {
+              final Insurance insurance = m.find(Insurance.class, i.id());
 
-    vehicle.setInsurances(vehicleView.insurances().stream()
-        .filter(Objects::nonNull)
-        .map(i -> i.id() != null
-                  ? context.find(Insurance.class, i.id()).getValue()
-                  : new Insurance(i.dateInitialization(), i.dateExpiration(), vehicle))
-        .filter(Objects::nonNull)
-        .toList());
+              insurance.setDateInitialization(i.dateInitialization());
+              insurance.setDateExpiration(i.dateExpiration());
 
-    vehicle.setOwners(vehicleView.owners().stream()
-        .filter(Objects::nonNull)
-        .map(vo -> {
-          if (vo.id() != null) {
-            return context.find(VehicleOwner.class, vo.id()).getValue();
-          }
+              return insurance;
+            }
 
-          final Person person = context.find(Person.class, vo.person().id()).getValue();
+            return new Insurance(i.dateInitialization(), i.dateExpiration(), vehicle);
+          })
+          .toList());
 
-          if (person == null) {
-            return null;
-          }
+      vehicle.setOwners(vehicleView.owners().stream()
+          .map(vo -> {
+            if (vo.id() != null) {
+              return m.find(VehicleOwner.class, vo.id());
+            }
 
-          return new VehicleOwner(vo.dateAcquisition(), vo.dateDisposal(), person, vehicle);
-        })
-        .filter(Objects::nonNull)
-        .toList());
+            final Person person = m.find(Person.class, vo.person().id());
 
-    return vehicle;
+            if (person == null) {
+              return null;
+            }
+
+            return new VehicleOwner(vo.dateAcquisition(), vo.dateDisposal(), person, vehicle);
+          })
+          .filter(Objects::nonNull)
+          .toList());
+
+      m.merge(vehicle);
+    });
   }
 }

@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
+import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import jakarta.persistence.EntityManager;
@@ -9,6 +10,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +114,8 @@ public final class CrashContext implements ICrashContext {
   }
 
   @Override
-  public <E> @NonNull ResponseValued<Collection<E>> createOrUpdate(@NonNull Collection<E> entities) {
+  public <E> @NonNull ResponseValued<Collection<E>> createOrUpdate(
+      @NonNull Collection<E> entities) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
@@ -132,6 +135,31 @@ public final class CrashContext implements ICrashContext {
       manager.getTransaction().rollback();
 
       return ResponseValued.failure(e, Collections.emptyList());
+    } finally {
+      manager.close();
+    }
+  }
+
+  @NonNull
+  @Override
+  public ResponseBase wrappedTransaction(@NonNull Consumer<EntityManager> consumer) {
+    final EntityManager manager = entityManagerFactory.createEntityManager();
+
+    try {
+      manager.getTransaction().begin();
+
+      consumer.accept(manager);
+
+      manager.getTransaction().commit();
+
+      return ResponseBase.success();
+    } catch (Exception e) {
+      LOGGER.error("Error while wrapping transaction for consumer. Rolling back...");
+      LOGGER.error("Message: {}", e.getMessage());
+
+      manager.getTransaction().rollback();
+
+      return ResponseBase.failure(e.getMessage());
     } finally {
       manager.close();
     }

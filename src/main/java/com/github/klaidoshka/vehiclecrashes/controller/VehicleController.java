@@ -47,10 +47,16 @@ public final class VehicleController {
   public @NonNull ResponseEntity<ResponseBase> create(
       @NonNull @RequestBody VehicleViewModifiable entity) {
     if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+      return ResponseResolver.resolve(ResponseBase.failure("Invalid vehicle data"));
     }
 
-    return ResponseResolver.resolve(context.createOrUpdate(service.merge(new Vehicle(), entity)));
+    try {
+      service.createOrUpdate(entity);
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
+
+    return ResponseEntity.ok(ResponseBase.success());
   }
 
   @DeleteMapping("/{id}")
@@ -62,14 +68,18 @@ public final class VehicleController {
   @PutMapping("/{id}")
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody VehicleViewModifiable entity) {
-    if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+    if (!id.equals(entity.id()) || !service.isValid(entity)) {
+      return ResponseResolver.resolve(
+          ResponseBase.failure("Invalid vehicle data (or id mismatch)"));
     }
 
-    return Optional.ofNullable(context.find(Vehicle.class, id).getValue())
-        .map(v -> service.merge(v, entity))
-        .map(v -> ResponseResolver.resolve(context.createOrUpdate(v)))
-        .orElseGet(() -> ResponseEntity.badRequest().build());
+    try {
+      service.createOrUpdate(entity);
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
+
+    return ResponseEntity.ok(ResponseBase.success());
   }
 
   @GetMapping
@@ -92,7 +102,7 @@ public final class VehicleController {
         .toList();
   }
 
-  @GetMapping("/modifiable/{id}")
+  @GetMapping("/{id}/modifiable")
   public @NonNull ResponseEntity<ResponseValued<VehicleViewModifiable>> getModifiable(
       @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Vehicle.class, id).getValue())

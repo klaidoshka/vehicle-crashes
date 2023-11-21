@@ -35,7 +35,7 @@ public final class Vehicle {
       joinColumns = @JoinColumn(name = "person"),
       inverseJoinColumns = @JoinColumn(name = "crash")
   )
-  private Set<Crash> crashes;
+  private final Set<Crash> crashes = new HashSet<>();
 
   @Column(nullable = false)
   private LocalDate dateManufacture;
@@ -48,16 +48,18 @@ public final class Vehicle {
   @OneToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
-      mappedBy = "vehicle"
+      mappedBy = "vehicle",
+      orphanRemoval = true
   )
-  private Set<Insurance> insurances = new HashSet<>();
+  private final Set<Insurance> insurances = new HashSet<>();
 
   @OneToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
-      mappedBy = "vehicle"
+      mappedBy = "vehicle",
+      orphanRemoval = true
   )
-  private Set<VehicleOwner> owners = new HashSet<>();
+  private final Set<VehicleOwner> owners = new HashSet<>();
 
   @Column(nullable = false, unique = true)
   private String plate;
@@ -91,7 +93,11 @@ public final class Vehicle {
   }
 
   public void setCrashes(@NonNull Collection<Crash> crashes) {
-    this.crashes = new HashSet<>(crashes);
+    if (!this.crashes.isEmpty()) {
+      this.crashes.clear();
+    }
+
+    this.crashes.addAll(crashes);
   }
 
   public @NonNull LocalDate getDateManufacture() {
@@ -111,7 +117,11 @@ public final class Vehicle {
   }
 
   public void setInsurances(@NonNull Collection<Insurance> insurances) {
-    this.insurances = new HashSet<>(insurances);
+    if (!this.insurances.isEmpty()) {
+      this.insurances.clear();
+    }
+
+    this.insurances.addAll(insurances);
   }
 
   public @NonNull Collection<VehicleOwner> getOwners() {
@@ -119,7 +129,11 @@ public final class Vehicle {
   }
 
   public void setOwners(@NonNull Collection<VehicleOwner> owners) {
-    this.owners = new HashSet<>(owners);
+    if (!this.owners.isEmpty()) {
+      this.owners.clear();
+    }
+
+    this.owners.addAll(owners);
   }
 
   public @NonNull String getPlate() {

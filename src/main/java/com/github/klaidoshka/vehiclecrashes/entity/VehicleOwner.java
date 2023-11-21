@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.util.Objects;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 @Entity
 public final class VehicleOwner {
@@ -74,7 +75,7 @@ public final class VehicleOwner {
     return dateDisposal;
   }
 
-  public void setDateDisposal(@NonNull LocalDate dateDisposal) {
+  public void setDateDisposal(@Nullable LocalDate dateDisposal) {
     this.dateDisposal = dateDisposal;
   }
 

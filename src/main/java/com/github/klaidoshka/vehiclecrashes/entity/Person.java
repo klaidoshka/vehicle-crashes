@@ -32,7 +32,7 @@ public final class Person {
       joinColumns = @JoinColumn(name = "person"),
       inverseJoinColumns = @JoinColumn(name = "crash")
   )
-  private Set<Crash> crashes = new HashSet<>();
+  private final Set<Crash> crashes = new HashSet<>();
 
   @Column(nullable = false)
   private LocalDate dateBirth;
@@ -51,9 +51,10 @@ public final class Person {
   @OneToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
-      mappedBy = "person"
+      mappedBy = "person",
+      orphanRemoval = true
   )
-  private Set<VehicleOwner> vehiclesOwned = new HashSet<>();
+  private final Set<VehicleOwner> vehiclesOwned = new HashSet<>();
 
   public Person() {
   }
@@ -71,7 +72,11 @@ public final class Person {
   }
 
   public void setVehiclesOwned(@NonNull Collection<VehicleOwner> vehiclesOwned) {
-    this.vehiclesOwned = new HashSet<>(vehiclesOwned);
+    if (!this.vehiclesOwned.isEmpty()) {
+      this.vehiclesOwned.clear();
+    }
+
+    this.vehiclesOwned.addAll(vehiclesOwned);
   }
 
   public @NonNull Collection<Crash> getCrashes() {
@@ -79,7 +84,11 @@ public final class Person {
   }
 
   public void setCrashes(@NonNull Collection<Crash> crashes) {
-    this.crashes = new HashSet<>(crashes);
+    if (!this.crashes.isEmpty()) {
+      this.crashes.clear();
+    }
+
+    this.crashes.addAll(crashes);
   }
 
   public @NonNull LocalDate getDateBirth() {
