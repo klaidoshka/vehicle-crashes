@@ -1,7 +1,5 @@
 ## Vehicle Crashes Registry @ CraVeh
 
----
-
 ### PROJECT IDEA
 
 The project is a simple CRUD application for managing vehicles, their owners, insurances, crashes
