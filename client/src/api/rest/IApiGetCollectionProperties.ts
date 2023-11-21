@@ -3,5 +3,6 @@ export default interface IApiGetCollectionProperties<T> {
   onError?: (error: Error) => void;
   onFinally?: () => void;
   onSuccess?: (elements: T[]) => void;
+  onSuccessMap?: (elements: T[]) => T[];
   params?: { [key: string]: string | number };
 }

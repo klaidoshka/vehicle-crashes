@@ -1,7 +1,7 @@
-import IFormProperties from "./IFormProperties.ts";
-import {FormType} from "../../constants/FormType.ts";
+import { FormType } from '../../constants/FormType.ts';
+import IFormProperties from './IFormProperties.ts';
 
-export default function FormResolver({formType, formManage, formList}: IFormProperties) {
+export default function FormResolver({ formType, formManage, formList }: IFormProperties) {
   switch (formType) {
     case FormType.CREATE:
       return formManage;
@@ -11,11 +11,9 @@ export default function FormResolver({formType, formManage, formList}: IFormProp
 
     default:
       return (
-          <div className="d-flex flex-column text-center mt-3">
-            <p>
-              Please select a form by clicking one of the buttons above
-            </p>
-          </div>
+        <div className='d-flex flex-column text-center mt-3'>
+          <p>Please select a form by clicking one of the buttons above</p>
+        </div>
       );
   }
 }

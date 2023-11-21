@@ -1,19 +1,20 @@
-import FormList from "../../forms/FormList.tsx";
-import {TableColumn} from "react-data-table-component";
-import {Gender} from "../../../constants/Gender.ts";
-import {useEffect, useState} from "react";
-import {deletePerson, getPeople, getPersonModifiable} from "../../../services/PersonService.ts";
-import PersonManageForm from "./PersonManageForm.tsx";
-import PersonViewModifiable from "../../../dto/PersonViewModifiable.ts";
+import { useEffect, useState } from 'react';
+import { TableColumn } from 'react-data-table-component';
+
+import { Gender } from '../../../constants/Gender.ts';
+import PersonViewModifiable from '../../../dto/PersonViewModifiable.ts';
+import { deletePerson, getPeople, getPersonModifiable } from '../../../services/PersonService.ts';
+import FormList from '../../forms/FormList.tsx';
+import PersonManageForm from './PersonManageForm.tsx';
 
 const PersonListForm = () => {
   const [isLoading, setLoading] = useState(false);
-  const [rows, setRows] = useState<PersonViewModifiable  []>([]);
+  const [rows, setRows] = useState<PersonViewModifiable[]>([]);
 
   useEffect(() => {
     setLoading(true);
 
-    getPeople({}).then(async people => {
+    getPeople({}).then(async (people) => {
       setRows(people);
 
       setLoading(false);
@@ -21,82 +22,78 @@ const PersonListForm = () => {
   }, []);
 
   return (
-      (
-          !isLoading &&
-          <FormList
-              title={"View, edit, delete..."}
-              columns={columns}
-              rows={rows}
-              resolveDeleteModule={row => ({
-                description: 'This action is irreversible. Associated data will be deleted too.',
-                handleDelete: () => {
-                  deletePerson({id: row.id!}).then(() => {
-                    setRows(rows.filter(r => r.id !== row.id));
-                  });
-                },
-                title: 'Are you sure you want to delete this entity?'
-              })}
-              resolveEditModule={row => {
-                return ({
-                  content: (callback: (element: PersonViewModifiable) => void) => <PersonManageForm
-                      callback={callback}
-                      element={row}
-                      isEdit={true}
-                  />,
-                  handleEdit: () => {
-                    getPersonModifiable({id: row.id!}).then(p => {
-                      if (p !== undefined) {
-                        setRows(rows.map(row => {
-                          if (row.id === p.id) {
-                            return p;
-                          }
-
-                          return row;
-                        }));
+    (!isLoading && (
+      <FormList
+        title={"View, edit, delete..."}
+        columns={columns}
+        rows={rows}
+        resolveDeleteModule={(row) => ({
+          description: "This action is irreversible. Associated data will be deleted too.",
+          handleDelete: () => {
+            deletePerson({ id: row.id! }).then(() => {
+              setRows(rows.filter((r) => r.id !== row.id));
+            });
+          },
+          title: "Are you sure you want to delete this entity?"
+        })}
+        resolveEditModule={(row) => {
+          return {
+            content: (callback: (element: PersonViewModifiable) => void) => (
+              <PersonManageForm callback={callback} element={row} isEdit={true} />
+            ),
+            handleEdit: () => {
+              getPersonModifiable({ id: row.id! }).then((p) => {
+                if (p !== undefined) {
+                  setRows(
+                    rows.map((row) => {
+                      if (row.id === p.id) {
+                        return p;
                       }
-                    });
-                  }
-                })
-              }}
-          />
-      ) ||
-      <p className="text-center text-black-50">
-        Loading entries...
-      </p>
-  )
-}
+
+                      return row;
+                    })
+                  );
+                }
+              });
+            }
+          };
+        }}
+      />
+    )) || <p className='text-center text-black-50'>Loading entries...</p>
+  );
+};
 
 export default PersonListForm;
 
 const columns: TableColumn<PersonViewModifiable>[] = [
   {
-    id: 'id',
-    name: '#',
-    selector: row => row.id ?? "N/A",
+    id: "id",
+    name: "#",
+    selector: (row) => row.id ?? "N/A",
     sortable: true,
-    width: '80px'
+    width: "80px"
   },
   {
-    id: 'name',
-    name: 'Name',
-    selector: row => row.name!,
+    id: "name",
+    name: "Name",
+    selector: (row) => row.name!,
     sortable: true,
-    width: '160px'
+    width: "160px"
   },
   {
-    id: 'dateBirth',
-    name: 'Date Birth',
-    selector: row => row.dateBirth!,
+    id: "dateBirth",
+    name: "Date Birth",
+    selector: (row) => row.dateBirth!,
     sortable: true,
-    width: '150px'
+    width: "150px"
   },
   {
-    id: 'gender',
-    name: 'Gender',
-    selector: row => row.gender!,
+    id: "gender",
+    name: "Gender",
+    selector: (row) => row.gender!,
     sortable: true,
-    width: '150px',
-    format: row => isNaN(row.gender!) ? row.gender : Gender[row.gender!]
+    width: "150px",
+    format: (row) => (isNaN(row.gender!) ? row.gender : Gender[row.gender!])
   }
 ];
 

@@ -1,269 +1,143 @@
-import {callApi} from "./RestApi.ts";
-import VehicleView from "../dto/VehicleView.ts";
-import {VehicleType} from "../constants/VehicleType.ts";
-import IApiCreateProperties from "../api/rest/IApiCreateProperties.ts";
-import IApiDeleteProperties from "../api/rest/IApiDeleteProperties.ts";
-import IApiEditProperties from "../api/rest/IApiEditProperties.ts";
-import IApiGetCollectionProperties from "../api/rest/IApiGetCollectionProperties.ts";
-import Response from "../api/rest/Response.ts";
-import VehicleViewModifiable, {VehicleViewModifiableSchema} from "../dto/VehicleViewModifiable.ts";
-import {mapSchemaToEntity as mapVehicleOwnerSchemaToEntity} from "./VehicleOwnerService.ts";
-import {mapSchemaToEntity as mapInsuranceSchemaToEntity} from "./InsuranceService.ts";
-import Configurations from "../api/Configurations.ts";
-import IApiGetProperties from "../api/rest/IApiGetProperties.ts";
-
-const API_ENDPOINT = Configurations.SERVER_ADDRESS + "/api/vehicles";
+import IApiCreateProperties from '../api/rest/IApiCreateProperties.ts';
+import IApiDeleteProperties from '../api/rest/IApiDeleteProperties.ts';
+import IApiGetCollectionProperties from '../api/rest/IApiGetCollectionProperties.ts';
+import IApiGetProperties from '../api/rest/IApiGetProperties.ts';
+import IApiUpdateProperties from '../api/rest/IApiUpdateProperties.ts';
+import Response from '../api/rest/Response.ts';
+import { VehicleEndpoints } from '../constants/Endpoints.ts';
+import { VehicleType } from '../constants/VehicleType.ts';
+import VehicleView from '../dto/VehicleView.ts';
+import VehicleViewModifiable, {
+    VehicleViewModifiableSchema
+} from '../dto/VehicleViewModifiable.ts';
+import { mapSchemaToEntity as mapInsuranceSchemaToEntity } from './InsuranceService.ts';
+import { createEntity, deleteEntity, getEntities, getEntity, updateEntity } from './RestApi.ts';
+import {
+    mapApiViewModifiableData as mapApiVehicleOwnerViewModifiableData,
+    mapSchemaToEntity as mapVehicleOwnerSchemaToEntity
+} from './VehicleOwnerService.ts';
 
 const createVehicle = async ({
-                               element,
-                               onError = (error: Error) => console.error(error),
-                               onFinally,
-                               onSuccess
-                             }: IApiCreateProperties<VehicleViewModifiable>): Promise<Response<any>> => {
-  return callApi(
-      API_ENDPOINT,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(element)
-      })
-  .then(response => {
-    if (!response.success) {
-      throw new Error(response?.message);
-    }
-
-    onSuccess?.(response);
-
-    return response;
-  })
-  .catch(error => {
-    onError(error);
-
-    return {
-      success: false,
-      message: error?.message
-    };
-  })
-  .finally(() => {
-    onFinally?.();
+  element,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
+}: IApiCreateProperties<VehicleViewModifiable>): Promise<Response<any>> => {
+  return createEntity(VehicleEndpoints.create, {
+    element: element,
+    onError: onError,
+    onFinally: onFinally,
+    onSuccess: onSuccess,
+    params: params
   });
 };
 
 const deleteVehicle = async ({
-                               id,
-                               onError = (error: Error) => console.error(error),
-                               onFinally,
-                               onSuccess
-                             }: IApiDeleteProperties): Promise<Response<any>> => {
-  return callApi(
-      API_ENDPOINT + "/" + id,
-      {
-        method: "DELETE",
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-  .then(response => {
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-
-    onSuccess?.(response);
-
-    return response;
-  })
-  .catch(error => {
-    onError(error);
-
-    return {
-      success: false,
-      message: error?.message
-    };
-  })
-  .finally(() => {
-    onFinally?.();
+  id,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
+}: IApiDeleteProperties<VehicleViewModifiable>): Promise<Response<any>> => {
+  return deleteEntity(VehicleEndpoints.delete, {
+    id: id,
+    onError: onError,
+    onFinally: onFinally,
+    onSuccess: onSuccess,
+    params: params
   });
-}
+};
 
-const editVehicle = async ({
-                             element,
-                             onError = (error: Error) => console.error(error),
-                             onFinally,
-                             onSuccess
-                           }: IApiEditProperties<VehicleViewModifiable>): Promise<Response<any>> => {
-  return callApi<any>(
-      API_ENDPOINT + "/" + element?.id,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(element)
-      })
-  .then(response => {
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-
-    onSuccess?.(response);
-
-    return response;
-  })
-  .catch(error => {
-    onError(error);
-
-    return {
-      success: false,
-      message: error?.message
-    };
-  })
-  .finally(() => {
-    onFinally?.();
+const updateVehicle = async ({
+  id,
+  element,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
+}: IApiUpdateProperties<VehicleViewModifiable>): Promise<Response<any>> => {
+  return updateEntity<VehicleViewModifiable>(VehicleEndpoints.update, {
+    id: id,
+    element: element,
+    onError: onError,
+    onFinally: onFinally,
+    onSuccess: onSuccess,
+    params: params
   });
-}
+};
 
 const getVehicle = async ({
-                            id,
-                            onError = (error: Error) => console.error(error),
-                            onFinally,
-                            onSuccess,
-                            params
-                          }: IApiGetProperties<VehicleView>): Promise<VehicleView | undefined> => {
-  const queryParams = new URLSearchParams();
-
-  if (params) {
-    for (const key in params) {
-      if (params.hasOwnProperty(key)) {
-        queryParams.append(key, params[key].toString());
-      }
-    }
-  }
-
-  const apiUrl = API_ENDPOINT + "/" + id + (queryParams.size > 0 ? `?${queryParams.toString()}` : '');
-
-  return callApi<VehicleView>(apiUrl)
-  .then((response: Response<VehicleView>) => {
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-
-    const vehicle = response.data!;
-
-    if (vehicle) {
-      vehicle.type = (isNaN(vehicle.type) ? VehicleType[vehicle.type] : vehicle.type) as VehicleType;
-    }
-
-    onSuccess?.(vehicle);
-
-    return vehicle;
-  })
-  .catch(error => {
-    onError(error);
-
-    return undefined;
-  })
-  .finally(() => {
-    onFinally?.();
-  });
+  id,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
+}: IApiGetProperties<VehicleView>): Promise<VehicleView | undefined> => {
+  return (
+    await getEntity<VehicleView>(VehicleEndpoints.getById, {
+      id: id,
+      onError: onError,
+      onFinally: onFinally,
+      onSuccess: onSuccess,
+      onSuccessMap: mapApiViewData,
+      params: params
+    })
+  ).data;
 };
 const getVehicleModifiable = async ({
-                                      id,
-                                      onError = (error: Error) => console.error(error),
-                                      onFinally,
-                                      onSuccess,
-                                      params
-                                    }: IApiGetProperties<VehicleViewModifiable>): Promise<VehicleViewModifiable | undefined> => {
-  const queryParams = new URLSearchParams();
-
-  if (params) {
-    for (const key in params) {
-      if (params.hasOwnProperty(key)) {
-        queryParams.append(key, params[key].toString());
-      }
-    }
-  }
-
-  const apiUrl = API_ENDPOINT + "/modifiable/" + id + (queryParams.size > 0 ? `?${queryParams.toString()}` : '');
-
-  return callApi<VehicleViewModifiable>(apiUrl)
-  .then((response: Response<VehicleViewModifiable>) => {
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-
-    const vehicle = response.data!;
-
-    if (vehicle) {
-      vehicle.type = (isNaN(vehicle.type) ? VehicleType[vehicle.type] : vehicle.type) as VehicleType;
-    }
-
-    onSuccess?.(vehicle);
-
-    return vehicle;
-  })
-  .catch(error => {
-    onError(error);
-
-    return undefined;
-  })
-  .finally(() => {
-    onFinally?.();
-  });
+  id,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
+}: IApiGetProperties<VehicleViewModifiable>): Promise<VehicleViewModifiable | undefined> => {
+  return (
+    await getEntity<VehicleViewModifiable>(VehicleEndpoints.getModifiableById, {
+      id: id,
+      onError: onError,
+      onFinally: onFinally,
+      onSuccess: onSuccess,
+      onSuccessMap: mapApiViewModifiableData,
+      params: params
+    })
+  ).data;
 };
 
-const getVehicles = async ({
-                             filter,
-                             onError = (error: Error) => console.error(error),
-                             onFinally,
-                             onSuccess,
-                             params
-                           }: IApiGetCollectionProperties<VehicleViewModifiable>): Promise<VehicleViewModifiable[]> => {
-  const queryParams = new URLSearchParams();
+const getVehiclesModifiable = async ({
+  filter,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
+}: IApiGetCollectionProperties<VehicleViewModifiable>): Promise<VehicleViewModifiable[]> => {
+  return (
+    (
+      await getEntities<VehicleViewModifiable>(VehicleEndpoints.getModifiable, {
+        filter: filter,
+        onError: onError,
+        onFinally: onFinally,
+        onSuccess: onSuccess,
+        onSuccessMap: (data: VehicleViewModifiable[]) => data.map(mapApiViewModifiableData),
+        params: params
+      })
+    ).data ?? []
+  );
+};
 
-  if (params) {
-    for (const key in params) {
-      if (params.hasOwnProperty(key)) {
-        queryParams.append(key, params[key].toString());
-      }
-    }
-  }
+const mapApiViewData = (vehicle: VehicleView): VehicleView => {
+  return {
+    ...vehicle,
+    type: (isNaN(vehicle.type) ? VehicleType[vehicle.type] : vehicle.type) as VehicleType
+  };
+};
 
-  const apiUrl = API_ENDPOINT + "/modifiable" + (queryParams.size > 0 ? `?${queryParams.toString()}` : '');
-
-  return callApi<VehicleViewModifiable[]>(apiUrl)
-  .then((response: Response<VehicleViewModifiable[]>) => {
-    if (!response.success) {
-      throw new Error(response.message);
-    }
-
-    let entries: VehicleViewModifiable[] = response.data?.map(vehicle => {
-      return {
-        ...vehicle,
-        crashes: vehicle.crashes ?? [],
-        insurances: vehicle.insurances ?? [],
-        owners: vehicle.owners ?? [],
-        type: (isNaN(vehicle.type) ? VehicleType[vehicle.type] : vehicle.type) as VehicleType
-      }
-    }) ?? [];
-
-    if (filter) {
-      entries = entries.filter(filter);
-    }
-
-    onSuccess?.(entries);
-
-    return entries;
-  })
-  .catch(error => {
-    onError(error);
-
-    return [];
-  })
-  .finally(() => {
-    onFinally?.();
-  });
+const mapApiViewModifiableData = (vehicle: VehicleViewModifiable): VehicleViewModifiable => {
+  return {
+    ...vehicle,
+    owners: vehicle.owners.map(mapApiVehicleOwnerViewModifiableData),
+    type: (isNaN(vehicle.type) ? VehicleType[vehicle.type] : vehicle.type) as VehicleType
+  };
 };
 
 const mapSchemaToEntity = (vehicleSchema: VehicleViewModifiableSchema): VehicleViewModifiable => {
@@ -272,16 +146,20 @@ const mapSchemaToEntity = (vehicleSchema: VehicleViewModifiableSchema): VehicleV
     dateManufacture: vehicleSchema.dateManufacture.toISOString().substring(0, 10),
     insurances: vehicleSchema.insurances.map(mapInsuranceSchemaToEntity),
     owners: vehicleSchema.owners.map(mapVehicleOwnerSchemaToEntity),
-    type: (isNaN(vehicleSchema.type) ? VehicleType[vehicleSchema.type] : vehicleSchema.type) as VehicleType
+    type: (isNaN(vehicleSchema.type)
+      ? VehicleType[vehicleSchema.type]
+      : vehicleSchema.type) as VehicleType
   };
 };
 
 export {
   createVehicle,
   deleteVehicle,
-  editVehicle,
+  updateVehicle,
   getVehicle,
   getVehicleModifiable,
-  getVehicles,
+  getVehiclesModifiable,
+  mapApiViewData,
+  mapApiViewModifiableData,
   mapSchemaToEntity
 };

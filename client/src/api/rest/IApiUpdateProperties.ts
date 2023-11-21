@@ -1,5 +1,6 @@
-export default interface IApiCreateProperties<T> {
+export default interface IApiUpdateProperties<T> {
   element: T;
+  id: number;
   onError?: (error: Error) => void;
   onFinally?: () => void;
   onSuccess?: (element: T) => void;

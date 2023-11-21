@@ -1,5 +1,6 @@
-import {ReactNode} from "react";
-import {FormType} from "../../constants/FormType.ts";
+import { ReactNode } from 'react';
+
+import { FormType } from '../../constants/FormType.ts';
 
 export default interface IFormProperties {
   title: string;

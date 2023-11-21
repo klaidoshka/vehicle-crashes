@@ -1,8 +1,8 @@
-import Response from "./Response.ts";
-
-export default interface IApiDeleteProperties {
+export default interface IApiDeleteProperties<T> {
   id: number;
   onError?: (error: Error) => void;
   onFinally?: () => void;
-  onSuccess?: (response: Response<any>) => void;
+  onSuccess?: (element: T) => void;
+  onSuccessMap?: (data: T) => T;
+  params?: { [key: string]: string | number };
 }

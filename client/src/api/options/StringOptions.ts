@@ -1,4 +1,3 @@
-import ValuedOptions from "./ValuedOptions.ts";
+import ValuedOptions from './ValuedOptions.ts';
 
-export default interface StringOptions extends ValuedOptions<string> {
-}
+export default interface StringOptions extends ValuedOptions<string> {}

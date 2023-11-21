@@ -3,5 +3,6 @@ export default interface IApiGetProperties<T> {
   onError?: (error: Error) => void;
   onFinally?: () => void;
   onSuccess?: (element: T) => void;
+  onSuccessMap?: (element: T) => T;
   params?: { [key: string]: string | number };
 }

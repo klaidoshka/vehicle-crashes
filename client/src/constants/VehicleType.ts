@@ -4,9 +4,8 @@ enum VehicleType {
   VAN = 2,
   TRUCK = 3,
   MOTORCYCLE = 4,
-  BICYCLE = 5,
-  BOAT = 6,
-  PLANE = 7
+  BOAT = 5,
+  PLANE = 6
 }
 
-export {VehicleType};
+export { VehicleType };

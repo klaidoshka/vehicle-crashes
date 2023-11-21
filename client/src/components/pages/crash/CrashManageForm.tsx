@@ -1,60 +1,116 @@
-import {useForm} from "react-hook-form";
-import AsyncSelect from "react-select/async";
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import AsyncSelect from 'react-select/async';
 
-const resolveOptions = () => {
-  // return fetch(`http://localhost:8080/api/person?input=${input}`).then(response => response.json())
-  return new Promise<any>(() => []);
-}
+import IManageFormProperties from '../../../api/IManageFormProperties.ts';
+import CrashView, { CrashViewSchema } from '../../../dto/CrashView.ts';
+import { mapSchemaToEntity } from '../../../services/CrashService.ts';
 
-const onSubmit = (data: any) => console.log(data);
+const CrashManageForm = ({ callback, element, isEdit }: IManageFormProperties<CrashView>) => {
+  const [loadingElement, setLoadingElement] = useState(false);
 
-export default () => {
   const {
     register,
     handleSubmit,
-    formState: {errors}
-  } = useForm();
+    reset,
+    formState: { errors, isDirty }
+  } = useForm<CrashViewSchema>({
+    // defaultValues: {
+    //   date: new Date(),
+    //   damageCost: 0,
+    //   peopleCasualties: [],
+    //   vehicleCasualties: []
+    // }
+  });
 
-  errors.root?.message !== null && console.log(errors);
+  useEffect(() => {
+    if (!element) {
+      return;
+    }
+
+    setLoadingElement(true);
+
+    const onFormLoad = async (): Promise<CrashViewSchema> => {
+      return {
+        ...element,
+        date: new Date(element.date)
+      };
+    };
+
+    onFormLoad().then((personSchema) => {
+      reset(personSchema);
+
+      setLoadingElement(false);
+    });
+  }, []);
+
+  const onSubmit = (data: CrashViewSchema) => {
+    if (!isDirty) {
+      return;
+    }
+
+    const entity: CrashView = mapSchemaToEntity(data);
+
+    if (isEdit) {
+      callback?.(entity);
+
+      reset();
+    } else {
+      callback?.(entity);
+
+      reset();
+    }
+
+    console.log(entity);
+  };
+
+  console.log(errors);
 
   return (
-      <div className="container">
-        <h4>Crash Management</h4>
+    <div className='container'>
+      <h4>Crash Management</h4>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="form-group mb-3">
-            <label>Date</label>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className='form-group mb-3'>
+          <label>Date</label>
 
-            <input className="form-control"
-                   type="datetime-local"
-                   placeholder="Date"
-                   {...register("Begin Date", {required: true})} />
-          </div>
+          <input
+            className='form-control'
+            type='datetime-local'
+            placeholder='Date'
+            {...register("date")}
+          />
+        </div>
 
-          <div className="form-group mb-3">
-            <label>Damage Cost (Eur / €)</label>
+        <div className='form-group mb-3'>
+          <label>Damage Cost / €</label>
 
-            <input className="form-control"
-                   type="number"
-                   placeholder="Damage Cost"
-                   {...register("End Date", {required: true, pattern: RegExp("\d+")})} />
-          </div>
+          <input
+            className='form-control'
+            type='number'
+            placeholder='Damage Cost'
+            {...register("damageCost")}
+          />
+        </div>
 
-          <div className="form-group mb-5">
-            <label>Casualties</label>
+        <div className='form-group mb-3'>
+          <label>People Casualties</label>
 
-            <AsyncSelect
-                cacheOptions
-                defaultOptions
-                loadOptions={resolveOptions}/>
-          </div>
+          <AsyncSelect cacheOptions defaultOptions loadOptions={() => new Promise(() => [])} />
+        </div>
 
-          <button
-              className="btn btn-sm btn-success w-100"
-              type="submit">
-            Submit
-          </button>
-        </form>
-      </div>
+        <div className='form-group mb-3'>
+          <label>Vehicle Casualties</label>
+
+          <AsyncSelect cacheOptions defaultOptions loadOptions={() => new Promise(() => [])} />
+        </div>
+
+        <button className='btn btn-sm btn-success w-100' type='submit'>
+          Submit
+        </button>
+      </form>
+    </div>
   );
-}
+};
+
+export default CrashManageForm;
