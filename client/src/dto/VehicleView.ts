@@ -5,7 +5,7 @@ import { VehicleType } from '../constants/VehicleType.ts';
 interface VehicleView {
   color: string;
   crashes: number[];
-  dateManufacture: string;
+  dateManufacture: Date;
   id?: number;
   insurances: number[];
   owners: number[];

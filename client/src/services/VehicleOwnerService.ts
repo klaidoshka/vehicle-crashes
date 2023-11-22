@@ -19,20 +19,9 @@ const mapSchemaToEntity = (
 ): VehicleOwnerViewModifiable => {
   return {
     ...vehicleOwnerSchema,
-    person: {
-      ...vehicleOwnerSchema.person,
-      dateBirth: vehicleOwnerSchema.person.dateBirth.toISOString().substring(0, 10)
-    },
-    vehicle: {
-      ...vehicleOwnerSchema.vehicle,
-      dateManufacture: vehicleOwnerSchema.vehicle.dateManufacture.toISOString().substring(0, 10)
-    },
-    dateAcquisition: vehicleOwnerSchema.dateAcquisition.toISOString().substring(0, 10),
     dateDisposal:
-      vehicleOwnerSchema.dateDisposal === ""
-        ? undefined
-        : vehicleOwnerSchema.dateDisposal
-        ? new Date(vehicleOwnerSchema.dateDisposal).toISOString().substring(0, 10)
+      vehicleOwnerSchema.dateDisposal !== undefined && vehicleOwnerSchema.dateDisposal !== ""
+        ? new Date(vehicleOwnerSchema.dateDisposal)
         : undefined
   };
 };

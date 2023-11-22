@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 
 import CrashView from '../../../dto/CrashView.ts';
 import { deleteCrash, getCrash, getCrashes } from '../../../services/CrashService.ts';
+import { resolveDateString } from '../../../services/Dates.ts';
 import FormList from '../../forms/FormList.tsx';
-import { CrashColumns } from '../../forms/FormListColumns.ts';
+import {
+    CasualtiesPersonColumns, CasualtiesVehicleColumns, CrashColumns
+} from '../../forms/FormListColumns.ts';
 import CrashManageForm from './CrashManageForm.tsx';
 
 const CrashListForm = () => {
@@ -57,10 +60,28 @@ const CrashListForm = () => {
             }
           };
         }}
+        onExpand={(row) => (
+          <div className='mw-100 w-100 h-100'>
+            <h2 className='text-center bg-warning-subtle'>
+              Accident @ {resolveDateString(row.dateCrash)}
+            </h2>
+
+            <FormList
+              title={`People Casualties (${row.casualtiesPeople.length})`}
+              columns={CasualtiesPersonColumns}
+              rows={row.casualtiesPeople}
+            />
+
+            <FormList
+              title={`Vehicle Casualties (${row.casualtiesVehicle.length})`}
+              columns={CasualtiesVehicleColumns}
+              rows={row.casualtiesVehicle}
+            />
+          </div>
+        )}
       />
     )) || <p className='text-center text-black-50'>Loading entries...</p>
   );
 };
-
 
 export default CrashListForm;

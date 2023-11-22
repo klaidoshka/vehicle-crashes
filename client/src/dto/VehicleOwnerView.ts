@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { equalOrGreater } from '../services/Dates.ts';
 
 interface VehicleOwnerView {
-  dateAcquisition: string;
-  dateDisposal?: string;
+  dateAcquisition: Date;
+  dateDisposal: Date | undefined;
   id?: number;
   personId?: number;
   vehicleId?: number;

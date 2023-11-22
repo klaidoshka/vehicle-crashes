@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 interface InsuranceView {
-  dateExpiration: string;
-  dateInitialization: string;
+  dateExpiration: Date;
+  dateInitialization: Date;
   id?: number;
   vehicleId?: number;
 }

@@ -21,4 +21,11 @@ public interface IPersonService {
    */
   @NonNull
   void createOrUpdate(@NonNull PersonViewModifiable personView) throws IllegalArgumentException;
+
+  /**
+   * Deletes person by id
+   *
+   * @param id of person to delete
+   */
+  void deleteById(@NonNull Long id);
 }

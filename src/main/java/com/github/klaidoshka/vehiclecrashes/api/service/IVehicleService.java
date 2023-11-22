@@ -22,4 +22,11 @@ public interface IVehicleService {
    */
   @NonNull
   void createOrUpdate(@NonNull VehicleViewModifiable vehicleView) throws IllegalArgumentException;
+
+  /**
+   * Deletes vehicle by id
+   *
+   * @param id of vehicle to delete
+   */
+  void deleteById(@NonNull Long id);
 }

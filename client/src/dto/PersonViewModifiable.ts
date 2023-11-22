@@ -7,7 +7,7 @@ import VehicleOwnerViewModifiable, {
 
 interface PersonViewModifiable {
   crashes: number[];
-  dateBirth: string;
+  dateBirth: Date;
   gender: Gender;
   id?: number;
   name: string;

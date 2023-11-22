@@ -11,6 +11,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleViewModifiable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +109,39 @@ public final class VehicleService implements IVehicleService {
           .toList());
 
       m.merge(vehicle);
+    });
+  }
+
+  @Override
+  public void deleteById(@NonNull Long id) {
+    context.wrappedTransaction(m -> {
+      final Vehicle vehicle = m.find(Vehicle.class, id);
+
+      if (vehicle == null) {
+        throw new IllegalArgumentException("Vehicle with id " + id + " not found");
+      }
+
+      vehicle.getCrashes().forEach(c -> c.setCasualtiesVehicle(c.getCasualtiesVehicle().stream()
+          .filter(v -> !v.getId().equals(vehicle.getId()))
+          .toList()));
+
+      vehicle.getOwners().forEach(o -> {
+        final Person person = o.getPerson();
+
+        person.setVehiclesOwned(person.getVehiclesOwned().stream()
+            .filter(vo -> !vo.getVehicle().getId().equals(vehicle.getId()))
+            .toList());
+      });
+
+      vehicle.getOwners().forEach(m::remove);
+
+      vehicle.setCrashes(List.of());
+      vehicle.setInsurances(List.of());
+      vehicle.setOwners(List.of());
+
+      m.merge(vehicle);
+
+      m.remove(vehicle);
     });
   }
 }

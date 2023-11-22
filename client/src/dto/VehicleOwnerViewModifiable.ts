@@ -5,8 +5,8 @@ import PersonView, { personViewSchema } from './PersonView.ts';
 import VehicleView, { vehicleViewSchema } from './VehicleView.ts';
 
 interface VehicleOwnerViewModifiable {
-  dateAcquisition: string;
-  dateDisposal: string | undefined;
+  dateAcquisition: Date;
+  dateDisposal: Date | undefined;
   id?: number;
   person: PersonView;
   vehicle: VehicleView;

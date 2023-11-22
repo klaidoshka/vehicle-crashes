@@ -6,7 +6,17 @@ import org.springframework.lang.NonNull;
 
 public interface IVehicleOwnerService {
 
+  /***
+   * Checks if vehicle owner is valid
+   * @param vehicleOwner to check
+   * @return true if is valid, false otherwise
+   */
   boolean isValid(@NonNull VehicleOwnerView vehicleOwner);
 
+  /***
+   * Checks if vehicle owner is valid
+   * @param vehicleOwner to check
+   * @return true if is valid, false otherwise
+   */
   boolean isValid(@NonNull VehicleOwnerViewModifiable vehicleOwner);
 }

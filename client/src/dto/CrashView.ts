@@ -1,18 +1,21 @@
 import { z } from 'zod';
 
+import PersonView, { personViewSchema } from './PersonView';
+import VehicleView, { vehicleViewSchema } from './VehicleView';
+
 interface CrashView {
-  casualtiesPeople: number[];
-  casualtiesVehicle: number[];
+  casualtiesPeople: PersonView[];
+  casualtiesVehicle: VehicleView[];
   damageCost: number;
-  date: string;
+  dateCrash: Date;
   id?: number;
 }
 
 const crashSchema = z.object({
-  casualtiesPeople: z.array(z.number().int().positive()),
-  casualtiesVehicle: z.array(z.number().int().positive()),
+  casualtiesPeople: z.array(personViewSchema),
+  casualtiesVehicle: z.array(vehicleViewSchema),
   damageCost: z.number().nonnegative(),
-  date: z.coerce
+  dateCrash: z.coerce
     .date({ required_error: "Please select a date" })
     .min(new Date(1900, 0), "Too old, please select a date after 1900")
     .max(new Date(), "Too far, please select a date before today"),

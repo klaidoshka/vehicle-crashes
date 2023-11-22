@@ -104,6 +104,27 @@ const getVehicleModifiable = async ({
   ).data;
 };
 
+const getVehicles = async ({
+  filter,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
+}: IApiGetCollectionProperties<VehicleView>): Promise<VehicleView[]> => {
+  return (
+    (
+      await getEntities<VehicleView>(VehicleEndpoints.get, {
+        filter: filter,
+        onError: onError,
+        onFinally: onFinally,
+        onSuccess: onSuccess,
+        onSuccessMap: (data: VehicleView[]) => data.map(mapApiViewData),
+        params: params
+      })
+    ).data ?? []
+  );
+};
+
 const getVehiclesModifiable = async ({
   filter,
   onError = (error: Error) => console.error(error),
@@ -143,7 +164,6 @@ const mapApiViewModifiableData = (vehicle: VehicleViewModifiable): VehicleViewMo
 const mapSchemaToEntity = (vehicleSchema: VehicleViewModifiableSchema): VehicleViewModifiable => {
   return {
     ...vehicleSchema,
-    dateManufacture: vehicleSchema.dateManufacture.toISOString().substring(0, 10),
     insurances: vehicleSchema.insurances.map(mapInsuranceSchemaToEntity),
     owners: vehicleSchema.owners.map(mapVehicleOwnerSchemaToEntity),
     type: (isNaN(vehicleSchema.type)
@@ -158,6 +178,7 @@ export {
   updateVehicle,
   getVehicle,
   getVehicleModifiable,
+  getVehicles,
   getVehiclesModifiable,
   mapApiViewData,
   mapApiViewModifiableData,

@@ -9,6 +9,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.PersonViewModifiable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -106,6 +107,38 @@ public final class PersonService implements IPersonService {
               .toList()));
 
       m.merge(person);
+    });
+  }
+
+  @Override
+  public void deleteById(@NonNull Long id) {
+    context.wrappedTransaction(m -> {
+      final Person person = m.find(Person.class, id);
+
+      if (person == null) {
+        throw new IllegalArgumentException("Person with id " + id + " not found");
+      }
+
+      person.getCrashes().forEach(c -> c.setCasualtiesPeople(c.getCasualtiesPeople().stream()
+          .filter(p -> !p.getId().equals(person.getId()))
+          .toList()));
+
+      person.getVehiclesOwned().forEach(vo -> {
+        final Vehicle vehicle = vo.getVehicle();
+
+        vehicle.setOwners(vehicle.getOwners().stream()
+            .filter(o -> !o.getPerson().getId().equals(person.getId()))
+            .toList());
+      });
+
+      person.getVehiclesOwned().forEach(m::remove);
+
+      person.setCrashes(List.of());
+      person.setVehiclesOwned(List.of());
+
+      m.merge(person);
+
+      m.remove(person);
     });
   }
 }

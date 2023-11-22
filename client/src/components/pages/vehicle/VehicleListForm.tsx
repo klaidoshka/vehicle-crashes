@@ -60,17 +60,15 @@ const VehicleListForm = () => {
             }
           };
         }}
-        onExpand={(row) => {
-          return (
-            <div className='mw-100 w-100 h-100'>
-              <FormList
-                title={`${VehicleType[row.type]} / ${row.plate} Owners`}
-                columns={VehicleOwnerColumnsPersonSided}
-                rows={row.owners}
-              />
-            </div>
-          );
-        }}
+        onExpand={(row) => (
+          <div className='mw-100 w-100 h-100'>
+            <FormList
+              title={`${VehicleType[row.type]} / ${row.plate} Owners`}
+              columns={VehicleOwnerColumnsPersonSided}
+              rows={row.owners}
+            />
+          </div>
+        )}
       />
     )) || <p className='text-center text-black-50'>Loading entries...</p>
   );

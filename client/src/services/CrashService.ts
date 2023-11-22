@@ -6,7 +6,9 @@ import IApiUpdateProperties from '../api/rest/IApiUpdateProperties.ts';
 import Response from '../api/rest/Response.ts';
 import { CrashEndpoints } from '../constants/Endpoints.ts';
 import CrashView, { CrashViewSchema } from '../dto/CrashView.ts';
+import { mapApiViewData as mapApiPersonViewData } from './PersonService.ts';
 import { createEntity, deleteEntity, getEntities, getEntity, updateEntity } from './RestApi.ts';
+import { mapApiViewData as mapApiVehicleViewData } from './VehicleService.ts';
 
 const createCrash = async ({
   element,
@@ -66,6 +68,7 @@ const getCrashes = async ({
         onError: onError,
         onFinally: onFinally,
         onSuccess: onSuccess,
+        onSuccessMap: (crashes: CrashView[]) => crashes.map((crash) => mapSchemaToEntity(crash)),
         params: params
       })
     ).data ?? []
@@ -85,16 +88,32 @@ const getCrash = async ({
       onError: onError,
       onFinally: onFinally,
       onSuccess: onSuccess,
+      onSuccessMap: mapApiViewData,
       params: params
     })
   ).data;
 };
 
-const mapSchemaToEntity = (crashSchema: CrashViewSchema): CrashView => {
+const mapApiViewData = (crash: CrashView): CrashView => {
   return {
-    ...crashSchema,
-    date: new Date(crashSchema.date).toISOString().substring(0, 10)
+    ...crash,
+    casualtiesPeople: crash.casualtiesPeople.map(mapApiPersonViewData),
+    casualtiesVehicle: crash.casualtiesVehicle.map(mapApiVehicleViewData)
   };
 };
 
-export { createCrash, deleteCrash, updateCrash, getCrash, getCrashes, mapSchemaToEntity };
+const mapSchemaToEntity = (crashSchema: CrashViewSchema): CrashView => {
+  return {
+    ...crashSchema
+  };
+};
+
+export {
+  createCrash,
+  deleteCrash,
+  updateCrash,
+  getCrash,
+  getCrashes,
+  mapApiViewData,
+  mapSchemaToEntity
+};

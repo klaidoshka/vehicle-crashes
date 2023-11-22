@@ -26,22 +26,22 @@ public final class Crash {
       fetch = FetchType.EAGER
   )
   @JoinTable(
-      name = "CrashCasualtiesPeople",
-      joinColumns = @JoinColumn(name = "crash"),
-      inverseJoinColumns = @JoinColumn(name = "people")
+      name = "crashCasualtiesPeople",
+      joinColumns = @JoinColumn(name = "crash_id"),
+      inverseJoinColumns = @JoinColumn(name = "person_id")
   )
-  private Set<Person> casualtiesPeople = new HashSet<>();
+  private final Set<Person> casualtiesPeople = new HashSet<>();
 
   @ManyToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER
   )
   @JoinTable(
-      name = "CrashCasualtiesVehicle",
-      joinColumns = @JoinColumn(name = "crash"),
-      inverseJoinColumns = @JoinColumn(name = "vehicle")
+      name = "crashCasualtiesVehicle",
+      joinColumns = @JoinColumn(name = "crash_id"),
+      inverseJoinColumns = @JoinColumn(name = "vehicle_id")
   )
-  private Set<Vehicle> casualtiesVehicle = new HashSet<>();
+  private final Set<Vehicle> casualtiesVehicle = new HashSet<>();
 
   @Column(nullable = false)
   private LocalDateTime dateCrash;
@@ -71,7 +71,11 @@ public final class Crash {
   }
 
   public void setCasualtiesPeople(@NonNull Collection<Person> casualtiesPeople) {
-    this.casualtiesPeople = new HashSet<>(casualtiesPeople);
+    if (!this.casualtiesPeople.isEmpty()) {
+      this.casualtiesPeople.clear();
+    }
+
+    this.casualtiesPeople.addAll(casualtiesPeople);
   }
 
   public @NonNull Collection<Vehicle> getCasualtiesVehicle() {
@@ -79,7 +83,11 @@ public final class Crash {
   }
 
   public void setCasualtiesVehicle(@NonNull Collection<Vehicle> casualtiesVehicle) {
-    this.casualtiesVehicle = new HashSet<>(casualtiesVehicle);
+    if (!this.casualtiesVehicle.isEmpty()) {
+      this.casualtiesVehicle.clear();
+    }
+
+    this.casualtiesVehicle.addAll(casualtiesVehicle);
   }
 
   public @NonNull LocalDateTime getDate() {

@@ -1,10 +1,10 @@
-package com.github.klaidoshka.vehiclecrashes.controller;
+package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
-import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
-import com.github.klaidoshka.vehiclecrashes.entity.mappers.InsuranceMapper;
+import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleOwnerView;
+import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleOwnerMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +16,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/insurances")
-public final class InsuranceController {
+@RequestMapping("/api/vehicleOwners")
+public final class VehicleOwnerController {
 
   private final ICrashContext context;
-  private final InsuranceMapper insuranceMapper;
+  private final VehicleOwnerMapper vehicleOwnerMapper;
 
   @Autowired
-  public InsuranceController(ICrashContext context, InsuranceMapper insuranceMapper) {
+  public VehicleOwnerController(ICrashContext context, VehicleOwnerMapper vehicleOwnerMapper) {
     this.context = context;
-    this.insuranceMapper = insuranceMapper;
+    this.vehicleOwnerMapper = vehicleOwnerMapper;
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<InsuranceView>> get(
+  public @NonNull ResponseEntity<ResponseValued<VehicleOwnerView>> get(
       @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(
-        Optional.ofNullable(context.find(Insurance.class, id).getValue())
-            .map(insuranceMapper), "Entity not found");
+        Optional.ofNullable(context.find(VehicleOwner.class, id).getValue())
+            .map(vehicleOwnerMapper), "Entity not found");
   }
 }

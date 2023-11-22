@@ -4,7 +4,7 @@ import { Gender } from '../constants/Gender.ts';
 
 interface PersonView {
   crashes: number[];
-  dateBirth: string;
+  dateBirth: Date;
   gender: Gender;
   id?: number;
   name: string;

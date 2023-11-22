@@ -1,8 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.entity.mappers;
 
 import com.github.klaidoshka.vehiclecrashes.entity.Crash;
-import com.github.klaidoshka.vehiclecrashes.entity.Person;
-import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.CrashView;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
@@ -15,10 +13,10 @@ public final class CrashMapper implements
   public CrashView apply(Crash entity) {
     return new CrashView(
         entity.getCasualtiesPeople().stream()
-            .map(Person::getId)
+            .map(new PersonMapper())
             .toList(),
         entity.getCasualtiesVehicle().stream()
-            .map(Vehicle::getId)
+            .map(new VehicleMapper())
             .toList(),
         entity.getDamageCost(),
         entity.getDate(),

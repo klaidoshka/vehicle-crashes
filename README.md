@@ -2,20 +2,20 @@
 
 ### PROJECT IDEA
 
-The project is a simple CRUD application for managing vehicles, their owners, insurances, crashes
-and accident's casualties (people or vehicles) by creating and editing entities with primitive
+The project is a simple **CRUD** application for managing vehicles, their owners, insurances, crashes
+and accident's casualties _(people or vehicles)_ by creating and editing entities with primitive
 forms.
 
 The main idea behind this project was to improve my skills in...
 
-- <span style="color: yellow">React</span>
-- <span style="color: yellow">TypeScript</span>
-- <span style="color: yellow">Java Frameworks</span> (Spring Boot, Hibernate / JPA)
+- **React**
+- **TypeScript**
+- **Java Frameworks** (Spring Boot, Hibernate / JPA)
 
 Additionally, I have tried out some libraries for data validation and form management...
 
-- <span style="color: yellow">zod</span> (TypeScript)
-- <span style="color: yellow">React Hook Form</span> (React)
+- **zod** (TypeScript)
+- **React Hook Form** (React)
 
 The project is not intended to be used in production, but rather as a playground for learning. It
 is not a complete solution, but rather a prototype. Since it is a prototype, it is not perfect and

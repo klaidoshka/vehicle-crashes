@@ -6,8 +6,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 public record CrashView(
-    @NonNull Collection<Long> casualtiesPeople,
-    @NonNull Collection<Long> casualtiesVehicle,
+    @NonNull Collection<PersonView> casualtiesPeople,
+    @NonNull Collection<VehicleView> casualtiesVehicle,
     double damageCost,
     @NonNull LocalDateTime dateCrash,
     @Nullable Long id

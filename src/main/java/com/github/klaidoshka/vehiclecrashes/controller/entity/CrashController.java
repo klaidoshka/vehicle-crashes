@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.controller;
+package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
@@ -41,28 +41,43 @@ public final class CrashController {
   @PostMapping
   public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody CrashView entity) {
     if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+      return ResponseResolver.resolve(ResponseBase.failure("Invalid crash data"));
     }
 
-    return ResponseResolver.resolve(context.createOrUpdate(service.merge(new Crash(), entity)));
+    try {
+      service.createOrUpdate(entity);
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
+
+    return ResponseEntity.ok(ResponseBase.success());
   }
 
   @DeleteMapping("/{id}")
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
-    return ResponseResolver.resolve(context.deleteById(Crash.class, id));
+    try {
+      service.deleteById(id);
+
+      return ResponseEntity.ok(ResponseBase.success());
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
   }
 
   @PutMapping("/{id}")
   public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody CrashView entity) {
-    if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid entity data"));
+    if (!id.equals(entity.id()) || !service.isValid(entity)) {
+      return ResponseResolver.resolve(ResponseBase.failure("Invalid crash data (or id mismatch)"));
     }
 
-    return Optional.ofNullable(context.find(Crash.class, id).getValue())
-        .map(v -> service.merge(v, entity))
-        .map(v -> ResponseResolver.resolve(context.createOrUpdate(v)))
-        .orElseGet(() -> ResponseEntity.badRequest().build());
+    try {
+      service.createOrUpdate(entity);
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
+
+    return ResponseEntity.ok(ResponseBase.success());
   }
 
   @GetMapping

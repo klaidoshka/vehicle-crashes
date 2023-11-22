@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.controller;
+package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
 import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
@@ -61,7 +61,13 @@ public final class PersonController {
 
   @DeleteMapping("/{id}")
   public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
-    return ResponseResolver.resolve(context.deleteById(Person.class, id));
+    try {
+      service.deleteById(id);
+
+      return ResponseEntity.ok(ResponseBase.success());
+    } catch (IllegalArgumentException e) {
+      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+    }
   }
 
   @PutMapping("/{id}")

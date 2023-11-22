@@ -8,8 +8,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
@@ -23,28 +21,11 @@ import org.springframework.lang.NonNull;
 @Entity
 public final class Vehicle {
 
-  @Column(nullable = false)
-  private String color;
-
   @ManyToMany(
-      cascade = CascadeType.ALL,
-      fetch = FetchType.EAGER
-  )
-  @JoinTable(
-      name = "CrashCasualtiesPeople",
-      joinColumns = @JoinColumn(name = "person"),
-      inverseJoinColumns = @JoinColumn(name = "crash")
+      fetch = FetchType.EAGER,
+      mappedBy = "casualtiesVehicle"
   )
   private final Set<Crash> crashes = new HashSet<>();
-
-  @Column(nullable = false)
-  private LocalDate dateManufacture;
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
-  private Long id;
-
   @OneToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
@@ -52,7 +33,6 @@ public final class Vehicle {
       orphanRemoval = true
   )
   private final Set<Insurance> insurances = new HashSet<>();
-
   @OneToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
@@ -60,7 +40,14 @@ public final class Vehicle {
       orphanRemoval = true
   )
   private final Set<VehicleOwner> owners = new HashSet<>();
-
+  @Column(nullable = false)
+  private String color;
+  @Column(nullable = false)
+  private LocalDate dateManufacture;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(nullable = false)
+  private Long id;
   @Column(nullable = false, unique = true)
   private String plate;
 

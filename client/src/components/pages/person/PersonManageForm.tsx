@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import AsyncSelect from 'react-select/async';
@@ -21,8 +21,6 @@ const PersonManageForm = ({
   element,
   isEdit = false
 }: IManageFormProperties<PersonViewModifiable>) => {
-  const [isLoadingElement, setLoadingElement] = useState(false);
-
   const {
     control,
     formState: { errors, isSubmitting, isDirty },
@@ -52,33 +50,7 @@ const PersonManageForm = ({
       return;
     }
 
-    setLoadingElement(true);
-
-    const onFormLoad = async (): Promise<PersonViewModifiableSchema> => {
-      return {
-        ...element,
-        dateBirth: new Date(element.dateBirth),
-        vehiclesOwned: element.vehiclesOwned.map((vo) => ({
-          ...vo,
-          dateAcquisition: new Date(vo.dateAcquisition),
-          dateDisposal: vo.dateDisposal ? new Date(vo.dateDisposal) : undefined,
-          person: {
-            ...vo.person,
-            dateBirth: new Date(vo.person.dateBirth)
-          },
-          vehicle: {
-            ...vo.vehicle,
-            dateManufacture: new Date(vo.vehicle.dateManufacture)
-          }
-        }))
-      };
-    };
-
-    onFormLoad().then((personSchema) => {
-      reset(personSchema);
-
-      setLoadingElement(false);
-    });
+    reset(element);
   }, []);
 
   const onSubmit = async (data: PersonViewModifiableSchema) => {
@@ -98,6 +70,9 @@ const PersonManageForm = ({
           callback?.(entity);
 
           reset(data);
+        },
+        onError: () => {
+          alert("An error occurred while editing the person!");
         }
       });
     } else {
@@ -109,6 +84,9 @@ const PersonManageForm = ({
           callback?.(entity);
 
           reset();
+        },
+        onError: () => {
+          alert("An error occurred while creating the person!");
         }
       });
     }
@@ -116,208 +94,200 @@ const PersonManageForm = ({
 
   return (
     <div className='container'>
-      <h4 className='text-center'>Person Management</h4>
+      <h2 className='text-center'>Person Management</h2>
 
-      {(isLoadingElement && <p>Loading data...</p>) || (
-        <form
-          className='overflow-scroll p-3'
-          onSubmit={(e) => {
-            const { name, dateBirth } = getValues();
+      <form
+        className='overflow-scroll p-3'
+        onSubmit={(e) => {
+          const { name, dateBirth, gender } = getValues();
 
-            getValues("vehiclesOwned").forEach((vo) => {
-              vo.person = {
-                ...vo.person,
-                name: name,
-                dateBirth: dateBirth
-              };
-            });
+          getValues("vehiclesOwned").forEach((vo) => {
+            vo.person = {
+              ...vo.person,
+              name: name,
+              dateBirth: dateBirth,
+              gender: gender
+            };
+          });
 
-            handleSubmit(onSubmit)(e);
-          }}
-          style={{ minWidth: 400, maxHeight: 600 }}
-        >
-          <div className='form-group mb-3'>
-            <label htmlFor={"name"}>Name</label>
+          handleSubmit(onSubmit)(e);
+        }}
+        style={{ minWidth: 400, maxHeight: 600 }}
+      >
+        <div className='form-group mb-3'>
+          <label htmlFor={"name"}>Name</label>
 
-            <input {...register("name")} className='form-control' placeholder='Name' type='text' />
+          <input {...register("name")} className='form-control' placeholder='Name' type='text' />
 
-            <p className='text-danger small'>{errors.name?.message}</p>
-          </div>
+          <p className='text-danger small'>{errors.name?.message}</p>
+        </div>
 
-          <div className='form-group mb-3'>
-            <label htmlFor={"dateBirth"}>Birth Date</label>
+        <div className='form-group mb-3'>
+          <label htmlFor={"dateBirth"}>Birth Date</label>
 
-            <input
-              {...register("dateBirth")}
-              className='form-control'
-              defaultChecked
-              defaultValue={control._defaultValues.dateBirth?.toISOString().substring(0, 10)}
-              placeholder='Birth Date'
-              type='date'
-            />
+          <input
+            {...register("dateBirth")}
+            className='form-control'
+            placeholder='Birth Date'
+            type='date'
+          />
 
-            <p className='text-danger small'>{errors.dateBirth?.message}</p>
-          </div>
+          <p className='text-danger small'>{errors.dateBirth?.message}</p>
+        </div>
 
-          <div className='form-group mb-3'>
-            <label htmlFor={"gender"}>Gender</label>
+        <div className='form-group mb-3'>
+          <label htmlFor={"gender"}>Gender</label>
 
-            <Controller
-              control={control}
-              name={"gender"}
-              defaultValue={Gender.MALE}
-              render={({ field }) => (
-                <ReactSelect
-                  options={genderOptions}
-                  value={genderOptions.find((option) => option.value === field.value)}
-                  onChange={(option) => {
-                    if (option) {
-                      field.onChange(option.value);
-                    }
-                  }}
-                />
-              )}
-            />
+          <Controller
+            control={control}
+            name={"gender"}
+            defaultValue={Gender.MALE}
+            render={({ field }) => (
+              <ReactSelect
+                options={genderOptions}
+                value={genderOptions.find((option) => option.value === field.value)}
+                onChange={(option) => {
+                  if (option) {
+                    field.onChange(option.value);
+                  }
+                }}
+              />
+            )}
+          />
 
-            <p className='text-danger small'>{errors.gender?.message}</p>
-          </div>
+          <p className='text-danger small'>{errors.gender?.message}</p>
+        </div>
 
-          <div className={"form-group mb-3"}>
-            <label htmlFor={"vehiclesOwned"}>Owned Vehicles</label>
+        <div className={"form-group mb-3"}>
+          <label htmlFor={"vehiclesOwned"}>Owned Vehicles</label>
 
-            {(vehiclesOwnedFields.length > 0 && (
-              <div className='table-responsive'>
-                <table className='table table-sm table-hover table-striped'>
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Plate</th>
-                      <th>Year</th>
-                      <th>Acquisition Date</th>
-                      <th>Disposal Date</th>
-                      <th></th>
-                    </tr>
-                  </thead>
+          {(vehiclesOwnedFields.length > 0 && (
+            <div className='table-responsive'>
+              <table className='table table-sm table-hover table-striped'>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Plate</th>
+                    <th>Year</th>
+                    <th>Acquisition Date</th>
+                    <th>Disposal Date</th>
+                    <th></th>
+                  </tr>
+                </thead>
 
-                  <tbody>
-                    {vehiclesOwnedFields.map((vo, index) => (
-                      <Fragment key={vo.id}>
+                <tbody>
+                  {vehiclesOwnedFields.map((vo, index) => (
+                    <Fragment key={vo.id}>
+                      <tr>
+                        <td>{VehicleType[vo.vehicle.type]}</td>
+                        <td>{vo.vehicle.plate}</td>
+                        <td>{new Date(vo.vehicle.dateManufacture).getFullYear()}</td>
+
+                        <td>
+                          <input
+                            {...register(`vehiclesOwned.${index}.dateAcquisition`)}
+                            className='form-control'
+                            defaultChecked
+                            defaultValue={new Date(vo.dateAcquisition)
+                              .toISOString()
+                              .substring(0, 10)}
+                            type='date'
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            {...register(`vehiclesOwned.${index}.dateDisposal`)}
+                            className='form-control'
+                            defaultChecked
+                            defaultValue={
+                              vo.dateDisposal
+                                ? new Date(vo.dateDisposal).toISOString().substring(0, 10)
+                                : undefined
+                            }
+                            type='date'
+                          />
+                        </td>
+
+                        <td>
+                          <button
+                            className='btn btn-sm btn-outline-danger'
+                            onClick={() => vehiclesOwnedRemove(index)}
+                            type='button'
+                          >
+                            ❌
+                          </button>
+                        </td>
+                      </tr>
+
+                      {errors.vehiclesOwned?.[index] && (
                         <tr>
-                          <td>{VehicleType[vo.vehicle.type]}</td>
-                          <td>{vo.vehicle.plate}</td>
-                          <td>{new Date(vo.vehicle.dateManufacture).getFullYear()}</td>
-
-                          <td>
-                            <input
-                              {...register(`vehiclesOwned.${index}.dateAcquisition`)}
-                              className='form-control'
-                              defaultChecked
-                              defaultValue={new Date(vo.dateAcquisition)
-                                .toISOString()
-                                .substring(0, 10)}
-                              type='date'
-                            />
+                          <td colSpan={3}></td>
+                          <td className='text-center'>
+                            <p className='text-danger small'>
+                              {errors.vehiclesOwned?.[index]?.dateAcquisition?.message}
+                            </p>
                           </td>
-
-                          <td>
-                            <input
-                              {...register(`vehiclesOwned.${index}.dateDisposal`)}
-                              className='form-control'
-                              defaultChecked
-                              defaultValue={
-                                vo.dateDisposal
-                                  ? new Date(vo.dateDisposal).toISOString().substring(0, 10)
-                                  : undefined
-                              }
-                              type='date'
-                            />
+                          <td className='text-center'>
+                            <p className='text-danger small'>
+                              {errors.vehiclesOwned?.[index]?.dateDisposal?.message}
+                            </p>
                           </td>
-
-                          <td>
-                            <button
-                              className='btn btn-sm btn-outline-danger'
-                              onClick={() => vehiclesOwnedRemove(index)}
-                              type='button'
-                            >
-                              ❌
-                            </button>
-                          </td>
+                          <td></td>
                         </tr>
+                      )}
+                    </Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )) || <p className='text-black-50'>This person has no vehicles registered</p>}
 
-                        {errors.vehiclesOwned?.[index] && (
-                          <tr>
-                            <td colSpan={3}></td>
-                            <td className='text-center'>
-                              <p className='text-danger small'>
-                                {errors.vehiclesOwned?.[index]?.dateAcquisition?.message}
-                              </p>
-                            </td>
-                            <td className='text-center'>
-                              <p className='text-danger small'>
-                                {errors.vehiclesOwned?.[index]?.dateDisposal?.message}
-                              </p>
-                            </td>
-                            <td></td>
-                          </tr>
-                        )}
-                      </Fragment>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )) || <p className='text-black-50'>This person has no vehicles registered</p>}
+          <AsyncSelect
+            className='mt-3'
+            closeMenuOnSelect={true}
+            defaultOptions
+            hideSelectedOptions={true}
+            isClearable
+            isOptionSelected={(option: any) => {
+              return vehiclesOwnedFields.some((vo) => vo.vehicle.plate === option.value.plate);
+            }}
+            loadingMessage={() => "Loading vehicles data..."}
+            loadOptions={fetchVehicleOptions}
+            noOptionsMessage={() => "No vehicles found"}
+            onChange={(v) => {
+              if (v) {
+                const vehicle: VehicleViewModifiable = v.value;
 
-            <AsyncSelect
-              className='mt-3'
-              closeMenuOnSelect={true}
-              defaultOptions
-              hideSelectedOptions={true}
-              isClearable
-              isOptionSelected={(option: any) => {
-                return vehiclesOwnedFields.some((vo) => vo.vehicle.plate === option.value.plate);
-              }}
-              loadingMessage={() => "Loading vehicles data..."}
-              loadOptions={fetchVehicleOptions}
-              noOptionsMessage={() => "No vehicles found"}
-              onChange={(v) => {
-                if (v) {
-                  const vehicle: VehicleViewModifiable = v.value;
-
-                  vehiclesOwnedAppend({
-                    vehicle: {
-                      ...vehicle,
-                      dateManufacture: new Date(vehicle.dateManufacture),
-                      owners: vehicle.owners.map((o) => o.id!),
-                      insurances: vehicle.insurances.map((i) => i.id!)
-                    },
-                    dateAcquisition: new Date(),
-                    dateDisposal: undefined,
-                    person: {
-                      ...getValues(),
-                      vehiclesOwned: [...vehiclesOwnedFields.map((vo) => vo.id!), vehicle.id!]
-                    }
-                  });
-                }
-              }}
-              placeholder={"Add an owned vehicle..."}
-              value={null}
-              filterOption={(option, rawInput) =>
-                option.label.toLowerCase().includes(rawInput.toLowerCase())
+                vehiclesOwnedAppend({
+                  vehicle: {
+                    ...vehicle,
+                    owners: vehicle.owners.map((o) => o.id!),
+                    insurances: vehicle.insurances.map((i) => i.id!)
+                  },
+                  dateAcquisition: new Date(),
+                  dateDisposal: undefined,
+                  person: {
+                    ...getValues(),
+                    vehiclesOwned: [...vehiclesOwnedFields.map((vo) => vo.id!), vehicle.id!]
+                  }
+                });
               }
-            />
+            }}
+            placeholder={"Add an owned vehicle..."}
+            value={null}
+            filterOption={(option, rawInput) =>
+              option.label.toLowerCase().includes(rawInput.toLowerCase())
+            }
+          />
 
-            <p className={"text-danger small"}>{errors.vehiclesOwned?.message}</p>
-          </div>
+          <p className={"text-danger small"}>{errors.vehiclesOwned?.message}</p>
+        </div>
 
-          <button
-            disabled={isSubmitting}
-            className='mt-3 btn btn-sm btn-success w-100'
-            type='submit'
-          >
-            Submit
-          </button>
-        </form>
-      )}
+        <button disabled={isSubmitting} className='mt-3 btn btn-sm btn-success w-100' type='submit'>
+          Submit
+        </button>
+      </form>
     </div>
   );
 };

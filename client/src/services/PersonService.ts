@@ -6,7 +6,6 @@ import IApiUpdateProperties from '../api/rest/IApiUpdateProperties.ts';
 import Response from '../api/rest/Response.ts';
 import { PersonEndpoints } from '../constants/Endpoints.ts';
 import { Gender } from '../constants/Gender.ts';
-import { VehicleType } from '../constants/VehicleType.ts';
 import PersonView from '../dto/PersonView.ts';
 import PersonViewModifiable, { PersonViewModifiableSchema } from '../dto/PersonViewModifiable.ts';
 import { createEntity, deleteEntity, getEntities, getEntity, updateEntity } from './RestApi.ts';
@@ -65,6 +64,27 @@ const getPeople = async ({
   onFinally,
   onSuccess,
   params
+}: IApiGetCollectionProperties<PersonView>): Promise<PersonView[]> => {
+  return (
+    (
+      await getEntities<PersonView>(PersonEndpoints.get, {
+        filter: filter,
+        onError: onError,
+        onFinally: onFinally,
+        onSuccess: onSuccess,
+        onSuccessMap: (data: PersonView[]) => data.map(mapApiViewData),
+        params: params
+      })
+    ).data ?? []
+  );
+};
+
+const getPeopleModifiable = async ({
+  filter,
+  onError = (error: Error) => console.error(error),
+  onFinally,
+  onSuccess,
+  params
 }: IApiGetCollectionProperties<PersonViewModifiable>): Promise<PersonViewModifiable[]> => {
   return (
     (
@@ -73,30 +93,7 @@ const getPeople = async ({
         onError: onError,
         onFinally: onFinally,
         onSuccess: onSuccess,
-        onSuccessMap: (data: PersonViewModifiable[]) =>
-          data.map((entry) => ({
-            ...entry,
-            crashes: entry.crashes ?? [],
-            gender: (isNaN(entry.gender!)
-              ? Gender[entry.gender as number]
-              : entry.gender) as Gender,
-            vehiclesOwned:
-              entry.vehiclesOwned.map((vo) => ({
-                ...vo,
-                person: {
-                  ...vo.person,
-                  gender: (isNaN(entry.gender!)
-                    ? Gender[entry.gender as number]
-                    : entry.gender) as Gender
-                },
-                vehicle: {
-                  ...vo.vehicle,
-                  type: (isNaN(vo.vehicle.type)
-                    ? VehicleType[vo.vehicle.type]
-                    : vo.vehicle.type) as VehicleType
-                }
-              })) ?? []
-          })) ?? [],
+        onSuccessMap: (data: PersonViewModifiable[]) => data.map(mapApiViewModifiableData),
         params: params
       })
     ).data ?? []
@@ -160,7 +157,6 @@ const mapSchemaToEntity = (personSchema: PersonViewModifiableSchema): PersonView
   return {
     ...personSchema,
     crashes: [],
-    dateBirth: personSchema.dateBirth.toISOString().substring(0, 10),
     vehiclesOwned: personSchema.vehiclesOwned.map(mapVehicleOwnerSchemaToEntity)
   };
 };
@@ -172,6 +168,7 @@ export {
   getPerson,
   getPersonModifiable,
   getPeople,
+  getPeopleModifiable,
   mapApiViewData,
   mapApiViewModifiableData,
   mapSchemaToEntity

@@ -9,7 +9,7 @@ import VehicleOwnerViewModifiable, {
 interface VehicleViewModifiable {
   color: string;
   crashes: number[];
-  dateManufacture: string;
+  dateManufacture: Date;
   id?: number;
   insurances: InsuranceView[];
   owners: VehicleOwnerViewModifiable[];

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import PersonViewModifiable from '../../../dto/PersonViewModifiable.ts';
-import { deletePerson, getPeople, getPersonModifiable } from '../../../services/PersonService.ts';
+import {
+    deletePerson, getPeopleModifiable, getPersonModifiable
+} from '../../../services/PersonService.ts';
 import FormList from '../../forms/FormList.tsx';
 import { PersonColumns, VehicleOwnerColumnsVehicleSided } from '../../forms/FormListColumns.ts';
 import PersonManageForm from './PersonManageForm.tsx';
@@ -13,7 +15,7 @@ const PersonListForm = () => {
   useEffect(() => {
     setLoading(true);
 
-    getPeople({}).then(async (people) => {
+    getPeopleModifiable({}).then(async (people) => {
       setRows(people);
 
       setLoading(false);
@@ -57,17 +59,15 @@ const PersonListForm = () => {
             }
           };
         }}
-        onExpand={(row) => {
-          return (
-            <div className='mw-100 w-100 h-100'>
-              <FormList
-                title={`${row.name} Owned Vehicles`}
-                columns={VehicleOwnerColumnsVehicleSided}
-                rows={row.vehiclesOwned}
-              />
-            </div>
-          );
-        }}
+        onExpand={(row) => (
+          <div className='mw-100 w-100 h-100'>
+            <FormList
+              title={`${row.name} Owned Vehicles`}
+              columns={VehicleOwnerColumnsVehicleSided}
+              rows={row.vehiclesOwned}
+            />
+          </div>
+        )}
       />
     )) || <p className='text-center text-black-50'>Loading entries...</p>
   );
