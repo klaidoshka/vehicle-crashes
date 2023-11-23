@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +20,7 @@ import java.util.Set;
 import org.springframework.lang.NonNull;
 
 @Entity
+@Table(schema = "crashes")
 public final class Crash {
 
   @ManyToMany(
@@ -26,7 +28,8 @@ public final class Crash {
       fetch = FetchType.EAGER
   )
   @JoinTable(
-      name = "crashCasualtiesPeople",
+      schema = "crashes",
+      name = "crash_casualties_people",
       joinColumns = @JoinColumn(name = "crash_id"),
       inverseJoinColumns = @JoinColumn(name = "person_id")
   )
@@ -37,7 +40,8 @@ public final class Crash {
       fetch = FetchType.EAGER
   )
   @JoinTable(
-      name = "crashCasualtiesVehicle",
+      schema = "crashes",
+      name = "crash_casualties_vehicle",
       joinColumns = @JoinColumn(name = "crash_id"),
       inverseJoinColumns = @JoinColumn(name = "vehicle_id")
   )
