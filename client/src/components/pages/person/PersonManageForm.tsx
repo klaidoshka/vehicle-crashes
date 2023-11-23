@@ -179,7 +179,9 @@ const PersonManageForm = ({
                   {vehiclesOwnedFields.map((vo, index) => (
                     <Fragment key={vo.id}>
                       <tr>
-                        <td>{VehicleType[vo.vehicle.type]}</td>
+                        <td>
+                          {!isNaN(vo.vehicle.type) ? VehicleType[vo.vehicle.type] : vo.vehicle.type}
+                        </td>
                         <td>{vo.vehicle.plate}</td>
                         <td>{new Date(vo.vehicle.dateManufacture).getFullYear()}</td>
 
@@ -269,7 +271,7 @@ const PersonManageForm = ({
                   dateDisposal: undefined,
                   person: {
                     ...getValues(),
-                    vehiclesOwned: [...vehiclesOwnedFields.map((vo) => vo.id!), vehicle.id!]
+                    vehiclesOwned: []
                   }
                 });
               }

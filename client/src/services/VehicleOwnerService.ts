@@ -20,9 +20,9 @@ const mapSchemaToEntity = (
   return {
     ...vehicleOwnerSchema,
     dateDisposal:
-      vehicleOwnerSchema.dateDisposal !== undefined && vehicleOwnerSchema.dateDisposal !== ""
-        ? new Date(vehicleOwnerSchema.dateDisposal)
-        : undefined
+      (vehicleOwnerSchema.dateDisposal ?? "") === ""
+        ? undefined
+        : new Date(vehicleOwnerSchema.dateDisposal!)
   };
 };
 

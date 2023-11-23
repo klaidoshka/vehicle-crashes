@@ -139,7 +139,7 @@ const CrashManageForm = ({ callback, element, isEdit }: IManageFormProperties<Cr
                     <tr key={p.id}>
                       <td>{p.name}</td>
                       <td>{new Date(p.dateBirth).toISOString().substring(0, 10)}</td>
-                      <td>{p.gender}</td>
+                      <td>{!isNaN(p.gender) ? Gender[p.gender] : p.gender}</td>
 
                       <td className='d-flex justify-content-end'>
                         <button
@@ -202,7 +202,7 @@ const CrashManageForm = ({ callback, element, isEdit }: IManageFormProperties<Cr
                 <tbody>
                   {casualtiesVehicleFields.map((v, index) => (
                     <tr key={v.id}>
-                      <td>{v.type}</td>
+                      <td>{!isNaN(v.type) ? VehicleType[v.type] : v.type}</td>
                       <td>{v.plate}</td>
                       <td>{new Date(v.dateManufacture).getFullYear()}</td>
 
@@ -265,10 +265,7 @@ const fetchVehicleOptions = async (inputValue: string): Promise<ValuedOptions<Ve
   })
     .then((vehicles) =>
       vehicles.map((v) => ({
-        value: {
-          ...v,
-          type: VehicleType[v.type] as unknown as VehicleType
-        },
+        value: v,
         label: `${VehicleType[v.type]} - ${v.plate}`
       }))
     )
@@ -283,10 +280,7 @@ const fetchPersonOptions = async (inputValue: string): Promise<ValuedOptions<Per
   })
     .then((people) =>
       people.map((p) => ({
-        value: {
-          ...p,
-          gender: Gender[p.gender] as unknown as Gender
-        },
+        value: p,
         label: `${p.name} - ${Gender[p.gender]}`
       }))
     )

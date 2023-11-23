@@ -25,7 +25,6 @@ const VehicleManageForm = ({
     register,
     handleSubmit,
     reset,
-    watch,
     getValues,
     formState: { errors, isSubmitting, isDirty }
   } = useForm<VehicleViewModifiableSchema>({
@@ -51,7 +50,13 @@ const VehicleManageForm = ({
       return;
     }
 
-    reset(element);
+    reset({
+      ...element,
+      owners: element.owners.map((o) => ({
+        ...o,
+        dateDisposal: (o.dateDisposal ?? "") === "" ? undefined : o.dateDisposal
+      }))
+    });
   }, []);
 
   const onSubmit = async (data: VehicleViewModifiableSchema) => {
@@ -100,9 +105,9 @@ const VehicleManageForm = ({
       <form
         className='overflow-scroll p-3'
         onSubmit={(e) => {
-          const { color, dateManufacture, plate, type } = getValues();
+          const { color, dateManufacture, owners, plate, type } = getValues();
 
-          getValues("owners").forEach((o) => {
+          owners.forEach((o) => {
             o.vehicle = {
               ...o.vehicle,
               color: color,
@@ -273,7 +278,7 @@ const VehicleManageForm = ({
 const vehicleTypeOptions: ValuedOptions<VehicleType>[] = Object.values(VehicleType)
   .filter((v: any) => isNaN(v))
   .map((v) => ({
-    value: VehicleType[v as keyof typeof VehicleType],
+    value: v as VehicleType,
     label: v as string
   }));
 

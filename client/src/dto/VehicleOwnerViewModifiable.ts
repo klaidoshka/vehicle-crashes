@@ -31,7 +31,7 @@ const vehicleOwnerViewModifiableSchema = z
     vehicle: vehicleViewSchema
   })
   .refine((v) => (v.dateDisposal ? equalOrGreater(v.dateDisposal, v.dateAcquisition) : true), {
-    message: "Disposal date must be after acquisition date",
+    message: "Disposal date must be after acquisition date.",
     path: ["dateDisposal"]
   });
 
