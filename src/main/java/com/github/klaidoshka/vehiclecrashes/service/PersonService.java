@@ -51,7 +51,7 @@ public final class PersonService implements IPersonService {
 
   @Override
   public void createOrUpdate(@NonNull PersonViewModifiable personView) {
-    context.wrappedTransaction(m -> {
+    context.wrappedUpdate(m -> {
       final Person person;
 
       if (personView.id() != null) {
@@ -112,7 +112,7 @@ public final class PersonService implements IPersonService {
 
   @Override
   public void deleteById(@NonNull Long id) {
-    context.wrappedTransaction(m -> {
+    context.wrappedUpdate(m -> {
       final Person person = m.find(Person.class, id);
 
       if (person == null) {

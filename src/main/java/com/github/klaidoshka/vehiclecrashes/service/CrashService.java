@@ -35,7 +35,7 @@ public final class CrashService implements ICrashService {
   @NonNull
   @Override
   public void createOrUpdate(@NonNull CrashView crashView) {
-    context.wrappedTransaction(m -> {
+    context.wrappedUpdate(m -> {
       final Crash crash;
 
       if (crashView.id() != null) {
@@ -79,7 +79,7 @@ public final class CrashService implements ICrashService {
 
   @Override
   public void deleteById(@NonNull Long id) {
-    context.wrappedTransaction(m -> {
+    context.wrappedUpdate(m -> {
       Crash crash = m.find(Crash.class, id);
 
       if (crash == null) {

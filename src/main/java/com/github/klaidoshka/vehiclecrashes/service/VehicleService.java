@@ -57,7 +57,7 @@ public final class VehicleService implements IVehicleService {
   @NonNull
   @Override
   public void createOrUpdate(@NonNull VehicleViewModifiable vehicleView) {
-    context.wrappedTransaction(m -> {
+    context.wrappedUpdate(m -> {
       final Vehicle vehicle;
 
       if (vehicleView.id() != null) {
@@ -114,7 +114,7 @@ public final class VehicleService implements IVehicleService {
 
   @Override
   public void deleteById(@NonNull Long id) {
-    context.wrappedTransaction(m -> {
+    context.wrappedUpdate(m -> {
       final Vehicle vehicle = m.find(Vehicle.class, id);
 
       if (vehicle == null) {

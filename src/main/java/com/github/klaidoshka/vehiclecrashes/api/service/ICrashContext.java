@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import org.springframework.lang.NonNull;
 
 public interface ICrashContext {
@@ -73,11 +74,20 @@ public interface ICrashContext {
   <E> @NonNull ResponseValued<Collection<E>> findAll(@NonNull Class<E> clazz);
 
   /**
+   * Wraps fetch around consumer
+   *
+   * @param consumer to wrap
+   * @param <T>      type of fetched value
+   * @return response with fetched value
+   */
+  <T> T wrappedRead(@NonNull Function<EntityManager, T> consumer);
+
+  /**
    * Wraps transaction around consumer
    *
    * @param consumer to wrap
    * @return response with boolean and/or message values, indicating if transaction was successful
    */
   @NonNull
-  ResponseBase wrappedTransaction(@NonNull Consumer<EntityManager> consumer);
+  ResponseBase wrappedUpdate(@NonNull Consumer<EntityManager> consumer);
 }

@@ -163,7 +163,7 @@ const VehicleManageForm = ({
                 value={vehicleTypeOptions.find((option) => option.value === field.value)}
                 onChange={(option) => {
                   if (option) {
-                    field.onChange(option.value);
+                    field.onChange(VehicleType[option.value]);
                   }
                 }}
               />

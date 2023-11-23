@@ -11,6 +11,7 @@ import jakarta.persistence.criteria.Root;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,30 @@ public final class CrashContext implements ICrashContext {
   }
 
   @Override
+  public <T> T wrappedRead(@NonNull Function<EntityManager, T> consumer) {
+    final EntityManager manager = entityManagerFactory.createEntityManager();
+
+    try {
+      manager.getTransaction().begin();
+
+      final T element = consumer.apply(manager);
+
+      manager.getTransaction().commit();
+
+      return element;
+    } catch (Exception e) {
+      LOGGER.error("Error while wrapping transaction for consumer. Rolling back...");
+      LOGGER.error("Message: {}", e.getMessage());
+
+      manager.getTransaction().rollback();
+
+      return null;
+    } finally {
+      manager.close();
+    }
+  }
+
+  @Override
   public <E> @NonNull ResponseValued<E> createOrUpdate(@NonNull E entity) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
@@ -142,7 +167,7 @@ public final class CrashContext implements ICrashContext {
 
   @NonNull
   @Override
-  public ResponseBase wrappedTransaction(@NonNull Consumer<EntityManager> consumer) {
+  public ResponseBase wrappedUpdate(@NonNull Consumer<EntityManager> consumer) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
