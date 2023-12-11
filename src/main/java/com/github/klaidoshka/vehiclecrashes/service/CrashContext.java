@@ -1,7 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -9,7 +9,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ public final class CrashContext implements ICrashContext {
   }
 
   @Override
-  public @NonNull <E> ResponseValued<E> delete(@NonNull E entity) {
+  public @NonNull <E> ResultTyped<E> delete(@NonNull E entity) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
@@ -43,37 +42,37 @@ public final class CrashContext implements ICrashContext {
 
       manager.getTransaction().commit();
 
-      return ResponseValued.success(entity);
+      return ResultTyped.success(entity);
     } catch (Exception e) {
       LOGGER.error("Error while deleting entity. Rolling back...");
       LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
-      return ResponseValued.failure(e, null);
+      return ResultTyped.failure(e);
     } finally {
       manager.close();
     }
   }
 
   @Override
-  public @NonNull <E> ResponseValued<E> find(@NonNull Class<E> clazz, @NonNull Object id) {
+  public @NonNull <E> ResultTyped<E> find(@NonNull Class<E> clazz, @NonNull Object id) {
     try (final EntityManager manager = entityManagerFactory.createEntityManager()) {
       final E entity = manager.find(clazz, id);
 
       return entity != null
-             ? ResponseValued.success(entity)
-             : ResponseValued.failure("Entity not found", null);
+             ? ResultTyped.success(entity)
+             : ResultTyped.failure("Entity not found");
     } catch (Exception e) {
       LOGGER.error("Error while finding entity");
       LOGGER.error("Message: {}", e.getMessage());
 
-      return ResponseValued.failure(e, null);
+      return ResultTyped.failure(e);
     }
   }
 
   @Override
-  public @NonNull <E> ResponseValued<Collection<E>> findAll(@NonNull Class<E> clazz) {
+  public @NonNull <E> ResultTyped<Collection<E>> findAll(@NonNull Class<E> clazz) {
     try (final EntityManager entityManager = entityManagerFactory.createEntityManager()) {
       final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
       final CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(clazz);
@@ -81,12 +80,12 @@ public final class CrashContext implements ICrashContext {
 
       criteriaQuery.select(root);
 
-      return ResponseValued.success(entityManager.createQuery(criteriaQuery).getResultList());
+      return ResultTyped.success(entityManager.createQuery(criteriaQuery).getResultList());
     } catch (Exception e) {
       LOGGER.error("Error while getting entities");
       LOGGER.error("Message: {}", e.getMessage());
 
-      return ResponseValued.failure(e, Collections.emptyList());
+      return ResultTyped.failure(e);
     }
   }
 
@@ -115,7 +114,7 @@ public final class CrashContext implements ICrashContext {
   }
 
   @Override
-  public <E> @NonNull ResponseValued<E> createOrUpdate(@NonNull E entity) {
+  public <E> @NonNull ResultTyped<E> createOrUpdate(@NonNull E entity) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
@@ -125,21 +124,21 @@ public final class CrashContext implements ICrashContext {
 
       manager.getTransaction().commit();
 
-      return ResponseValued.success(entity);
+      return ResultTyped.success(entity);
     } catch (Exception e) {
       LOGGER.error("Error while saving entity. Rolling back...");
       LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
-      return ResponseValued.failure(e, null);
+      return ResultTyped.failure(e);
     } finally {
       manager.close();
     }
   }
 
   @Override
-  public <E> @NonNull ResponseValued<Collection<E>> createOrUpdate(
+  public <E> @NonNull ResultTyped<Collection<E>> createOrUpdate(
       @NonNull Collection<E> entities) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
@@ -152,14 +151,14 @@ public final class CrashContext implements ICrashContext {
 
       manager.getTransaction().commit();
 
-      return ResponseValued.success(entitiesMerged);
+      return ResultTyped.success(entitiesMerged);
     } catch (Exception e) {
       LOGGER.error("Error while saving entities. Rolling back...");
       LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
-      return ResponseValued.failure(e, Collections.emptyList());
+      return ResultTyped.failure(e);
     } finally {
       manager.close();
     }
@@ -167,7 +166,7 @@ public final class CrashContext implements ICrashContext {
 
   @NonNull
   @Override
-  public ResponseBase wrappedUpdate(@NonNull Consumer<EntityManager> consumer) {
+  public Result wrappedUpdate(@NonNull Consumer<EntityManager> consumer) {
     final EntityManager manager = entityManagerFactory.createEntityManager();
 
     try {
@@ -177,14 +176,14 @@ public final class CrashContext implements ICrashContext {
 
       manager.getTransaction().commit();
 
-      return ResponseBase.success();
+      return Result.success();
     } catch (Exception e) {
       LOGGER.error("Error while wrapping transaction for consumer. Rolling back...");
       LOGGER.error("Message: {}", e.getMessage());
 
       manager.getTransaction().rollback();
 
-      return ResponseBase.failure(e.getMessage());
+      return Result.failure(e.getMessage());
     } finally {
       manager.close();
     }

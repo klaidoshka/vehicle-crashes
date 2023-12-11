@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.controller;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
 import com.github.klaidoshka.vehiclecrashes.api.service.IConfigurationService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public final class ErrorController implements
   }
 
   @PostMapping
-  public @NonNull ResponseEntity<ResponseBase> handleErrorResponse(
+  public @NonNull ResponseEntity<Result> handleErrorResponse(
       @NonNull HttpServletRequest request, @NonNull Exception exception) {
 
     return ResponseEntity
@@ -50,7 +50,7 @@ public final class ErrorController implements
             Optional.ofNullable((Integer) request.getAttribute("javax.servlet.error.status_code"))
                 .orElse(400)
         )
-        .body(ResponseBase.failure(
+        .body(Result.failure(
             Optional.ofNullable((String) request.getAttribute("javax.servlet.error.message"))
                 .orElse("Error has occurred on the server side. Wrong request.")
         ));

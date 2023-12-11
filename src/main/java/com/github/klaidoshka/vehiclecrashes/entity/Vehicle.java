@@ -28,6 +28,7 @@ public final class Vehicle {
       mappedBy = "casualtiesVehicle"
   )
   private final Set<Crash> crashes = new HashSet<>();
+
   @OneToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
@@ -35,6 +36,7 @@ public final class Vehicle {
       orphanRemoval = true
   )
   private final Set<Insurance> insurances = new HashSet<>();
+
   @OneToMany(
       cascade = CascadeType.ALL,
       fetch = FetchType.EAGER,
@@ -42,14 +44,18 @@ public final class Vehicle {
       orphanRemoval = true
   )
   private final Set<VehicleOwner> owners = new HashSet<>();
+
   @Column(nullable = false)
   private String color;
+
   @Column(nullable = false)
   private LocalDate dateManufacture;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
   private Long id;
+
   @Column(nullable = false, unique = true)
   private String plate;
 

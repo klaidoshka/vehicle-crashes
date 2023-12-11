@@ -7,7 +7,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.Crash;
 import com.github.klaidoshka.vehiclecrashes.entity.Person;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.PersonViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.person.PersonViewModifiable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;

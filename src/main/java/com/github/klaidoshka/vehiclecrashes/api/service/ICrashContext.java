@@ -1,7 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import jakarta.persistence.EntityManager;
 import java.util.Collection;
 import java.util.Optional;
@@ -18,7 +18,7 @@ public interface ICrashContext {
    * @param <E>    entity type
    * @return response with saved entity or null, if entity save failed
    */
-  <E> @NonNull ResponseValued<E> createOrUpdate(@NonNull E entity);
+  <E> @NonNull ResultTyped<E> createOrUpdate(@NonNull E entity);
 
   /**
    * Saves entities to the context
@@ -27,7 +27,7 @@ public interface ICrashContext {
    * @param <E>      entity type
    * @return response with saved entities or empty collection, if entities save failed
    */
-  <E> @NonNull ResponseValued<Collection<E>> createOrUpdate(@NonNull Collection<E> entities);
+  <E> @NonNull ResultTyped<Collection<E>> createOrUpdate(@NonNull Collection<E> entities);
 
   /**
    * Deletes entity from the context
@@ -36,7 +36,7 @@ public interface ICrashContext {
    * @param <E>    entity type
    * @return response with deleted entity or null, if entity delete failed
    */
-  <E> @NonNull ResponseValued<E> delete(@NonNull E entity);
+  <E> @NonNull ResultTyped<E> delete(@NonNull E entity);
 
   /**
    * Deletes entity from the context
@@ -46,12 +46,12 @@ public interface ICrashContext {
    * @param <E>   entity type
    * @return response with deleted entity or null, if entity delete failed
    */
-  default <E> @NonNull ResponseValued<E> deleteById(@NonNull Class<E> clazz, @NonNull Object id) {
-    final ResponseValued<E> entity = find(clazz, id);
+  default <E> @NonNull ResultTyped<E> deleteById(@NonNull Class<E> clazz, @NonNull Object id) {
+    final ResultTyped<E> entity = find(clazz, id);
 
     return Optional.ofNullable(entity.getValue())
         .map(this::delete)
-        .orElse(ResponseValued.failure("Entity not found", null));
+        .orElse(ResultTyped.failure("Entity not found"));
   }
 
   /**
@@ -62,7 +62,7 @@ public interface ICrashContext {
    * @param <E>   entity type
    * @return response with found entity or null, if entity was not found
    */
-  <E> @NonNull ResponseValued<E> find(@NonNull Class<E> clazz, @NonNull Object id);
+  <E> @NonNull ResultTyped<E> find(@NonNull Class<E> clazz, @NonNull Object id);
 
   /**
    * Finds all entities of given class
@@ -71,7 +71,7 @@ public interface ICrashContext {
    * @param <E>   entity type
    * @return response with collection of entities
    */
-  <E> @NonNull ResponseValued<Collection<E>> findAll(@NonNull Class<E> clazz);
+  <E> @NonNull ResultTyped<Collection<E>> findAll(@NonNull Class<E> clazz);
 
   /**
    * Wraps fetch around consumer
@@ -89,5 +89,5 @@ public interface ICrashContext {
    * @return response with boolean and/or message values, indicating if transaction was successful
    */
   @NonNull
-  ResponseBase wrappedUpdate(@NonNull Consumer<EntityManager> consumer);
+  Result wrappedUpdate(@NonNull Consumer<EntityManager> consumer);
 }

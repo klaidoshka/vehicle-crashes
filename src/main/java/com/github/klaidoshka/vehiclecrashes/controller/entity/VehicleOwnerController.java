@@ -1,9 +1,9 @@
 package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleOwnerView;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.vehicleowner.VehicleOwnerView;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleOwnerMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Optional;
@@ -29,7 +29,7 @@ public final class VehicleOwnerController {
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<VehicleOwnerView>> get(
+  public @NonNull ResponseEntity<ResultTyped<VehicleOwnerView>> get(
       @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(
         Optional.ofNullable(context.find(VehicleOwner.class, id).getValue())

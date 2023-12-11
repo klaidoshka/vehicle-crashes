@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.entity.dto;
+package com.github.klaidoshka.vehiclecrashes.entity.dto.person;
 
 import com.github.klaidoshka.vehiclecrashes.constant.Gender;
 import java.time.LocalDate;
@@ -6,13 +6,13 @@ import java.util.Collection;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-public record PersonViewModifiable(
+public record PersonView(
     @NonNull Collection<Long> crashes,
     @NonNull LocalDate dateBirth,
     @NonNull Gender gender,
     @Nullable Long id,
     @NonNull String name,
-    @NonNull Collection<VehicleOwnerViewModifiable> vehiclesOwned
+    @NonNull Collection<Long> vehiclesOwned
 ) {
 
 }

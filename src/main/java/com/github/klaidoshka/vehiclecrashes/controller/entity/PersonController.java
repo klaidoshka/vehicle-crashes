@@ -1,12 +1,12 @@
 package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.service.IPersonService;
 import com.github.klaidoshka.vehiclecrashes.entity.Person;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.PersonView;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.PersonViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.person.PersonView;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.person.PersonViewModifiable;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.PersonMapper;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.PersonModifiableMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
@@ -44,46 +44,46 @@ public final class PersonController {
   }
 
   @PostMapping
-  public @NonNull ResponseEntity<ResponseBase> create(
+  public @NonNull ResponseEntity<Result> create(
       @NonNull @RequestBody PersonViewModifiable entity) {
     if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid person data"));
+      return ResponseResolver.resolve(Result.failure("Invalid person data"));
     }
 
     try {
       service.createOrUpdate(entity);
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
 
-    return ResponseEntity.ok(ResponseBase.success());
+    return ResponseEntity.ok(Result.success());
   }
 
   @DeleteMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
+  public @NonNull ResponseEntity<Result> delete(@NonNull @PathVariable Long id) {
     try {
       service.deleteById(id);
 
-      return ResponseEntity.ok(ResponseBase.success());
+      return ResponseEntity.ok(Result.success());
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
   }
 
   @PutMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
+  public @NonNull ResponseEntity<Result> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody PersonViewModifiable entity) {
     if (!id.equals(entity.id()) || !service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid person data (or id mismatch)"));
+      return ResponseResolver.resolve(Result.failure("Invalid person data (or id mismatch)"));
     }
 
     try {
       service.createOrUpdate(entity);
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
 
-    return ResponseEntity.ok(ResponseBase.success());
+    return ResponseEntity.ok(Result.success());
   }
 
   @GetMapping
@@ -94,7 +94,7 @@ public final class PersonController {
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<PersonView>> get(@NonNull @PathVariable Long id) {
+  public @NonNull ResponseEntity<ResultTyped<PersonView>> get(@NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Person.class, id).getValue())
         .map(personViewMapper), "Entity not found");
   }
@@ -107,7 +107,7 @@ public final class PersonController {
   }
 
   @GetMapping("/{id}/modifiable")
-  public @NonNull ResponseEntity<ResponseValued<PersonViewModifiable>> getModifiable(
+  public @NonNull ResponseEntity<ResultTyped<PersonViewModifiable>> getModifiable(
       @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Person.class, id).getValue())
         .map(personViewModifiableMapper), "Entity not found");

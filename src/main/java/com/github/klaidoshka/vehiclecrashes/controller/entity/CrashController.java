@@ -1,7 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashService;
 import com.github.klaidoshka.vehiclecrashes.entity.Crash;
@@ -39,45 +39,45 @@ public final class CrashController {
   }
 
   @PostMapping
-  public @NonNull ResponseEntity<ResponseBase> create(@NonNull @RequestBody CrashView entity) {
+  public @NonNull ResponseEntity<Result> create(@NonNull @RequestBody CrashView entity) {
     if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid crash data"));
+      return ResponseResolver.resolve(Result.failure("Invalid crash data"));
     }
 
     try {
       service.createOrUpdate(entity);
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
 
-    return ResponseEntity.ok(ResponseBase.success());
+    return ResponseEntity.ok(Result.success());
   }
 
   @DeleteMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
+  public @NonNull ResponseEntity<Result> delete(@NonNull @PathVariable Long id) {
     try {
       service.deleteById(id);
 
-      return ResponseEntity.ok(ResponseBase.success());
+      return ResponseEntity.ok(Result.success());
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
   }
 
   @PutMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
+  public @NonNull ResponseEntity<Result> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody CrashView entity) {
     if (!id.equals(entity.id()) || !service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid crash data (or id mismatch)"));
+      return ResponseResolver.resolve(Result.failure("Invalid crash data (or id mismatch)"));
     }
 
     try {
       service.createOrUpdate(entity);
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
 
-    return ResponseEntity.ok(ResponseBase.success());
+    return ResponseEntity.ok(Result.success());
   }
 
   @GetMapping
@@ -88,7 +88,7 @@ public final class CrashController {
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<CrashView>> get(@NonNull @PathVariable Long id) {
+  public @NonNull ResponseEntity<ResultTyped<CrashView>> get(@NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Crash.class, id).getValue())
         .map(crashMapper), "Entity not found");
   }

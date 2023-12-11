@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
 import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
@@ -29,7 +29,7 @@ public final class InsuranceController {
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<InsuranceView>> get(
+  public @NonNull ResponseEntity<ResultTyped<InsuranceView>> get(
       @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(
         Optional.ofNullable(context.find(Insurance.class, id).getValue())

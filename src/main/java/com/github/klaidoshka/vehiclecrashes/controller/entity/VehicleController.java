@@ -1,12 +1,12 @@
 package com.github.klaidoshka.vehiclecrashes.controller.entity;
 
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseBase;
-import com.github.klaidoshka.vehiclecrashes.api.response.ResponseValued;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.service.IVehicleService;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleView;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.vehicle.VehicleView;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.vehicle.VehicleViewModifiable;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleMapper;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleModifiableMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
@@ -44,47 +44,47 @@ public final class VehicleController {
   }
 
   @PostMapping
-  public @NonNull ResponseEntity<ResponseBase> create(
+  public @NonNull ResponseEntity<Result> create(
       @NonNull @RequestBody VehicleViewModifiable entity) {
     if (!service.isValid(entity)) {
-      return ResponseResolver.resolve(ResponseBase.failure("Invalid vehicle data"));
+      return ResponseResolver.resolve(Result.failure("Invalid vehicle data"));
     }
 
     try {
       service.createOrUpdate(entity);
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
 
-    return ResponseEntity.ok(ResponseBase.success());
+    return ResponseEntity.ok(Result.success());
   }
 
   @DeleteMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseBase> delete(@NonNull @PathVariable Long id) {
+  public @NonNull ResponseEntity<Result> delete(@NonNull @PathVariable Long id) {
     try {
       service.deleteById(id);
 
-      return ResponseEntity.ok(ResponseBase.success());
+      return ResponseEntity.ok(Result.success());
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
   }
 
   @PutMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseBase> edit(@NonNull @PathVariable Long id,
+  public @NonNull ResponseEntity<Result> edit(@NonNull @PathVariable Long id,
       @NonNull @RequestBody VehicleViewModifiable entity) {
     if (!id.equals(entity.id()) || !service.isValid(entity)) {
       return ResponseResolver.resolve(
-          ResponseBase.failure("Invalid vehicle data (or id mismatch)"));
+          Result.failure("Invalid vehicle data (or id mismatch)"));
     }
 
     try {
       service.createOrUpdate(entity);
     } catch (IllegalArgumentException e) {
-      return ResponseResolver.resolve(ResponseBase.failure(e.getMessage()));
+      return ResponseResolver.resolve(Result.failure(e.getMessage()));
     }
 
-    return ResponseEntity.ok(ResponseBase.success());
+    return ResponseEntity.ok(Result.success());
   }
 
   @GetMapping
@@ -95,7 +95,7 @@ public final class VehicleController {
   }
 
   @GetMapping("/{id}")
-  public @NonNull ResponseEntity<ResponseValued<VehicleView>> get(@NonNull @PathVariable Long id) {
+  public @NonNull ResponseEntity<ResultTyped<VehicleView>> get(@NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Vehicle.class, id).getValue())
         .map(vehicleViewMapper), "Entity not found");
   }
@@ -108,7 +108,7 @@ public final class VehicleController {
   }
 
   @GetMapping("/{id}/modifiable")
-  public @NonNull ResponseEntity<ResponseValued<VehicleViewModifiable>> getModifiable(
+  public @NonNull ResponseEntity<ResultTyped<VehicleViewModifiable>> getModifiable(
       @NonNull @PathVariable Long id) {
     return ResponseResolver.resolve(Optional.ofNullable(context.find(Vehicle.class, id).getValue())
         .map(vehicleViewModifiableMapper), "Entity not found");

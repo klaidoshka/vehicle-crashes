@@ -4,7 +4,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.Crash;
 import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.VehicleView;
+import com.github.klaidoshka.vehiclecrashes.entity.dto.vehicle.VehicleView;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
