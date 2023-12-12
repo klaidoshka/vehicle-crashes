@@ -1,6 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
@@ -19,11 +20,11 @@ public interface IJwtService {
 
   boolean isTokenValid(String token, UserDetails details);
 
-  <T> T resolveClaim(String token, Function<Claims, T> mapper);
+  <T> T resolveClaim(String token, Function<Claims, T> mapper) throws JwtException;
 
-  Claims resolveClaims(String token);
+  Claims resolveClaims(String token) throws JwtException;
 
-  Date resolveExpirationDate(String token);
+  Date resolveExpirationDate(String token) throws JwtException;
 
-  String resolveUsername(String token);
+  String resolveUsername(String token) throws JwtException;
 }

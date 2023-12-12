@@ -9,6 +9,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.dto.CrashView;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.CrashMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -82,7 +83,13 @@ public final class CrashController {
 
   @GetMapping
   public @NonNull Collection<CrashView> get() {
-    return context.findAll(Crash.class).getValue().stream()
+    final ResultTyped<Collection<Crash>> result = context.findAll(Crash.class);
+
+    if (!result.isSuccess()) {
+      return List.of();
+    }
+
+    return result.getValue().stream()
         .map(crashMapper)
         .toList();
   }

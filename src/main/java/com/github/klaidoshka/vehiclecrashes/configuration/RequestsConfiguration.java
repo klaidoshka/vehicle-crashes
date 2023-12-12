@@ -1,13 +1,13 @@
 package com.github.klaidoshka.vehiclecrashes.configuration;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import com.github.klaidoshka.vehiclecrashes.api.service.IConfigurationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -34,16 +34,17 @@ public class RequestsConfiguration {
   }
 
   @Bean
-  public SecurityFilterChain configureRequests(@NonNull HttpSecurity httpSecurity)
+  public SecurityFilterChain securityFilterChain(@NonNull HttpSecurity httpSecurity)
       throws Exception {
     return httpSecurity
-        .authenticationProvider(authenticationProvider)
-        .cors(Customizer.withDefaults())
-        .csrf(AbstractHttpConfigurer::disable)
-        .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(c -> c
-            .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
-            .anyRequest().authenticated())
+            .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+            .requestMatchers("/error").permitAll()
+            .anyRequest().permitAll())
+        .authenticationProvider(authenticationProvider)
+        .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .cors(withDefaults())
+        .csrf(AbstractHttpConfigurer::disable)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
@@ -59,11 +60,11 @@ public class RequestsConfiguration {
             .allowedHeaders(
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.AUTHORIZATION,
-                HttpHeaders.ORIGIN,
-                HttpHeaders.ACCEPT)
+                HttpHeaders.ORIGIN)
             .allowedOrigins(
                 configurationService.getClientServerAddress(),
-                configurationService.getClientServerDomain())
+                configurationService.getClientServerDomain(),
+                configurationService.getServerAddress())
             .allowedMethods(
                 RequestMethod.GET.name(),
                 RequestMethod.DELETE.name(),

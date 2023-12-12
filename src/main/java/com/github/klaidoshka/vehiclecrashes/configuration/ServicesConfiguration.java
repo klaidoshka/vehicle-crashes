@@ -1,6 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.configuration;
 
-import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
+import com.github.klaidoshka.vehiclecrashes.api.service.IUserService;
 import com.github.klaidoshka.vehiclecrashes.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class ServicesConfiguration {
 
-  private final ICrashContext crashContext;
+  private final IUserService userService;
 
-  public ServicesConfiguration(ICrashContext crashContext) {
-    this.crashContext = crashContext;
+  public ServicesConfiguration(IUserService userService) {
+    this.userService = userService;
   }
 
   @Bean
@@ -44,9 +45,14 @@ public class ServicesConfiguration {
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return userName -> crashContext.wrappedRead(
-        (m) -> m.createQuery("SELECT u FROM User u WHERE u.username = :userName", User.class)
-            .setParameter("userName", userName)
-            .getSingleResult());
+    return userName -> {
+      final ResultTyped<User> result = userService.getUserByUsername(userName);
+
+      if (!result.isSuccess()) {
+        throw new IllegalArgumentException("User not found");
+      }
+
+      return result.getValue();
+    };
   }
 }

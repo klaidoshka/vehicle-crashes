@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/error")
@@ -23,22 +24,8 @@ public final class ErrorController implements
   }
 
   @GetMapping
-  public @NonNull String redirectToClientServer(@NonNull HttpServletRequest request) {
-    return """
-          <html>
-            <head>
-              <title>Redirecting...</title>
-            </head>
-            <body>
-              <script>
-                setTimeout(function () {
-                  window.location.href = "%s";
-                }, 3000);
-              </script>
-            </body>
-          </html>
-        """
-        .formatted(configurationService.getClientServerDomain());
+  public @NonNull RedirectView redirectToClientServer(@NonNull HttpServletRequest request) {
+    return new RedirectView(configurationService.getClientServerDomain());
   }
 
   @PostMapping

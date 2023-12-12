@@ -6,6 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 public class JwtAuthFilter extends OncePerRequestFilter {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthFilter.class);
 
   private final IJwtService jwtService;
   private final UserDetailsService userDetailsService;
@@ -34,33 +38,49 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     if (header == null || !header.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
 
+      LOGGER.info("Authentication failed because of empty header");
+
       return;
     }
 
     final String token = header.substring(7);
-    final String userName = jwtService.resolveUsername(token);
 
-    if (userName == null || SecurityContextHolder.getContext().getAuthentication() == null
-        || jwtService.isTokenExpired(token)) {
+    try {
+      final String userName = jwtService.resolveUsername(token);
+
+      if (userName == null) {
+        filterChain.doFilter(request, response);
+
+        LOGGER.info("Authentication failed because of empty username");
+
+        return;
+      }
+
+      final UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+
+      if (!jwtService.isTokenValid(token, userDetails)) {
+        filterChain.doFilter(request, response);
+
+        LOGGER.info("Authentication failed because of invalid token for {}", userName);
+
+        return;
+      }
+
+      final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+          userDetails, null, userDetails.getAuthorities());
+
+      authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+      SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+      LOGGER.info("Authentication successful for {}", userName);
+    } catch (Exception e) {
       filterChain.doFilter(request, response);
+
+      LOGGER.info("Authentication failed: {}", e.getMessage());
 
       return;
     }
-
-    final UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-
-    if (!jwtService.isTokenValid(token, userDetails)) {
-      filterChain.doFilter(request, response);
-
-      return;
-    }
-
-    final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-        userDetails, null, userDetails.getAuthorities());
-
-    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
     filterChain.doFilter(request, response);
   }

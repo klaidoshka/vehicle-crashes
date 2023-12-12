@@ -11,6 +11,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.mappers.PersonMapper;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.PersonModifiableMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +89,13 @@ public final class PersonController {
 
   @GetMapping
   public @NonNull Collection<PersonView> get() {
-    return context.findAll(Person.class).getValue().stream()
+    final ResultTyped<Collection<Person>> result = context.findAll(Person.class);
+
+    if (!result.isSuccess()) {
+      return List.of();
+    }
+
+    return result.getValue().stream()
         .map(personViewMapper)
         .toList();
   }
@@ -101,7 +108,13 @@ public final class PersonController {
 
   @GetMapping("/modifiable")
   public @NonNull Collection<PersonViewModifiable> getModifiable() {
-    return context.findAll(Person.class).getValue().stream()
+    final ResultTyped<Collection<Person>> result = context.findAll(Person.class);
+
+    if (!result.isSuccess()) {
+      return List.of();
+    }
+
+    return result.getValue().stream()
         .map(personViewModifiableMapper)
         .toList();
   }

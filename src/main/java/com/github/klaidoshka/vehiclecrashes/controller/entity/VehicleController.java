@@ -11,6 +11,7 @@ import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleMapper;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.VehicleModifiableMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -89,7 +90,13 @@ public final class VehicleController {
 
   @GetMapping
   public @NonNull Collection<VehicleView> get() {
-    return context.findAll(Vehicle.class).getValue().stream()
+    final ResultTyped<Collection<Vehicle>> result = context.findAll(Vehicle.class);
+
+    if (!result.isSuccess()) {
+      return List.of();
+    }
+
+    return result.getValue().stream()
         .map(vehicleViewMapper)
         .toList();
   }
@@ -102,7 +109,13 @@ public final class VehicleController {
 
   @GetMapping("/modifiable")
   public @NonNull Collection<VehicleViewModifiable> getModifiable() {
-    return context.findAll(Vehicle.class).getValue().stream()
+    final ResultTyped<Collection<Vehicle>> result = context.findAll(Vehicle.class);
+
+    if (!result.isSuccess()) {
+      return List.of();
+    }
+
+    return result.getValue().stream()
         .map(vehicleViewModifiableMapper)
         .toList();
   }
