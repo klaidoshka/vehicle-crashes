@@ -55,6 +55,14 @@ public final class User implements UserDetails {
     this.email = email;
   }
 
+  public boolean isEmailConfirmed() {
+    return emailConfirmed;
+  }
+
+  public void setEmailConfirmed(boolean emailConfirmed) {
+    this.emailConfirmed = emailConfirmed;
+  }
+
   public Long getId() {
     return id;
   }

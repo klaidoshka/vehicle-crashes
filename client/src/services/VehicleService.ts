@@ -10,8 +10,10 @@ import VehicleView from '../dto/VehicleView.ts';
 import VehicleViewModifiable, {
     VehicleViewModifiableSchema
 } from '../dto/VehicleViewModifiable.ts';
+import {
+    createEntity, deleteEntity, getEntities, getEntity, updateEntity
+} from './BackendService.ts';
 import { mapSchemaToEntity as mapInsuranceSchemaToEntity } from './InsuranceService.ts';
-import { createEntity, deleteEntity, getEntities, getEntity, updateEntity } from './RestApi.ts';
 import {
     mapApiViewModifiableData as mapApiVehicleOwnerViewModifiableData,
     mapSchemaToEntity as mapVehicleOwnerSchemaToEntity

@@ -1,8 +1,8 @@
-package com.github.klaidoshka.vehiclecrashes.entity.dto.vehicle;
+package com.github.klaidoshka.vehiclecrashes.api.dto.vehicle;
 
 import com.github.klaidoshka.vehiclecrashes.constant.VehicleType;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.vehicleowner.VehicleOwnerViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.api.dto.InsuranceView;
+import com.github.klaidoshka.vehiclecrashes.api.dto.vehicleowner.VehicleOwnerViewModifiable;
 import java.time.LocalDate;
 import java.util.Collection;
 import org.springframework.lang.NonNull;

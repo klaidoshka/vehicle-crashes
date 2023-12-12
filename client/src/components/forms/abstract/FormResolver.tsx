@@ -1,4 +1,4 @@
-import { FormType } from '../../constants/FormType.ts';
+import { FormType } from '../../../constants/FormType.ts';
 import IFormProperties from './IFormProperties.ts';
 
 export default function FormResolver({ formType, formManage, formList }: IFormProperties) {

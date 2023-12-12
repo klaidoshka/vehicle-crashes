@@ -1,7 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
 import com.github.klaidoshka.vehiclecrashes.api.service.IInsuranceService;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
+import com.github.klaidoshka.vehiclecrashes.api.dto.InsuranceView;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 

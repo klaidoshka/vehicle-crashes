@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.entity.dto.person;
+package com.github.klaidoshka.vehiclecrashes.api.dto.person;
 
 import com.github.klaidoshka.vehiclecrashes.constant.Gender;
 import java.time.LocalDate;

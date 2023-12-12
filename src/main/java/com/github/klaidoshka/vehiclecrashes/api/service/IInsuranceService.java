@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
-import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
+import com.github.klaidoshka.vehiclecrashes.api.dto.InsuranceView;
 import org.springframework.lang.NonNull;
 
 public interface IInsuranceService {

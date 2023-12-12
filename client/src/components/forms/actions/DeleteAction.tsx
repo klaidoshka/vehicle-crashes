@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { DeleteForeverOutlined } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 
+import IFormDeleteModuleProperties from '../abstract/IFormDeleteModuleProperties.ts';
 import DialogAkaModule from '../dialogs/DialogAkaModule.tsx';
 import DialogDelete from '../dialogs/DialogDelete.tsx';
-import IFormDeleteModuleProperties from '../IFormDeleteModuleProperties.ts';
 
 const DeleteAction = ({ description, handleDelete, title }: IFormDeleteModuleProperties) => {
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const DeleteAction = ({ description, handleDelete, title }: IFormDeleteModulePro
       </IconButton>
 
       <DialogAkaModule
-        content={
+        children={
           <DialogDelete
             title={title}
             description={description}

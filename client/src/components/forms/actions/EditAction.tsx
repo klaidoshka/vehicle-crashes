@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { EditOutlined } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 
+import IFormEditModuleProperties from '../abstract/IFormEditModuleProperties.ts';
 import DialogAkaModule from '../dialogs/DialogAkaModule.tsx';
-import IFormEditModuleProperties from '../IFormEditModuleProperties.ts';
 
 const EditAction = <T,>({ content, handleEdit }: IFormEditModuleProperties<T>) => {
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -22,7 +22,7 @@ const EditAction = <T,>({ content, handleEdit }: IFormEditModuleProperties<T>) =
       </IconButton>
 
       <DialogAkaModule
-        content={content(() => {
+        children={content(() => {
           handleEdit();
 
           setOpen(false);

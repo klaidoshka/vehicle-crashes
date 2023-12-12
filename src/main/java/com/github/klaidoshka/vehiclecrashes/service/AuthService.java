@@ -1,5 +1,9 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
+import com.github.klaidoshka.vehiclecrashes.api.dto.auth.AuthenticationResponse;
+import com.github.klaidoshka.vehiclecrashes.api.dto.auth.LoginRequest;
+import com.github.klaidoshka.vehiclecrashes.api.dto.auth.RegisterRequest;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
 import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.IAuthService;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
@@ -7,9 +11,6 @@ import com.github.klaidoshka.vehiclecrashes.api.service.IJwtService;
 import com.github.klaidoshka.vehiclecrashes.api.service.IUserService;
 import com.github.klaidoshka.vehiclecrashes.constant.Role;
 import com.github.klaidoshka.vehiclecrashes.entity.User;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.auth.AuthenticationResponse;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.auth.LoginRequest;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.auth.RegisterRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,12 +37,19 @@ public final class AuthService implements IAuthService {
   }
 
   @Override
+  public Result confirmEmail(String userName, String token) {
+    return ResultTyped.failure("Not implemented");
+  }
+
+  @Override
   public ResultTyped<AuthenticationResponse> login(LoginRequest model) {
     try {
       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
           model.userName(),
           model.password()
       ));
+
+      // TODO: Check for email confirmation
     } catch (Exception e) {
       return ResultTyped.failure("Invalid username or password");
     }
@@ -53,7 +61,8 @@ public final class AuthService implements IAuthService {
     }
 
     return ResultTyped.success(new AuthenticationResponse(
-        jwtService.generateToken(result.getValue())
+        jwtService.generateToken(result.getValue()),
+        result.getValue().getUsername()
     ));
   }
 
@@ -70,6 +79,7 @@ public final class AuthService implements IAuthService {
     final User user = new User();
 
     user.setEmail(model.email().toLowerCase());
+    user.setEmailConfirmed(false);
     user.setUsername(model.userName().toLowerCase());
     user.setPassword(passwordEncoder.encode(model.password()));
     user.setRole(Role.USER);
@@ -79,7 +89,8 @@ public final class AuthService implements IAuthService {
     }
 
     return ResultTyped.success(new AuthenticationResponse(
-        jwtService.generateToken(user)
+        jwtService.generateToken(user),
+        user.getUsername()
     ));
   }
 }

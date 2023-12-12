@@ -3,7 +3,7 @@ package com.github.klaidoshka.vehiclecrashes.controller.entity;
 import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
+import com.github.klaidoshka.vehiclecrashes.api.dto.InsuranceView;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.InsuranceMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Optional;

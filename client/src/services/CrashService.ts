@@ -6,8 +6,10 @@ import IApiUpdateProperties from '../api/rest/IApiUpdateProperties.ts';
 import Response from '../api/rest/Response.ts';
 import { CrashEndpoints } from '../constants/Endpoints.ts';
 import CrashView, { CrashViewSchema } from '../dto/CrashView.ts';
+import {
+    createEntity, deleteEntity, getEntities, getEntity, updateEntity
+} from './BackendService.ts';
 import { mapApiViewData as mapApiPersonViewData } from './PersonService.ts';
-import { createEntity, deleteEntity, getEntities, getEntity, updateEntity } from './RestApi.ts';
 import { mapApiViewData as mapApiVehicleViewData } from './VehicleService.ts';
 
 const createCrash = async ({

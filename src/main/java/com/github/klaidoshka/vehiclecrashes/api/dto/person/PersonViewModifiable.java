@@ -1,7 +1,7 @@
-package com.github.klaidoshka.vehiclecrashes.entity.dto.person;
+package com.github.klaidoshka.vehiclecrashes.api.dto.person;
 
 import com.github.klaidoshka.vehiclecrashes.constant.Gender;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.vehicleowner.VehicleOwnerViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.api.dto.vehicleowner.VehicleOwnerViewModifiable;
 import java.time.LocalDate;
 import java.util.Collection;
 import org.springframework.lang.NonNull;

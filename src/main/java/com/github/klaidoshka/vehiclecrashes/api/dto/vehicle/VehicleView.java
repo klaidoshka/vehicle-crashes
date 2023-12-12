@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.entity.dto.vehicle;
+package com.github.klaidoshka.vehiclecrashes.api.dto.vehicle;
 
 import com.github.klaidoshka.vehiclecrashes.constant.VehicleType;
 import java.time.LocalDate;

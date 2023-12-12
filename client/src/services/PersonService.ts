@@ -8,7 +8,9 @@ import { PersonEndpoints } from '../constants/Endpoints.ts';
 import { Gender } from '../constants/Gender.ts';
 import PersonView from '../dto/PersonView.ts';
 import PersonViewModifiable, { PersonViewModifiableSchema } from '../dto/PersonViewModifiable.ts';
-import { createEntity, deleteEntity, getEntities, getEntity, updateEntity } from './RestApi.ts';
+import {
+    createEntity, deleteEntity, getEntities, getEntity, updateEntity
+} from './BackendService.ts';
 import {
     mapApiViewModifiableData as mapApiVehicleOwnerViewModifiableData,
     mapSchemaToEntity as mapVehicleOwnerSchemaToEntity

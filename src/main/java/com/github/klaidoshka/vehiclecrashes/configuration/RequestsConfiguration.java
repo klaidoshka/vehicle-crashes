@@ -63,8 +63,7 @@ public class RequestsConfiguration {
                 HttpHeaders.ORIGIN)
             .allowedOrigins(
                 configurationService.getClientServerAddress(),
-                configurationService.getClientServerDomain(),
-                configurationService.getServerAddress())
+                configurationService.getClientServerDomain())
             .allowedMethods(
                 RequestMethod.GET.name(),
                 RequestMethod.DELETE.name(),

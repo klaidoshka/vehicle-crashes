@@ -4,8 +4,10 @@ import PersonViewModifiable from '../../../dto/PersonViewModifiable.ts';
 import {
     deletePerson, getPeopleModifiable, getPersonModifiable
 } from '../../../services/PersonService.ts';
-import FormList from '../../forms/FormList.tsx';
-import { PersonColumns, VehicleOwnerColumnsVehicleSided } from '../../forms/FormListColumns.ts';
+import FormList from '../../forms/abstract/FormList.tsx';
+import {
+    PersonColumns, VehicleOwnerColumnsVehicleSided
+} from '../../forms/abstract/FormListColumns.ts';
 import PersonManageForm from './PersonManageForm.tsx';
 
 const PersonListForm = () => {

@@ -1,14 +1,14 @@
 import { TableColumn } from 'react-data-table-component';
 
-import { Gender } from '../../constants/Gender';
-import { VehicleType } from '../../constants/VehicleType';
-import CrashView from '../../dto/CrashView';
-import PersonView from '../../dto/PersonView';
-import PersonViewModifiable from '../../dto/PersonViewModifiable';
-import VehicleOwnerViewModifiable from '../../dto/VehicleOwnerViewModifiable';
-import VehicleView from '../../dto/VehicleView';
-import VehicleViewModifiable from '../../dto/VehicleViewModifiable';
-import { resolveDateString } from '../../services/Dates';
+import { Gender } from '../../../constants/Gender';
+import { VehicleType } from '../../../constants/VehicleType';
+import CrashView from '../../../dto/CrashView';
+import PersonView from '../../../dto/PersonView';
+import PersonViewModifiable from '../../../dto/PersonViewModifiable';
+import VehicleOwnerViewModifiable from '../../../dto/VehicleOwnerViewModifiable';
+import VehicleView from '../../../dto/VehicleView';
+import VehicleViewModifiable from '../../../dto/VehicleViewModifiable';
+import { resolveDateString } from '../../../services/Dates';
 
 const columnsCasualtiesPerson: TableColumn<PersonView>[] = [
   {

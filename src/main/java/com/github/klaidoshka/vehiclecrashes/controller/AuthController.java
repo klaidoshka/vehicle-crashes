@@ -1,14 +1,16 @@
 package com.github.klaidoshka.vehiclecrashes.controller;
 
+import com.github.klaidoshka.vehiclecrashes.api.dto.auth.AuthenticationResponse;
+import com.github.klaidoshka.vehiclecrashes.api.dto.auth.LoginRequest;
+import com.github.klaidoshka.vehiclecrashes.api.dto.auth.RegisterRequest;
+import com.github.klaidoshka.vehiclecrashes.api.result.Result;
 import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.IAuthService;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.auth.AuthenticationResponse;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.auth.LoginRequest;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.auth.RegisterRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,6 +21,18 @@ public final class AuthController {
 
   public AuthController(IAuthService authService) {
     this.authService = authService;
+  }
+
+  @PostMapping("/confirmEmail")
+  public ResponseEntity<Result> confirmEmail(@RequestParam String userName,
+      @RequestParam String token) {
+    final Result result = authService.confirmEmail(userName, token);
+
+    if (result.isSuccess()) {
+      return ResponseEntity.ok(result);
+    }
+
+    return ResponseEntity.badRequest().body(result);
   }
 
   @PostMapping("/login")

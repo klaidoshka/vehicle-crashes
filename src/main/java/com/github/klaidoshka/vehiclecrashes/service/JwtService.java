@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Service
 public final class JwtService implements IJwtService {
 
-  private static final long VALIDITY_MINUTES = 15;
+  private static final long VALIDITY_MINUTES = 1440;
   private static final String SECRET_KEY = "6e9f045c834995d8a936947b4fac450ad7c52978cc1b6a1f41a3009965e20e99";
 
   @Override

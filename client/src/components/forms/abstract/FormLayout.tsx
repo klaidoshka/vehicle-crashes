@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Divider, Stack } from '@mui/material';
 
-import { FormType } from '../../constants/FormType.ts';
+import { FormType } from '../../../constants/FormType.ts';
 import FormButtons from './FormButtons.tsx';
 import FormExplanation from './FormExplanation.tsx';
 import FormResolver from './FormResolver.tsx';

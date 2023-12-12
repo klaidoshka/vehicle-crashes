@@ -2,7 +2,7 @@ package com.github.klaidoshka.vehiclecrashes.entity.mappers;
 
 import com.github.klaidoshka.vehiclecrashes.entity.Crash;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.vehicle.VehicleViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.api.dto.vehicle.VehicleViewModifiable;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
 

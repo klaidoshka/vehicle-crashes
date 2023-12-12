@@ -1,7 +1,7 @@
 import DataTable, { Direction } from 'react-data-table-component';
 
-import DeleteAction from './actions/DeleteAction.tsx';
-import EditAction from './actions/EditAction.tsx';
+import DeleteAction from '../actions/DeleteAction.tsx';
+import EditAction from '../actions/EditAction.tsx';
 import IFormListProperties from './IFormListProperties.ts';
 
 export default function FormList<T>({

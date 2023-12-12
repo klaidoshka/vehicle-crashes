@@ -5,7 +5,7 @@ import com.github.klaidoshka.vehiclecrashes.api.service.ICrashService;
 import com.github.klaidoshka.vehiclecrashes.entity.Crash;
 import com.github.klaidoshka.vehiclecrashes.entity.Person;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.CrashView;
+import com.github.klaidoshka.vehiclecrashes.api.dto.CrashView;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;

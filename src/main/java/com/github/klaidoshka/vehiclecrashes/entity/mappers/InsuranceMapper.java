@@ -1,7 +1,7 @@
 package com.github.klaidoshka.vehiclecrashes.entity.mappers;
 
 import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.InsuranceView;
+import com.github.klaidoshka.vehiclecrashes.api.dto.InsuranceView;
 import java.util.function.Function;
 import org.springframework.stereotype.Component;
 

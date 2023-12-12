@@ -1,6 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
-import com.github.klaidoshka.vehiclecrashes.entity.dto.person.PersonViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.api.dto.person.PersonViewModifiable;
 import org.springframework.lang.NonNull;
 
 public interface IPersonService {

@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import CrashView from '../../../dto/CrashView.ts';
 import { deleteCrash, getCrash, getCrashes } from '../../../services/CrashService.ts';
 import { resolveDateString } from '../../../services/Dates.ts';
-import FormList from '../../forms/FormList.tsx';
+import FormList from '../../forms/abstract/FormList.tsx';
 import {
     CasualtiesPersonColumns, CasualtiesVehicleColumns, CrashColumns
-} from '../../forms/FormListColumns.ts';
+} from '../../forms/abstract/FormListColumns.ts';
 import CrashManageForm from './CrashManageForm.tsx';
 
 const CrashListForm = () => {

@@ -1,4 +1,4 @@
-package com.github.klaidoshka.vehiclecrashes.entity.dto;
+package com.github.klaidoshka.vehiclecrashes.api.dto;
 
 import java.time.LocalDate;
 import org.springframework.lang.NonNull;

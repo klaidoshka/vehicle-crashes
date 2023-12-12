@@ -5,8 +5,10 @@ import VehicleViewModifiable from '../../../dto/VehicleViewModifiable.ts';
 import {
     deleteVehicle, getVehicleModifiable, getVehiclesModifiable
 } from '../../../services/VehicleService.ts';
-import FormList from '../../forms/FormList.tsx';
-import { VehicleColumns, VehicleOwnerColumnsPersonSided } from '../../forms/FormListColumns.ts';
+import FormList from '../../forms/abstract/FormList.tsx';
+import {
+    VehicleColumns, VehicleOwnerColumnsPersonSided
+} from '../../forms/abstract/FormListColumns.ts';
 import VehicleManageForm from './VehicleManageForm.tsx';
 
 const VehicleListForm = () => {

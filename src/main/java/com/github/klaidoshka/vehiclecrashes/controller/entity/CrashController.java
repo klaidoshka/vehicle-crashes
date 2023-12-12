@@ -5,7 +5,7 @@ import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashService;
 import com.github.klaidoshka.vehiclecrashes.entity.Crash;
-import com.github.klaidoshka.vehiclecrashes.entity.dto.CrashView;
+import com.github.klaidoshka.vehiclecrashes.api.dto.CrashView;
 import com.github.klaidoshka.vehiclecrashes.entity.mappers.CrashMapper;
 import com.github.klaidoshka.vehiclecrashes.util.ResponseResolver;
 import java.util.Collection;
