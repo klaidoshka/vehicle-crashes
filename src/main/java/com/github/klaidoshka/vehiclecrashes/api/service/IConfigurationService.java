@@ -29,6 +29,22 @@ public interface IConfigurationService {
   String getClientServerDomain();
 
   /**
+   * Endpoint of the client-side server (React) for successful email confirmation
+   *
+   * @return endpoint of the client-side server for successful email confirmation
+   */
+  @NonNull
+  String getEmailConfirmedEndpoint();
+
+  /**
+   * Endpoint of the client-side server (React) for failed email confirmation
+   *
+   * @return endpoint of the client-side server for failed email confirmation
+   */
+  @NonNull
+  String getEmailUnconfirmedEndpoint();
+
+  /**
    * Endpoint of the server-side server (Spring)
    *
    * @return endpoint of the server-side server

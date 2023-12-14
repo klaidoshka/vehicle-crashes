@@ -1,56 +1,85 @@
 import { FormEvent, useRef, useState } from 'react';
 
-import { useAuthContext } from '../../api/AuthContext';
+import Result, { resultOfError } from '../../api/rest/Result';
+import { AuthEndpoints } from '../../constants/Endpoints';
+import { backend } from '../../services/BackendService';
 
 const RegisterForm = () => {
-    const { login } = useAuthContext();
     const [errors, setErrors] = useState<string[]>([]);
     const emailRef = useRef<HTMLInputElement | null>(null);
     const usernameRef = useRef<HTMLInputElement | null>(null);
     const passwordRef = useRef<HTMLInputElement | null>(null);
     const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log("Registering...");
-
         const email = emailRef.current?.value;
-        const userName = usernameRef.current?.value;
+        const username = usernameRef.current?.value;
         const password = passwordRef.current?.value;
         const confirmPassword = confirmPasswordRef.current?.value;
+        let errorsApplied = false;
 
-        setErrors([]);
+        setErrors(() => {
+            let messages: string[] = [];
 
-        if (!email) {
-            setErrors((errors) => [...errors, "Email is required."]);
-        }
+            if (!email) {
+                messages = [...messages, "Email is required."];
+            }
 
-        if (!userName) {
-            setErrors((errors) => [...errors, "Username is required."]);
-        }
+            if (!username) {
+                messages = [...messages, "Username is required."];
+            }
 
-        if (!password) {
-            setErrors((errors) => [...errors, "Password is required."]);
-        }
+            if (!password) {
+                messages = [...messages, "Password is required."];
+            }
 
-        if (!confirmPassword) {
-            setErrors((errors) => [...errors, "Confirm password is required."]);
-        }
+            if (!confirmPassword) {
+                messages = [...messages, "Confirm password is required."];
+            }
 
-        if (errors.length > 0) {
+            if (password !== confirmPassword) {
+                messages = [...messages, "Passwords do not match."];
+            }
+
+            if (messages.length > 0) {
+                errorsApplied = true;
+            }
+
+            return messages;
+        });
+
+        if (errorsApplied) {
             return;
         }
 
-        if (password !== confirmPassword) {
-            setErrors((errors) => [...errors, "Passwords do not match."]);
+        await backend
+            .post<Result>(AuthEndpoints.register, {
+                email: email,
+                username: username,
+                password: password
+            })
+            .then(() => {
+                setErrors([
+                    "You have successfully registered. However, you still need to verify your email. Click the link in the email we sent you."
+                ]);
+            })
+            .catch((e) => {
+                const result = resultOfError(e);
 
-            return;
-        }
+                if (result.message) {
+                    setErrors([result.message!]);
+                }
 
-        // call api to get username, token
-
-        // login(username, token);
+                if (result.messages) {
+                    setErrors((errors) => [...errors, ...result.messages!]);
+                }
+            })
+            .finally(() => {
+                passwordRef.current!.value = "";
+                confirmPasswordRef.current!.value = "";
+            });
     };
 
     return (

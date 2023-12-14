@@ -1,38 +1,71 @@
 import { FormEvent, useRef, useState } from 'react';
 
 import { useAuthContext } from '../../api/AuthContext';
+import Result, { resultOfError } from '../../api/rest/Result';
+import { AuthEndpoints } from '../../constants/Endpoints';
+import AuthenticationResponse from '../../dto/AuthenticationResponse';
+import { backend } from '../../services/BackendService';
 
-const LoginForm = () => {
+type LoginFormProperties = {
+    onSuccess: () => void;
+};
+
+const LoginForm = ({ onSuccess }: LoginFormProperties) => {
     const { login } = useAuthContext();
     const [errors, setErrors] = useState<string[]>([]);
     const usernameRef = useRef<HTMLInputElement | null>(null);
     const passwordRef = useRef<HTMLInputElement | null>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        console.log("Logging in...");
-
-        const userName = usernameRef.current?.value;
+        const username = usernameRef.current?.value;
         const password = passwordRef.current?.value;
+        let errorsApplied = false;
 
-        setErrors([]);
+        setErrors(() => {
+            let messages: string[] = [];
 
-        if (!userName) {
-            setErrors((errors) => [...errors, "Username is required."]);
-        }
+            if (!username) {
+                messages = [...messages, "Username is required."];
+            }
 
-        if (!password) {
-            setErrors((errors) => [...errors, "Password is required."]);
-        }
+            if (!password) {
+                messages = [...messages, "Password is required."];
+            }
 
-        if (errors.length > 0) {
+            if (messages.length > 0) {
+                errorsApplied = true;
+            }
+
+            return messages;
+        });
+
+        if (errorsApplied) {
             return;
         }
-        
-        // call api to get username, token
 
-        // login(username, token);
+        await backend
+            .post<Result<AuthenticationResponse>>(AuthEndpoints.login, {
+                username: username,
+                password: password
+            })
+            .then((response) => {
+                login(onSuccess, response.data.value!.token, response.data.value!.userName);
+            })
+            .catch((e) => {
+                const result = resultOfError(e);
+
+                if (result.message) {
+                    setErrors([result.message!]);
+                }
+
+                if (result.messages) {
+                    setErrors((errors) => [...errors, ...result.messages!]);
+                }
+
+                passwordRef.current!.value = "";
+            });
     };
 
     return (

@@ -2,20 +2,39 @@ const backendApiEndpoint: string = "http://127.0.0.1:8080/api";
 
 // ------------------------------------------------------------
 
-interface Endpoints {
+type Endpoints = {
     create: string;
     delete: string;
     get: string;
     getById: string;
     update: string;
-}
+};
 
-interface EndpointsModifiable extends Endpoints {
+type EndpointsModifiable = Endpoints & {
     getModifiableById: string;
     getModifiable: string;
-}
+};
+
+type EndpointsWithExcel = Endpoints & {
+    downloadTemplate: string;
+    import: string;
+};
+
+type EndpointsAuth = {
+    confirmEmail: string;
+    login: string;
+    profile: string;
+    register: string;
+};
 
 // ------------------------------------------------------------
+
+const endpointsAuth: EndpointsAuth = {
+    confirmEmail: `${backendApiEndpoint}/auth/confirm-email`,
+    login: `${backendApiEndpoint}/auth/login`,
+    profile: `${backendApiEndpoint}/auth/profile`,
+    register: `${backendApiEndpoint}/auth/register`
+};
 
 const endpointsVehicle: EndpointsModifiable = {
     create: `${backendApiEndpoint}/vehicles`,
@@ -37,17 +56,20 @@ const endpointsPeople: EndpointsModifiable = {
     update: `${backendApiEndpoint}/people/:id`
 };
 
-const endpointsCrashes: Endpoints = {
+const endpointsCrashes: EndpointsWithExcel = {
     create: `${backendApiEndpoint}/crashes`,
     delete: `${backendApiEndpoint}/crashes/:id`,
+    downloadTemplate: `${backendApiEndpoint}/crashes/download-template`,
     get: `${backendApiEndpoint}/crashes`,
     getById: `${backendApiEndpoint}/crashes/:id`,
+    import: `${backendApiEndpoint}/crashes/import`,
     update: `${backendApiEndpoint}/crashes/:id`
 };
 
 // ------------------------------------------------------------
 
 export { backendApiEndpoint };
+export const AuthEndpoints = endpointsAuth;
 export const VehicleEndpoints = endpointsVehicle;
 export const PersonEndpoints = endpointsPeople;
 export const CrashEndpoints = endpointsCrashes;

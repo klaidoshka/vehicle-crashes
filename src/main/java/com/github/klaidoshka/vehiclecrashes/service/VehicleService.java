@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
+import com.github.klaidoshka.vehiclecrashes.api.dto.vehicle.VehicleViewModifiable;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.service.IInsuranceService;
 import com.github.klaidoshka.vehiclecrashes.api.service.IVehicleOwnerService;
@@ -9,7 +10,6 @@ import com.github.klaidoshka.vehiclecrashes.entity.Insurance;
 import com.github.klaidoshka.vehiclecrashes.entity.Person;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
-import com.github.klaidoshka.vehiclecrashes.api.dto.vehicle.VehicleViewModifiable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -143,5 +143,13 @@ public final class VehicleService implements IVehicleService {
 
       m.remove(vehicle);
     });
+  }
+
+  @Override
+  public Vehicle getByPlate(@NonNull String plate) {
+    return context.wrappedRead(
+        m -> m.createQuery("SELECT v FROM Vehicle v WHERE v.plate = :plate", Vehicle.class)
+            .setParameter("plate", plate)
+            .getSingleResult());
   }
 }

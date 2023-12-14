@@ -48,7 +48,7 @@ public final class Person {
   @Column(nullable = false)
   private Long id;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String name;
 
   public Person() {
@@ -122,9 +122,8 @@ public final class Person {
     if (!(o instanceof Person person)) {
       return false;
     }
-    return Objects.equals(vehiclesOwned, person.vehiclesOwned) && Objects.equals(crashes,
-        person.crashes) && Objects.equals(dateBirth, person.dateBirth)
-        && gender == person.gender && Objects.equals(id, person.id)
+    return Objects.equals(vehiclesOwned, person.vehiclesOwned) && Objects.equals(dateBirth,
+        person.dateBirth) && gender == person.gender && Objects.equals(id, person.id)
         && Objects.equals(name, person.name);
   }
 

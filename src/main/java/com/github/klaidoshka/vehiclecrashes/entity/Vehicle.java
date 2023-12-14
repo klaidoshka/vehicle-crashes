@@ -155,9 +155,8 @@ public final class Vehicle {
     if (!(o instanceof Vehicle vehicle)) {
       return false;
     }
-    return Objects.equals(color, vehicle.color) && Objects.equals(crashes,
-        vehicle.crashes) && Objects.equals(dateManufacture, vehicle.dateManufacture)
-        && Objects.equals(id, vehicle.id) && Objects.equals(insurances,
+    return Objects.equals(color, vehicle.color) && Objects.equals(dateManufacture,
+        vehicle.dateManufacture) && Objects.equals(id, vehicle.id) && Objects.equals(insurances,
         vehicle.insurances) && Objects.equals(owners, vehicle.owners)
         && Objects.equals(plate, vehicle.plate) && Objects.equals(type,
         vehicle.type);

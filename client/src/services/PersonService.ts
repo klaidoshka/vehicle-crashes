@@ -3,7 +3,7 @@ import IApiDeleteProperties from '../api/rest/IApiDeleteProperties.ts';
 import IApiGetCollectionProperties from '../api/rest/IApiGetCollectionProperties.ts';
 import IApiGetProperties from '../api/rest/IApiGetProperties.ts';
 import IApiUpdateProperties from '../api/rest/IApiUpdateProperties.ts';
-import Response from '../api/rest/Response.ts';
+import Response from '../api/rest/Result.ts';
 import { PersonEndpoints } from '../constants/Endpoints.ts';
 import { Gender } from '../constants/Gender.ts';
 import PersonView from '../dto/PersonView.ts';

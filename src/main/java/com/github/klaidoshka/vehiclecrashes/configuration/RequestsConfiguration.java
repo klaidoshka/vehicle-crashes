@@ -38,9 +38,13 @@ public class RequestsConfiguration {
       throws Exception {
     return httpSecurity
         .authorizeHttpRequests(c -> c
-            .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-            .requestMatchers("/error").permitAll()
-            .anyRequest().permitAll())
+            .requestMatchers(
+                "/api/auth/confirm-email",
+                "/api/auth/login",
+                "/api/auth/profile",
+                "/api/auth/register",
+                "/error").permitAll()
+            .anyRequest().authenticated())
         .authenticationProvider(authenticationProvider)
         .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .cors(withDefaults())

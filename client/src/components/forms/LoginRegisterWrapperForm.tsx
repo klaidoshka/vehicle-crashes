@@ -5,7 +5,11 @@ import RegisterForm from './RegisterForm';
 
 type AuthFormType = "LOGIN" | "REGISTER";
 
-const LoginRegisterWrapperForm = () => {
+type LoginRegisterWrapperFormProperties = {
+    onSuccess: () => void;
+};
+
+const LoginRegisterWrapperForm = ({ onSuccess }: LoginRegisterWrapperFormProperties) => {
     const [type, setType] = useState<AuthFormType>("LOGIN");
 
     const toggle = () => {
@@ -14,7 +18,7 @@ const LoginRegisterWrapperForm = () => {
 
     return type === "LOGIN" ? (
         <>
-            <LoginForm />
+            <LoginForm onSuccess={onSuccess} />
 
             <div className='col-12 d-flex justify-content-center align-items-center w-100'>
                 <a

@@ -1,5 +1,6 @@
 package com.github.klaidoshka.vehiclecrashes.service;
 
+import com.github.klaidoshka.vehiclecrashes.api.dto.person.PersonViewModifiable;
 import com.github.klaidoshka.vehiclecrashes.api.service.ICrashContext;
 import com.github.klaidoshka.vehiclecrashes.api.service.IPersonService;
 import com.github.klaidoshka.vehiclecrashes.api.service.IVehicleOwnerService;
@@ -7,7 +8,6 @@ import com.github.klaidoshka.vehiclecrashes.entity.Crash;
 import com.github.klaidoshka.vehiclecrashes.entity.Person;
 import com.github.klaidoshka.vehiclecrashes.entity.Vehicle;
 import com.github.klaidoshka.vehiclecrashes.entity.VehicleOwner;
-import com.github.klaidoshka.vehiclecrashes.api.dto.person.PersonViewModifiable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -140,5 +140,13 @@ public final class PersonService implements IPersonService {
 
       m.remove(person);
     });
+  }
+
+  @Override
+  public Person getByName(@NonNull String name) {
+    return context.wrappedRead(
+        m -> m.createQuery("SELECT p FROM Person p WHERE p.name = :name", Person.class)
+            .setParameter("name", name)
+            .getSingleResult());
   }
 }

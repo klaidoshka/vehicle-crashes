@@ -5,7 +5,7 @@ import IApiDeleteProperties from '../api/rest/IApiDeleteProperties.ts';
 import IApiGetCollectionProperties from '../api/rest/IApiGetCollectionProperties.ts';
 import IApiGetProperties from '../api/rest/IApiGetProperties.ts';
 import IApiUpdateProperties from '../api/rest/IApiUpdateProperties.ts';
-import Response from '../api/rest/Response.ts';
+import Response from '../api/rest/Result.ts';
 import { backendApiEndpoint } from '../constants/Endpoints.ts';
 
 const backend = axios.create({

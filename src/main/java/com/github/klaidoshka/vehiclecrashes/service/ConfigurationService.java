@@ -23,6 +23,16 @@ public final class ConfigurationService implements IConfigurationService {
   }
 
   @Override
+  public String getEmailConfirmedEndpoint() {
+    return getClientServerDomain() + "/page/register/email-confirmed";
+  }
+
+  @Override
+  public String getEmailUnconfirmedEndpoint() {
+    return getClientServerDomain() + "/page/register/email-unconfirmed";
+  }
+
+  @Override
   public @NonNull String getServerAddress() {
     return "http://127.0.0.1:8080";
   }

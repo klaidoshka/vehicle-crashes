@@ -1,16 +1,11 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
 import com.github.klaidoshka.vehiclecrashes.api.dto.CrashView;
+import com.github.klaidoshka.vehiclecrashes.api.result.ResultTyped;
 import org.springframework.lang.NonNull;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ICrashService {
-
-  /***
-   * Checks if crash is valid
-   * @param crash to check
-   * @return true if is valid, false otherwise
-   */
-  boolean isValid(@NonNull CrashView crash);
 
   /**
    * Creates or updates crash
@@ -28,4 +23,18 @@ public interface ICrashService {
    * @param id of crash to delete
    */
   void deleteById(@NonNull Long id);
+
+  /***
+   * Imports crashes from file
+   * @param file to import
+   * @return result of import
+   */
+  ResultTyped<Integer> importXlsx(@NonNull MultipartFile file);
+
+  /***
+   * Checks if crash is valid
+   * @param crash to check
+   * @return true if is valid, false otherwise
+   */
+  boolean isValid(@NonNull CrashView crash);
 }

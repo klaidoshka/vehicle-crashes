@@ -1,7 +1,9 @@
 package com.github.klaidoshka.vehiclecrashes.api.service;
 
 import com.github.klaidoshka.vehiclecrashes.api.dto.person.PersonViewModifiable;
+import com.github.klaidoshka.vehiclecrashes.entity.Person;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 public interface IPersonService {
 
@@ -28,4 +30,13 @@ public interface IPersonService {
    * @param id of person to delete
    */
   void deleteById(@NonNull Long id);
+
+  /**
+   * Finds person by name
+   *
+   * @param name of person to find
+   * @return person if found, null otherwise
+   */
+  @Nullable
+  Person getByName(@NonNull String name);
 }

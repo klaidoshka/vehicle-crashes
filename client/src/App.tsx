@@ -1,19 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, NavLink, Route, Routes, useNavigate } from 'react-router-dom';
+
+import { Person } from '@mui/icons-material';
 
 import { useAuthContext } from './api/AuthContext.ts';
 import CrashedVehicleLogo from './assets/image/logo.png';
 import DialogAkaModule from './components/forms/dialogs/DialogAkaModule.tsx';
 import LoginRegisterWrapperForm from './components/forms/LoginRegisterWrapperForm.tsx';
 import CrashPage from './components/pages/crash/CrashPage.tsx';
+import EmailConfirmed from './components/pages/EmailConfirmed.tsx';
+import EmailUnconfirmed from './components/pages/EmailUnconfirmed.tsx';
 import HomePage from './components/pages/HomePage.tsx';
 import PersonPage from './components/pages/person/PersonPage.tsx';
 import VehiclePage from './components/pages/vehicle/VehiclePage.tsx';
 
 const App = () => {
+    const { isAuthenticated, logout, tryRenewSession, userName } = useAuthContext();
     const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
-    const { isAuthenticated } = useAuthContext();
     const navigate = useNavigate();
+
+    const refresh = () => {
+        setDialogOpen(false);
+
+        navigate("/page/home");
+    };
+
+    useEffect(() => {
+        tryRenewSession(refresh);
+    }, []);
 
     return (
         <div className='h-100 overflow-hidden'>
@@ -70,20 +84,31 @@ const App = () => {
 
                         <div className='col-4 d-flex justify-content-end align-items-center'>
                             {(isAuthenticated() && (
-                                <button className='btn btn-sm fw-bold h-100' onClick={() => {}}>
-                                    Logout 🔒
-                                </button>
+                                <>
+                                    <div className='d-flex align-items-center h-100 fw-bold'>
+                                        {userName}
+
+                                        <Person />
+                                    </div>
+
+                                    <button
+                                        className='btn btn-sm btn-outline-danger fw-bold h-75 m-1'
+                                        onClick={() => logout(refresh)}
+                                    >
+                                        Logout 🔒
+                                    </button>
+                                </>
                             )) || (
                                 <>
                                     <button
-                                        className='btn btn-sm fw-bold h-100'
+                                        className='btn btn-sm btn-outline-dark fw-bold h-75'
                                         onClick={() => setDialogOpen(true)}
                                     >
                                         Login / Register 🔓
                                     </button>
 
                                     <DialogAkaModule
-                                        children={<LoginRegisterWrapperForm />}
+                                        children={<LoginRegisterWrapperForm onSuccess={refresh} />}
                                         closeCallback={() => setDialogOpen(false)}
                                         isOpen={() => isDialogOpen}
                                     />
@@ -103,24 +128,45 @@ const App = () => {
                 <Routes>
                     <Route path={"/page/home/*"} element={<HomePage />} caseSensitive={false} />
 
-                    {isAuthenticated() && (
+                    {(isAuthenticated() && (
                         <>
                             <Route
                                 path={"/page/crashes/*"}
                                 element={<CrashPage />}
                                 caseSensitive={false}
                             />
+
                             <Route
                                 path={"/page/vehicles/*"}
                                 element={<VehiclePage />}
                                 caseSensitive={false}
                             />
+
                             <Route
                                 path={"/page/people/*"}
                                 element={<PersonPage />}
                                 caseSensitive={false}
                             />
                         </>
+                    )) || (
+                        <Route
+                            path='/page/register/*'
+                            element={
+                                <Routes>
+                                    <Route
+                                        path='email-confirmed'
+                                        element={<EmailConfirmed />}
+                                        caseSensitive={false}
+                                    />
+
+                                    <Route
+                                        path='email-unconfirmed'
+                                        element={<EmailUnconfirmed />}
+                                        caseSensitive={false}
+                                    />
+                                </Routes>
+                            }
+                        />
                     )}
 
                     <Route

@@ -19,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(schema = "crashes", name = "users")
 public final class User implements UserDetails {
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String email;
 
   @Column(nullable = false)
@@ -36,7 +36,7 @@ public final class User implements UserDetails {
   @Column(nullable = false)
   private Role role;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String username;
 
   public User() {
