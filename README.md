@@ -6,13 +6,13 @@ The project is a simple **CRUD** application for managing vehicles, their owners
 and accident's casualties _(people or vehicles)_ by creating and editing entities with primitive
 forms.
 
-The main idea behind this project was to improve my skills in...
+The main idea behind this project was to improve my skills in
 
 - **React**
 - **TypeScript**
 - **Java Frameworks** (Spring Boot, Hibernate / JPA)
 
-Additionally, I have tried out some libraries for data validation and form management...
+Additionally, I have tried out some libraries for data validation and form management
 
 - **zod** (TypeScript)
 - **React Hook Form** (React)
@@ -50,16 +50,4 @@ designed architecture.
 - Back-End validation should return aggregated messages, if errors were found
 - - Currently: it returns only one message, displays in a alert
 - - Possible change: return array of messages, display in a table within abstract modal
-
-# ----------------------------------------------------- #
-
-- Authentication and Authorization
-- - Using: Spring Security
-
-- Email Confirmation
-- - Using: Spring Mail Service
-
-- CSV Reader (for crashes page w/ children data)
-- - Using: 3rd-Party Library
-- - Changes Required: Add a template for the CSV file
 ```
