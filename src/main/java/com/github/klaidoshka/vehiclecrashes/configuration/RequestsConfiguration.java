@@ -6,6 +6,7 @@ import com.github.klaidoshka.vehiclecrashes.api.service.IConfigurationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,6 +45,7 @@ public class RequestsConfiguration {
                 "/api/auth/profile",
                 "/api/auth/register",
                 "/error").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/crashes").permitAll()
             .anyRequest().authenticated())
         .authenticationProvider(authenticationProvider)
         .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

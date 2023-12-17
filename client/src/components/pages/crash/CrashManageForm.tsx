@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import AsyncSelect from 'react-select/async';
 
+import { useAuthContext } from '../../../api/AuthContext.ts';
 import IManageFormProperties from '../../../api/IManageFormProperties.ts';
 import ValuedOptions from '../../../api/options/ValuedOptions.ts';
 import { Gender } from '../../../constants/Gender.ts';
@@ -15,6 +16,16 @@ import { getVehicles } from '../../../services/VehicleService.ts';
 import ExcelManager from './ExcelManager.tsx';
 
 const CrashManageForm = ({ callback, element, isEdit }: IManageFormProperties<CrashView>) => {
+    const { isAuthenticated } = useAuthContext();
+
+    if (!isAuthenticated()) {
+        return (
+            <div className="d-flex justify-content-center align-items-center">
+                <p className='text-black-50'>You must be logged in to manage crashes!</p>
+            </div>
+        );
+    }
+
     const {
         control,
         register,

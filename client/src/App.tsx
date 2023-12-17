@@ -58,14 +58,14 @@ const App = () => {
 
                         <div className='col-4 d-flex justify-content-center align-items-center'>
                             <ul className='navbar-nav'>
+                                <li key={"/page/crashes"} className='nav-item'>
+                                    <NavLink className='nav-link' to={"/page/crashes"}>
+                                        Crashes
+                                    </NavLink>
+                                </li>
+                                
                                 {isAuthenticated() && (
                                     <>
-                                        <li key={"/page/crashes"} className='nav-item'>
-                                            <NavLink className='nav-link' to={"/page/crashes"}>
-                                                Crashes
-                                            </NavLink>
-                                        </li>
-
                                         <li key={"/page/vehicles"} className='nav-item'>
                                             <NavLink className='nav-link' to={"/page/vehicles"}>
                                                 Vehicles
@@ -128,14 +128,10 @@ const App = () => {
                 <Routes>
                     <Route path={"/page/home/*"} element={<HomePage />} caseSensitive={false} />
 
+                    <Route path={"/page/crashes/*"} element={<CrashPage />} caseSensitive={false} />
+
                     {(isAuthenticated() && (
                         <>
-                            <Route
-                                path={"/page/crashes/*"}
-                                element={<CrashPage />}
-                                caseSensitive={false}
-                            />
-
                             <Route
                                 path={"/page/vehicles/*"}
                                 element={<VehiclePage />}
