@@ -164,6 +164,8 @@ public final class CrashService implements ICrashService {
           crash.getCasualtiesPeople().forEach(p -> {
             final Collection<Crash> personCrashes = new ArrayList<>(p.getCrashes());
 
+            p.setVehiclesOwned(List.of());
+
             personCrashes.add(crash);
 
             p.setCrashes(personCrashes);
@@ -176,6 +178,8 @@ public final class CrashService implements ICrashService {
 
           crash.getCasualtiesVehicle().forEach(v -> {
             final Collection<Crash> vehicleCrashes = new ArrayList<>(v.getCrashes());
+
+            v.setOwners(List.of());
 
             vehicleCrashes.add(crash);
 
